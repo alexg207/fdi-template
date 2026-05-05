@@ -194,10 +194,12 @@ The V1 Valar dashboard is the gold-standard reference. The patterns below are ex
 
 Subtitle is the sentence under the company name. The V1 pattern is consistent across all 30 entries: **[what the company is], [why-they-fit-Valar phrase], [Valar relationship status]**.
 
-V1 examples:
-- BigPanda: *"AIOps + incident management, signed design partner. Inference for autonomous incident triage on production telemetry data."*
-- Qualcomm: *"Mobile silicon + on-device AI leader, IP-sensitive R&D inference workloads, named in Valar pipeline."*
-- Mastercard: *"Payments network giant, 150B+ transactions/year, real-time inference for fraud + risk, PCI DSS-bound."*
+**Hard constraint: maximum 18 words.** If yours runs longer, the dashboard truncates it with "..." and the signal is lost. Cut financial metadata, cut hedges, cut anything that isn't doing one of the three jobs below.
+
+V1 examples (all under 18 words):
+- BigPanda (12 words): *"AIOps + incident management, signed design partner. Inference for autonomous incident triage on production telemetry data."*
+- Qualcomm (14 words): *"Mobile silicon + on-device AI leader, IP-sensitive R&D inference workloads, named in Valar pipeline."*
+- Mastercard (14 words): *"Payments network giant, 150B+ transactions/year, real-time inference for fraud + risk, PCI DSS-bound."*
 
 The pattern works because every subtitle does three jobs in one sentence:
 1. Names the business
@@ -205,9 +207,11 @@ The pattern works because every subtitle does three jobs in one sentence:
 3. Marks the relationship status to the founder
 
 **Anti-patterns** (don't):
-- Generic descriptors: "Leading provider of X" → no signal
-- Marketing language: "Industry-defining innovator" → no signal
-- Vague relationship: "Potential customer" → useless; if it's a candidate, say what made it candidate-worthy
+- Generic descriptors: "Leading provider of X" gives no signal
+- Marketing language: "Industry-defining innovator" gives no signal
+- Vague relationship: "Potential customer" is useless; if it's a candidate, say what made it candidate-worthy
+- **Stuffed parentheticals**: never include revenue, employee count, founding year, or other financial metadata in a subtitle. Bad: *"UK challenger bank ($1.6B FY25, 11M customers), UK-resident-only customer data, real-time fraud inference on payment hotpath..."* That data belongs in the Profile section, not the subtitle. The reader sees the subtitle for half a second; it should land one signal, not five.
+- **Trailing ellipsis**: if the subtitle ends with "..." the truncation rule was violated. Rewrite shorter.
 
 ### 9.2 `overview`, 3-5 sentences, named-account positioning
 
@@ -240,9 +244,44 @@ Three patterns to extract:
 2. **Middle sentence(s)** describe the next-step motion, what concrete action does this account enable? "Land here = open peer accounts X, Y, Z" is a powerful pattern when applicable.
 3. **Buyer call-out** uses bold. **NOT** is critical, explicit "NOT [persona]" guidance reflects founder antagonist warnings (V1 used "NOT marketing AI team," "NOT research-floor AI team," "NOT ML eng", all from Tom's interview).
 
+**Durability rule (CRITICAL): the GTM thesis must survive personnel changes.**
+
+The thesis describes *why this company is a structural fit*. Specific named people belong in `CONTACT_MAP` (the Connections section), which is the dynamic layer — people leave, change roles, switch companies. The strategic layer should hold even if every contact rotated tomorrow.
+
+**Buyer and Champion in the gtm_thesis are personas, not specific names.** V1 BigPanda's "Platform Engineering / Site Reliability lead" is a role type that survives turnover. "John Morgan, Managing VP Head of Product" is a specific human being who could leave next month, taking three sentences of your thesis with him.
+
+| ✅ Durable (use these) | ❌ Brittle (move to CONTACT_MAP) |
+|---|---|
+| `**Buyer:** Platform Engineering leadership` | `**Buyer:** John Morgan, Managing VP Product` |
+| `**Champion:** Distinguished Engineer / Staff Eng cohort` | `**Champion:** Vivek Gupta (warm via Alex)` |
+| `Primary has multiple warm contacts spanning AI Eng, Platform, Product` | `8 Primary network warm contacts spanning... Lead with Vivek Gupta` |
+| `Tom's named pipeline pick` | `Tom's pick — and Gaby's framing of "..." sits squarely on Capital One` |
+
+**What's allowed in the thesis:**
+- Persona/role-type buyer + champion (always)
+- Antagonist exclusions as roles ("NOT ML engineering function broadly")
+- Verbatim founder quotes from CONTEXT.md (these are strategic anchors, not personnel facts)
+- Aggregate warm-contact counts as attributes ("Primary has 8 warm contacts here") — but framed as descriptive, not as the strategy
+- Founder relationship status if it's structural ("signed design partner", "named pipeline pick")
+
+**What belongs in CONTACT_MAP, not the thesis:**
+- Specific named individuals at the target company (John Morgan, Vivek Gupta)
+- Specific named individuals at Primary who can intro (Alex, Charles, Gaby)
+- Specific warm-intro paths ("warm via Alex")
+- Department-specific contact details ("Vivek Gupta is the Distinguished Engineer in the Enterprise AI org")
+- Comparative warmth claims that hinge on personnel ("highest-warmth account in the FDI")
+
+**Anti-pattern from May 5 V2 Capital One:** *"Capital One is the highest-warmth Stage-2 account in the entire FDI: a tech-forward US bank with public production multi-agent AI, an EVP Chief Scientist running enterprise AI, and 8 Primary network warm contacts spanning AI Eng, Platform, and Product... **Buyer:** Managing VP, Head of Product, Enterprise AI/ML Platforms (John Morgan). **Champion:** Distinguished Engineer (Vivek Gupta, warm via Alex)."*
+
+Three brittle pillars: "highest-warmth" (depends on relative contact warmth across companies), "EVP Chief Scientist running enterprise AI" (Prem Natarajan specifically), the named buyer + champion + intro path. If Prem leaves Capital One, two sentences invalidate. If Alex leaves Primary, the intro path breaks.
+
+**Better V3 version (durable):** *"Capital One is the most AI-forward major bank in the US: production multi-agent AI shipped publicly, dedicated enterprise AI leadership at the EVP level, and a cloud-first but security-obsessed culture that creates a natural fit for Valar's in-cloud deployment under bank governance. Tom's named pipeline pick. Primary network depth here is unusually strong (multiple warm contacts across AI Eng, Platform, and Product). **Buyer:** Platform / Enterprise AI/ML leadership. **Champion:** Distinguished/Staff Engineer cohort inside Enterprise AI. NOT ML engineering function broadly — sequence through platform and product first."*
+
+Same outbound utility, but every claim survives if the named individuals rotate. The names go in CONTACT_MAP where they belong.
+
 ### 9.4 `tags`, 3-5 chips, mixed colors
 
-Tag color vocabulary observed in V1: `Valar` (founder accent, relationship status), `stack` (subtle highlight, technical/constraint), `hw` (harder constraint), `hiring` (hiring signal), `oss` (open-source), `neutral` (gray, factual).
+Tag color vocabulary observed in V1: `Valar` / `brand` (founder accent, relationship status), `stack` (subtle highlight, technical/constraint), `hw` (harder constraint), `hiring` (hiring signal), `oss` (open-source), `neutral` (gray, factual).
 
 V1 GM (Cruise) tag set:
 ```javascript
@@ -259,6 +298,15 @@ Patterns:
 - **Tooltips are required if the tag is non-obvious.** "AIOps" is self-explanatory; "Data-Sensitive" needs a tip explaining why ("Customer telemetry data cannot be exposed to multi-tenant inference").
 - **Hiring tags are prefixed**: `'Hiring: ML Platform'` not just `'ML Platform'`.
 - **Color reflects role, not aesthetic.** Don't pick `c:` based on what looks nice, pick based on what the tag means.
+
+**Banned tag values** (these duplicate information already shown elsewhere in the UI, so they add zero signal):
+- `Stage-1 ICP`, `Stage-2 ICP`, `Stage 1`, `Stage 2`, or any segment-classification tag. The segment is already shown by which tab the company is on.
+- `Pipeline`, `Mid-Market`, `Enterprise`. Same reason.
+- `Target`. Every company in the dashboard is a target by definition.
+- `ICP`, `In ICP`. Same reason: every company in the dashboard is an ICP fit.
+- Generic descriptors like `B2B`, `SaaS`, `Tech` unless they're disambiguating from another segment.
+
+What tags SHOULD reference: product names ("Bits AI", "Process Copilot"), technical stack ("vLLM", "Multi-cloud + Bare Metal"), constraints ("PCI DSS Level 1", "HIPAA-bound"), relationship status ("Signed Design Partner", "Named in Pipeline"), or hiring signals (prefixed with "Hiring:").
 
 When the founder has an explicit "ML eng = antagonists" guidance, do NOT tag those teams as positive. The color discipline reinforces the founder's actual GTM strategy.
 
@@ -295,44 +343,79 @@ Notice the **specificity of the regulatory citation**, OCC, PCI DSS Level 1, SOX
 
 ### 9.8 `sections`, 3 sub-tables of fact rows
 
-Each company card has 3 sections (default: Profile / Inference Opportunity / GTM Strategy). Each section is a list of `[label, value]` row pairs. V1 pattern: **6 rows in Profile, 4 rows in Opportunity, 5 rows in GTM Strategy**.
+Each company card has 3 sections (default: Profile / Inference Footprint / GTM Strategy). Each section is a list of `[label, value]` row pairs.
 
-V1 BigPanda Profile section:
+**Profile section: exactly 5 rows, no more.** Locked field set is **Industry, Revenue, Employees, Cloud Provider, AI Maturity**. The last visible row should be a relationship status, but rather than adding a 6th profile row, that lives in the company `tags` array as a brand-color chip. Adding extra profile rows bloats the card without earning the space.
+
+**Banned profile fields** (these add no signal):
+- `Founded` (year). Founding year is rarely relevant to a buyer profile.
+- `Headquarters`. Already in the subtitle for most companies; redundant.
+- `Valar Status` / `[Founder] Status`. Redundant with the segment tab AND the relationship tag in the chip row.
+- `Stage`, `ICP Tier`, or any segment-classification field. Redundant with the tab.
+- `Business Type` (B2B vs B2C). Implicit in the founder's ICP.
+
+V1 Datadog Profile section (5 fields, this is the bar):
 ```javascript
 [
-  ['Industry', 'AIOps / IT Operations Management'],
-  ['Founded', '2012'],
-  ['Headquarters', 'Mountain View, CA'],
-  ['Cloud Provider', 'AWS primary; multi-region for enterprise customers'],
-  ['AI Maturity', 'High, generative AI for RCA, agentic incident automation, ML-based event correlation. "Pragmatic AI" branding emphasizes transparent + testable models.'],
-  ['Valar Status', 'Signed Design Partner (per PVP V Memo)']
+  ['Industry', 'Infrastructure / Cloud Observability'],
+  ['Revenue', '~$2.8B (FY2025)'],
+  ['Employees', '~7,000'],
+  ['Cloud Provider', 'Multi-cloud (AWS, GCP, Azure) + own bare metal data centers for the data plane'],
+  ['AI Maturity', 'Very advanced. Bits AI in production, extensive ML for anomaly detection and log analysis, dedicated AI/ML research team, deep infrastructure expertise.']
 ]
 ```
 
 Patterns:
-- **Values are sentences when the field needs nuance**, not always single-word answers. "AI Maturity" is `'High, generative AI for RCA, agentic incident automation...'` not just `'High'`. The sentence is the evidence for the rating.
-- **The last row is always the founder-relationship status** ("Valar Status: Signed Design Partner" or "Valar Status: Named Pipeline" or "Valar Status: Stretch ICP, not yet contacted"). This anchors every card in its position relative to the founder's GTM.
-- **Cite source materials inline** when the claim is non-obvious. V1 cites "(per PVP V Memo)" or "(estimated from technology investment and transaction volume)", the parenthetical citation lets the user trust the claim.
+- **Values are sentences when the field needs nuance**, not always single-word answers. "AI Maturity" is `'Very advanced. Bits AI in production, extensive ML for anomaly detection...'` not just `'Very advanced'`. The sentence is the evidence for the rating.
+- **Cite source materials inline** when the claim is non-obvious. The Webset enrichment text fields contain inline source URLs (pattern: `fact text | URL`); parse them out into ROW_SOURCES (see 9.9). Empty citations are fine; wrong citations are worse than none.
+- **Name the company's actual AI product** in AI Maturity if there is one (Datadog → Bits AI; Celonis → Process Copilot; Salesforce → Einstein). The named product is the strongest possible signal of AI maturity and gives the founder something specific to anchor outbound on.
 
-V1 BigPanda Opportunity section:
+**Inference Footprint section: exactly 4 rows.** Locked field set is **Use Cases, Current Stack, Pain Points, Estimated Spend**.
+
+V1 Datadog Inference Footprint section (the bar):
 ```javascript
 [
-  ['Use Cases', 'Autonomous incident correlation (80%+ alert noise reduction claim), generative RCA + dynamic incident titles, agentic remediation suggestions, AI Incident Prevention for change management'],
-  ['Current Stack', 'Cleans/normalizes/correlates events → applies ML/LLM. Active development with Valar on BYOC inference layer for production workloads.'],
-  ['Pain Points', 'Customer infrastructure data is restricted contractually, multi-tenant inference clouds disqualified. AIOps margins compress as AI compute grows.'],
-  ['Estimated Spend', '$1.5–3M annual inference (mid-market wedge profile)']
+  ['Use Cases', 'Bits AI natural language querying, intelligent log summarization, anomaly detection and root cause analysis, automated alert correlation, infrastructure recommendation engine.'],
+  ['Current Stack', 'Custom inference infrastructure across cloud and bare metal. Published engineering blog on LLM serving architecture. Likely custom serving with optimization layers.'],
+  ['Pain Points', 'Inference costs for Bits AI significantly impacting gross margins. Hybrid infrastructure (cloud + bare metal) adds optimization complexity. Customer telemetry data sensitivity constrains where inference can run.'],
+  ['Estimated Spend', '$40–80M annually on inference compute (estimated from margin impact disclosure and revenue scale)']
 ]
 ```
 
-Patterns:
-- **Estimated Spend always has a range, never a point estimate.** "$1.5–3M annual inference" is honest about uncertainty; "$2.3M" pretends to precision the data doesn't support.
-- **Estimated Spend always tags the segment context**, "(mid-market wedge profile)" or "(enterprise scale profile)" tells the user how the estimate was derived.
-- **Pain Points uses contractual/business language**, not technical jargon. "Multi-tenant inference clouds disqualified" is the buyer's framing. "Lacks fine-grained scheduling primitives" is the founder's framing, wrong for this field.
+**Pain Points framing rule (CRITICAL):** lead with the financial consequence, then the technical/regulatory constraint. The buyer thinks in dollars and margins; translate to that language.
+
+The V1 Datadog field works because the FIRST sentence is *"Inference costs for Bits AI significantly impacting gross margins."* That's a CFO sentence. A buyer reads that and feels the pain. The constraint enumeration follows.
+
+The May 5 V2 Celonis Pain Points was *"Customer ERP custody contracts; FedRAMP authorization boundary; EU GDPR + DE BDSG; multi-cloud means multi-stack inference."* Four constraints listed with semicolons, no financial framing, no buyer voice. The reader has to translate it themselves into a felt problem; most readers won't.
+
+Pain Points framing template:
+1. **First sentence:** the financial pain (margin compression, COGS impact, cost overruns, opex pressure, gross-margin drag, cash-burn rate). Use specific dollar phrasing if it's defensible.
+2. **Following sentences:** the technical/regulatory/contractual reasons that pain exists.
+
+If the public data doesn't support a financial pain claim, the field should still lead with the *consequence* in business language ("Inference cost is a margin headwind for the AI features cohort") rather than enumerating constraints. Constraints alone are not pain.
+
+**Estimated Spend rules:**
+- **Always a range**, never a point estimate. "$40–80M annually" is honest about uncertainty; "$57M" pretends to precision the data doesn't support.
+- **Always show the estimation method in parentheses** when the figure is derived rather than disclosed. "(estimated from margin impact disclosure and revenue scale)" is the V1 Datadog pattern. "(estimated from customer count × inference per customer estimates)" or "(triangulated from 10-K AI mentions and engineering headcount)" or "(disclosed in earnings call Q3 2025)" are also fine.
+- **NEVER write "needs verification", "TBD", "unknown", or any TODO placeholder in this field.** If you can't get to a defensible range with a method, omit the row entirely. Empty is better than placeholder.
+- **Tag the segment context** when relevant: "(mid-market wedge profile)" tells the user how the estimate was sized.
+
+**Pain Points anti-pattern (don't):**
+- Don't list constraints with semicolons as a substitute for framing the pain. "Customer ERP contracts; FedRAMP boundary; GDPR; multi-stack inference" is enumeration, not framing.
+- Don't use technical jargon ("Lacks fine-grained scheduling primitives") in the buyer's field. That's the founder's framing, wrong for this row.
+
+**Estimated Spend anti-pattern (don't):**
+- "$3–8M (needs verification)" leaks the TODO directly to the dashboard. Either compute the estimate with a method, or drop the row.
+- "$2.3M annual inference spend" implies confidence the public data doesn't support.
+
+### 9.8a GTM Strategy section: exactly 5 rows
+
+Locked field set: **Approach, Key Evidence, Urgency Level, Target Buyer, Messaging Angle**.
 
 V1 BigPanda GTM Strategy section:
 ```javascript
 [
-  ['Approach', 'Already executed land. Focus = co-develop joint case study (cost reduction %, SLO improvement, deployment friction) for use in landing peer AIOps/observability accounts.'],
+  ['Approach', 'Already executed land. Focus is co-developing joint case study (cost reduction %, SLO improvement, deployment friction) for use in landing peer AIOps/observability accounts.'],
   ['Key Evidence', 'Signed design partner status. Public AI/agentic AIOps positioning at scale. Reference customer commitments under SOC 2 + ISO 27001.'],
   ['Urgency Level', 'EXECUTE, already a customer; priority is reference-account development.'],
   ['Target Buyer', 'Buyer: Platform Engineering / Site Reliability leadership. Champion: Product/Eng leaders shipping the agentic AIOps capabilities.'],
@@ -343,7 +426,7 @@ V1 BigPanda GTM Strategy section:
 Patterns:
 - **Urgency Level uses uppercase action verbs**: EXECUTE / HIGH / WARM / MED / COLD / DEFER. The verb is the priority.
 - **Target Buyer always splits Buyer + Champion** when both are knowable. Buyer = decision-maker. Champion = internal advocate.
-- **Messaging Angle includes a quoted opening line**, "Lead with: '[exact line]'", gives the user something usable for outbound.
+- **Messaging Angle includes a quoted opening line**, *Lead with: "[exact line]"*, gives the user something usable for outbound.
 
 ### 9.9 `ROW_SOURCES`, every numeric or specific claim cites
 
@@ -358,7 +441,8 @@ The `ROW_SOURCES` dictionary is keyed by `'CompanyName|SectionTitle|RowLabel'`. 
 
 Patterns:
 - **Source citation includes the publication and approximate date.** "Walmart 2025 10-K Filing, SEC EDGAR" is good. "Walmart website" is bad, too vague to verify.
-- **Webset returns sources inline within text fields** (pattern: `fact text | URL / fact text | URL`). Parse these out and convert each `(fact, URL)` pair into a `ROW_SOURCES` entry keyed appropriately.
+- **Webset returns sources inline within text fields** (pattern: `fact text | URL / fact text | URL`, sometimes also `[source: URL]` or just bare URLs at the end). When you read a Webset enrichment value during Phase 7, scan it for URLs (regex `https?://[^\s\)]+`) BEFORE you write it into a `sections` row. Every URL extracted becomes a candidate `ROW_SOURCES` entry. After extraction, the cleaned text (without inline URLs) goes into the row value.
+- **Density target: every numeric or specific claim cites.** The May 5 V2 build had `src` tags on only 2 of ~12 fields per company. V1 averages 5 of ~10. The gap is the URL extraction step above; do not skip it. If a Profile or Inference Footprint row contains a number, a named product, a regulatory standard, or any verifiable specific, it should have a `ROW_SOURCES` entry.
 - **It's better to have empty ROW_SOURCES than wrong ones.** If you couldn't trace a claim's source, leave the entry blank or out, never invent a citation.
 
 ### 9.10 `CONTACT_MAP`, keyed exactly to company name
@@ -389,6 +473,49 @@ V1 logic:
 - **`'low'`**, Speculative; pattern matches the ICP but no direct evidence + no warm path
 
 When in doubt, err toward `'med'`. `'high'` is a promise, if a `'high'` company doesn't bear out under scrutiny, the dashboard's credibility erodes.
+
+### 9.12 `COMPANY_SOURCES`, the source list at the bottom of each card
+
+The `COMPANY_SOURCES` array is what renders under the "SOURCES" header at the bottom of each company card. This is where reader trust is built or lost. V1 Datadog ships **6 sources** including a **SEC EDGAR 10-K filing** and **5 named Datadog engineering blog posts** with specific technical titles ("LLMs for Postmortems", "State of AI Engineering Report", "Driving AI ROI"). The May 5 V2 Celonis ships **3 sources**: a BusinessWire press release, a TechCrunch article, and a Greenhouse job board. Same dashboard, very different credibility.
+
+**Source count: target 6, hard floor 4.** V1 averages 6. Aim for 6 on every company. The hard floor is 4 — below that, the card looks thin and the reader doubts the rest of the data. Webset returns sources inline within enrichment text; the population step in Phase 7 must extract those URLs *and* supplement with targeted web fetches for missing high-tier sources (SEC filing for public companies, primary engineering blog for tech-forward companies). If after 2-3 supplementary fetches you can't reach 4 quality sources, the research case is thin — drop the company's tier from `high` to `med`, or swap the company out of the curated 10.
+
+**Source quality hierarchy** (rank order — fill from the top down):
+
+1. **Tier 1: Primary regulatory filings.** SEC EDGAR (10-K, 10-Q, S-1, DEF 14A, 8-K) for public US companies. International equivalents: SEDAR (Canada), Companies House (UK), AMF (France). For every public company in the dashboard, **at least one Tier 1 source is required**. URL pattern: `sec.gov/cgi-bin/browse-edgar` or `sec.gov/Archives/edgar/...`.
+
+2. **Tier 2: Company engineering / research blog posts with specific technical titles.** Datadog's "LLMs for Postmortems" and "State of AI Engineering Report" are the V1 model. The bar: posts that name actual products, describe actual architecture, or report actual metrics. NOT generic landing pages or marketing copy. URL pattern: `<company>.com/blog/<specific-post-slug>` or `engineering.<company>.com/...`. For every company with a public engineering blog, aim for 2-3 Tier 2 sources.
+
+3. **Tier 3: Earnings call transcripts.** SeekingAlpha, Motley Fool transcript pages, or company IR sites. These are gold for capturing financial pain language ("inference cost is a margin headwind"). URL pattern: `seekingalpha.com/article/...transcript`, `fool.com/earnings/call-transcripts/...`.
+
+4. **Tier 4: Industry analyst reports.** Gartner Magic Quadrant, Forrester Wave, IDC MarketScape positioning. Gated content is fine to cite if the company was named in a public summary; cite the public summary, not the gate.
+
+5. **Tier 5: Specific trade press reporting.** TechCrunch, The Information, Protocol, Stratechery, with named reporters and specific reporting (not press-release rewrites). Reporter byline is a quality marker — anonymous syndication is a downgrade.
+
+**Banned (or use only if no higher-tier alternative exists):**
+
+- **PR aggregator wires alone.** BusinessWire, PRNewswire, Reuters PR Newswire, GlobeNewswire publish corporate press releases verbatim. These are the company's own claims with extra distribution; they are not journalism. If a piece of news matters, find the trade-press follow-up that quotes a reporter, not the BusinessWire original. The May 5 V2 Celonis sourced "Celonis Earns FedRAMP — BusinessWire 2025" — better source: the FedRAMP Marketplace listing itself (fedramp.gov/marketplace/) or the Celonis customer post-FedRAMP technical blog.
+- **Job board listings as standalone sources.** Greenhouse, Lever, and the company's own /careers page tell you the company is hiring; they're not independent attestations of anything else. Use them only if the source list otherwise meets the tier-1+2 minimum.
+- **Crunchbase company pages.** Aggregated and often stale. Use the specific funding-round announcement instead.
+- **Wikipedia.** Tertiary aggregation; use the citations Wikipedia uses.
+- **Marketing landing pages.** "<company>.com/why-<product>" is the company's own positioning. Cite engineering blogs or technical docs (`<company>.com/docs/...`) instead.
+
+**Source titling rule.** The display title in COMPANY_SOURCES should describe what's in the source, not just the source itself. V1 model:
+- Good: `"Datadog Engineering — LLMs for Postmortems (Bits AI)"`
+- Good: `"Datadog 10-K — SEC EDGAR"`
+- Good: `"Goldman Sachs Q3 2025 Earnings Call — SeekingAlpha"`
+- Bad: `"Celonis AI copilot"` (article title alone, no source attribution)
+- Bad: `"Datadog Blog"` (which post? on what?)
+
+The format is: `[Source/Outlet] — [Specific topic or filing type]`. The em dash here is a separator, not a stylistic choice (and is a permitted use within source titles, not a violation of the em-dash rule).
+
+**Mandatory minimums per company:**
+- **Target 6 sources, hard floor 4.** Below 4 is unacceptable; escalate (extra fetch, tier drop, or company swap). Between 4 and 5 is acceptable if quality tiers are present, but attempt to reach 6.
+- For public companies: ≥1 Tier 1 (SEC filing or international equivalent)
+- For tech-forward companies (any company with a public engineering blog): ≥2 Tier 2 (engineering posts)
+- ≤1 Tier 5 (trade press) — use Tier 5 to round out a list, not as the foundation
+
+If you can't hit the 4-source hard floor from public sources, that's a signal to deprioritize the company in tier (drop from `high` to `med`), or replace the company in the curated 10. A company that doesn't have 4 verifiable public sources is a company you don't actually have a research case on yet.
 
 ---
 
