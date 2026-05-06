@@ -559,15 +559,15 @@ function buildScoreTips(c){
   var resReason = c.residency_reason || (c.residency_signals||[])[0] || '';
   var trigReason = c.opp_reason || (c.signals||[])[0] || '';
   var jobs = (typeof JOB_LISTINGS !== 'undefined' && JOB_LISTINGS[c.name]) || [];
-  var hireReason = jobs.length ? jobs.length+' active posting'+(jobs.length===1?'':'s')+(jobs[0]?' — top: "'+jobs[0].title+'"':'') : 'No specific inference/ML hiring detected.';
+  var hireReason = jobs.length ? jobs.length+' active posting'+(jobs.length===1?'':'s')+(jobs[0]?' — top: "'+jobs[0].title+'"':'') : '{{HIRING_FALLBACK_TEXT}}';
   var total = pain+res+trig+hir;
   var score = c._signal != null ? c._signal : total*5;
   return {
-    pain: '<strong>Inference Pain ('+pain+'/5)</strong><br><em>What it measures:</em> heterogeneous-accelerator routing, gross-margin, or latency pain. Sourced from earnings calls, blog posts, and product docs.'+(painReason?'<br><br><em>Why '+c.name+' scored '+pain+':</em> '+painReason:''),
-    residency: '<strong>Data Residency ('+res+'/5)</strong><br><em>What it measures:</em> sovereignty, HIPAA/PCI/PHI, or contractual residency that blocks managed APIs. Sourced from compliance docs and customer contracts.'+(resReason?'<br><br><em>Why '+c.name+' scored '+res+':</em> '+resReason:''),
+    pain: '<strong>{{AXIS1_LABEL}} ('+pain+'/5)</strong><br><em>What it measures:</em> {{AXIS1_DESCRIPTION}}'+(painReason?'<br><br><em>Why '+c.name+' scored '+pain+':</em> '+painReason:''),
+    residency: '<strong>{{AXIS2_LABEL}} ('+res+'/5)</strong><br><em>What it measures:</em> {{AXIS2_DESCRIPTION}}'+(resReason?'<br><br><em>Why '+c.name+' scored '+res+':</em> '+resReason:''),
     trigger: '<strong>Buying Trigger ('+trig+'/5)</strong><br><em>What it measures:</em> recent earnings remarks, hiring spikes, partnerships, or RFPs that open a window now.'+(trigReason?'<br><br><em>Why '+c.name+' scored '+trig+':</em> '+trigReason:''),
-    hiring: '<strong>Hiring ('+hir+'/5)</strong><br><em>What it measures:</em> active job listings for ML / inference platform roles. Specific tech in JDs (Triton, vLLM, etc.) raises the score.<br><br><em>Why '+c.name+' scored '+hir+':</em> '+hireReason,
-    total: '<strong>Total Signal Score: '+score+'/100</strong><br>(Inference Pain + Data Residency + Buying Trigger + Hiring) × 5. Each dimension rubric-scored 0–5 from primary sources.<br><br>Pain '+pain+' + Residency '+res+' + Trigger '+trig+' + Hiring '+hir+' = '+total+'/20 × 5 = '+score+'/100.',
+    hiring: '<strong>Hiring ('+hir+'/5)</strong><br><em>What it measures:</em> {{HIRING_AXIS_DESCRIPTION}}<br><br><em>Why '+c.name+' scored '+hir+':</em> '+hireReason,
+    total: '<strong>Total Signal Score: '+score+'/100</strong><br>({{AXIS1_LABEL}} + {{AXIS2_LABEL}} + Buying Trigger + Hiring) × 5. Each dimension rubric-scored 0–5 from primary sources.<br><br>Pain '+pain+' + Residency '+res+' + Trigger '+trig+' + Hiring '+hir+' = '+total+'/20 × 5 = '+score+'/100.',
     confidence: '<strong>Confidence '+(score/100).toFixed(2)+'</strong><br>Composite confidence the account is a real {{PRODUCT_NAME}} opportunity. Derived from the Total Signal Score ('+score+'/100), normalized to 0.00–1.00. Higher = stronger signal across all four dimensions.'
   };
 }
@@ -617,7 +617,7 @@ function computeJobSignal(c){
   });
   var hasInf = specific.some(function(j){
     var t=((j.title||'')+' '+(j.techs||'')).toLowerCase();
-    return /inference|llm |triton|tensorrt|sglang|vllm|model serving|ml platform|gen[ ]?ai platform|kernel/.test(t);
+    return {{HIRING_KEYWORD_REGEX}}.test(t);
   });
   if (specific.length>=5 && hasInf) return 5;
   if (specific.length>=4) return 4;
@@ -717,7 +717,7 @@ function renderQueue(){
 
   var titles = {
     pipeline: {title:'Active Pipeline · Intelligence Map', sub:'Companies signed as design partners or named in active pipeline conversations. Sorted by combined signal score.'},
-    midmarket: {title:'Mid-market · Intelligence Map', sub:'Data-sensitive mid-market accounts with near-term BYOC inference need. ' + totalQueue + ' accounts evaluated, ' + aboveThresh + ' above 50-signal threshold.'},
+    midmarket: {title:'Mid-market · Intelligence Map', sub:'{{SEGMENT_MIDMARKET_SUBTITLE}} ' + totalQueue + ' accounts evaluated, ' + aboveThresh + ' above 50-signal threshold.'},
     enterprise: {title:'Enterprise · Intelligence Map', sub:'Large regulated enterprises, longer cycles, $800K+ ACV. ' + totalQueue + ' accounts evaluated, ' + aboveThresh + ' above 50-signal threshold.'}
   };
   var t = titles[state.tab] || titles.pipeline;
@@ -894,8 +894,8 @@ function buildExpansion(c){
       '</div>' +
     '</div>' +
     '<div class="cx-signal-strip">' +
-      dotsRow('Inference Pain', pain, 'pain', painTip) +
-      dotsRow('Data Residency', res, 'residency', resTip) +
+      dotsRow('{{AXIS1_LABEL}}', pain, 'pain', painTip) +
+      dotsRow('{{AXIS2_LABEL}}', res, 'residency', resTip) +
       dotsRow('Buying Trigger', trig, 'trigger', trigTip) +
       dotsRow('Hiring', hir, 'hiring', hireTip) +
       '<div class="cx-signal-foot" data-tip="'+escTipAttr(tips.total)+'"><span class="lbl">Signal</span><span class="val">'+c._signal+'<span style="color:var(--text-faint);font-weight:400;font-size:12px;">/100</span></span></div>' +
@@ -1367,7 +1367,7 @@ function openDetail(name){
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px 24px;">' +
           ['pain','residency','trigger','hiring'].map(function(k){
             var cls = k;
-            var labels = {pain:'Inference Pain',residency:'Data Residency',trigger:'Buying Trigger',hiring:'Hiring'};
+            var labels = {pain:'{{AXIS1_LABEL}}',residency:'{{AXIS2_LABEL}}',trigger:'Buying Trigger',hiring:'Hiring'};
             var vals = {pain:c.competitive_distress||0,residency:c.data_residency||0,trigger:c.signal_score||0,hiring:computeJobSignal(c)};
             var v = vals[k];
             return '<div data-tip="'+escTipAttr(dtTips[k])+'" style="display:flex;align-items:center;gap:10px;">' +

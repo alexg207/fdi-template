@@ -106,94 +106,124 @@ const SEGMENTS = [
     icon_svg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
     companies: [
 
-      // ── 1. Placeholder design partner ──
-      // Replace with real signed design partner. Keep tier='high' for partners.
+      // ── 1. CANONICAL placeholder — design partner. Demonstrates the locked
+      //    Profile (5 rows) / Section 2 (4 rows) / GTM Strategy (5 rows) shape.
+      //    Per SKILL.md Output Style Rule #10, Profile rows are EXACTLY:
+      //    Industry, Revenue, Employees, Cloud Provider, AI Maturity.
+      //    DO NOT add Founded, Headquarters, "[Founder] Status", Stage, or
+      //    other rows — relationship status lives in tags as a brand chip.
       {
         name: 'Acme Corp',
         domain: 'acme.example',
-        subtitle: 'Industry leader — signed design partner. [REPLACE: one-line specific use case].',
+        subtitle: '[REPLACE: ≤18 words. Pattern: what the company is, why-they-fit-Valar phrase, relationship status]',
         tier: 'high',
         tags: [
           { t: 'Design Partner', c: 'brand', tip: 'Signed design partner' },
-          { t: 'Industry Tag 1', c: 'neutral' },
-          { t: 'Constraint Tag', c: 'stack', tip: 'Reason this company cannot use the default vendor' }
+          { t: '[Industry sector]', c: 'neutral' },
+          { t: '[Specific constraint, e.g., HIPAA / PCI / GDPR / FedRAMP]', c: 'stack', tip: 'Reason the default vendor doesn\'t work for this company' }
         ],
-        overview: '[REPLACE: one paragraph explaining who this company is, why they\'re a fit, and what makes them a strong reference account for the rest of the vertical. Reference the founder\'s thesis explicitly.]',
+        overview: '[REPLACE: 3–5 sentences naming the company\'s position in the founder\'s market story, the specific data sensitivity in concrete terms, and the category-level reference. Splice founder voice from CONTEXT.md if natural.]',
         sections: [
           {
             title: 'Company Profile',
             rows: [
-              ['Industry', '[Industry segment]'],
-              ['Founded', '[Year]'],
-              ['Headquarters', '[City, State/Country]'],
-              ['Cloud Provider', '[AWS / GCP / Azure / multi-cloud]'],
-              ['AI Maturity', '[High / Med / Low — supporting evidence in 1 sentence]'],
-              ['{{PRODUCT_NAME}} Status', 'Signed Design Partner']
+              ['Industry', '[Specific industry — SIC/NAICS preferred]'],
+              ['Revenue', '[$X.XB (FY2025) — range if estimated]'],
+              ['Employees', '[Headcount]'],
+              ['Cloud Provider', '[AWS / GCP / Azure / multi-cloud / on-prem]'],
+              ['AI Maturity', '[High / Med / Low — one sentence of supporting evidence]']
             ]
           },
           {
-            title: '{{OPPORTUNITY_SECTION_TITLE}}',  // e.g., "Inference Opportunity", "Workflow Opportunity"
+            title: '{{SECTION_2_LABEL}}',  // e.g., "Inference Footprint" / "Workflow Footprint" / "Capex Footprint" / "Compliance Footprint" — chosen in Phase 5
             rows: [
-              ['Use Cases', '[Specific use cases this company will run on the founder\'s product]'],
-              ['Current Stack', '[What they use today + active development with the founder]'],
-              ['Pain Points', '[Concrete pain — make this specific, not generic]'],
-              ['Estimated Spend', '[$ or volume estimate that justifies the ACV]']
+              ['Use Cases', '[Specific use cases this company runs that map to the founder\'s product]'],
+              ['Current Stack', '[Named platforms / vendors / tools they use today]'],
+              ['Pain Points', '[CFO language first: margin/cost/COGS/opex impact. Constraint enumeration second.]'],
+              ['Estimated Spend', '[$X–$Y range. Method: derived from revenue × AI-headcount-share × industry default. NEVER "needs verification".]']
             ]
           },
           {
             title: 'GTM Strategy',
             rows: [
               ['Approach', '[Already-executed: focus is reference development. Or: planned land/expand sequence.]'],
-              ['Key Evidence', '[Public signals supporting the thesis]'],
-              ['Urgency Level', 'EXECUTE — already a customer; priority is reference-account development.'],
-              ['Target Buyer', 'Buyer: [title]. Champion: [title].'],
-              ['Messaging Angle', '[1–2 sentence positioning specific to this company]']
+              ['Key Evidence', '[Cited public signals supporting the thesis]'],
+              ['Urgency Level', 'EXECUTE'],
+              ['Target Buyer', 'Buyer: [persona / role type]. Champion: [persona / role type].'],
+              ['Messaging Angle', '[1–2 sentence positioning. Include a quoted opening line.]']
             ]
           }
         ],
         contacts: [],
         signal_score: 5,
-        signals: ['Already signed as design partner', '[Second supporting signal]', '[Third supporting signal]'],
+        signals: ['Already signed as design partner', '[Second supporting signal with cited source]', '[Third supporting signal with cited source]'],
         signal_types: ['positive', 'positive', 'positive'],
-        opp_reason: 'Signed design partner — top priority for engineering investment, reference development, and category proof-out.',
+        opp_reason: 'Signed design partner — priority is reference-account development for the rest of the vertical.',
         competitive_distress: 4,
-        distress_reason: '[Vertical-specific axis-1 reason: e.g., why default solutions fail this company]',
-        distress_signals: ['[Supporting bullet 1]', '[Supporting bullet 2]'],
+        distress_reason: '[Founder-specific axis-1 reason: vertical-specific pain framing]',
+        distress_signals: ['[Supporting bullet 1, with citation]', '[Supporting bullet 2, with citation]'],
         distress_signal_types: ['negative', 'negative'],
-        data_residency: 4,
-        residency_reason: '[Vertical-specific axis-2 reason: e.g., compliance, switching cost, trust gap]',
-        residency_signals: ['[Supporting bullet 1]', '[Supporting bullet 2]'],
+        data_residency: 5,
+        residency_reason: '[Founder-specific axis-2 reason. For score 5: must include cited evidence in the wow shape per Phase 5 WOW_EVIDENCE_SHAPE.]',
+        residency_signals: ['[Supporting bullet 1, with citation]', '[Supporting bullet 2 — cited wow-shape evidence]'],
         residency_signal_types: ['negative', 'negative'],
-        gtm_thesis: '[REPLACE: 2–3 sentence narrative. Why this company is the canonical reference for the thesis. What it unlocks (peer accounts in same vertical). Buyer/champion call-out at end.] <strong>Buyer:</strong> [title].'
+        gtm_thesis: '[REPLACE: 3-sentence pattern. Anchor sentence (why NOW). Motion sentence (the wedge). Buyer call-out at end. Splice verbatim founder quotes from CONTEXT.md if they fit.] <strong>Buyer:</strong> [persona / role type]. <strong>Champion:</strong> [persona / role type]. <strong>NOT</strong> [antagonist persona per CONTEXT.md].'
       },
 
-      // ── 2. Placeholder pipeline account ──
-      // Replace with real named-pipeline account. tier='high' if hot, 'med' if warming.
+      // ── 2. Placeholder pipeline account. Demonstrates same locked 5/4/5 shape
+      //    at tier='med' with thinner research. Replace with real named-pipeline
+      //    account from CONTEXT.md.
       {
         name: 'Beta Industries',
         domain: 'beta.example',
-        subtitle: '[REPLACE: one-line description of who they are and why they\'re in pipeline].',
+        subtitle: '[REPLACE: ≤18 words. Pattern: what the company is, why-they-fit-Valar phrase, "named pipeline" or relationship]',
         tier: 'med',
         tags: [
           { t: 'In Pipeline', c: 'brand', tip: 'Active pipeline conversation' },
-          { t: 'Industry Tag', c: 'neutral' }
+          { t: '[Industry sector]', c: 'neutral' }
         ],
-        overview: '[REPLACE: one paragraph on the company and why the founder is talking to them.]',
+        overview: '[REPLACE: 3–5 sentences. Same pattern as Acme above.]',
         sections: [
-          { title: 'Company Profile', rows: [['Industry', '[X]'], ['Revenue', '[$X]'], ['Cloud Provider', '[X]']] },
-          { title: '{{OPPORTUNITY_SECTION_TITLE}}', rows: [['Use Cases', '[X]'], ['Pain Points', '[X]']] },
-          { title: 'GTM Strategy', rows: [['Approach', '[X]'], ['Target Buyer', '[X]']] }
+          {
+            title: 'Company Profile',
+            rows: [
+              ['Industry', '[X]'],
+              ['Revenue', '[$X.XB (FY2025)]'],
+              ['Employees', '[X]'],
+              ['Cloud Provider', '[X]'],
+              ['AI Maturity', '[X]']
+            ]
+          },
+          {
+            title: '{{SECTION_2_LABEL}}',
+            rows: [
+              ['Use Cases', '[X]'],
+              ['Current Stack', '[X]'],
+              ['Pain Points', '[X — CFO language first]'],
+              ['Estimated Spend', '[$X–$Y range with method]']
+            ]
+          },
+          {
+            title: 'GTM Strategy',
+            rows: [
+              ['Approach', '[X]'],
+              ['Key Evidence', '[X]'],
+              ['Urgency Level', 'HIGH'],
+              ['Target Buyer', 'Buyer: [persona]. Champion: [persona].'],
+              ['Messaging Angle', '[X]']
+            ]
+          }
         ],
         contacts: [],
         signal_score: 4,
-        signals: ['[Signal 1]', '[Signal 2]'],
+        signals: ['[Signal 1 with citation]', '[Signal 2 with citation]'],
         signal_types: ['positive', 'positive'],
         opp_reason: '[Why this is a real opportunity]',
         competitive_distress: 3,
         distress_reason: '[Axis 1 explanation]',
-        data_residency: 3,
-        residency_reason: '[Axis 2 explanation]',
-        gtm_thesis: '[REPLACE: 2–3 sentence narrative.]'
+        data_residency: 4,
+        residency_reason: '[Axis 2 explanation. Score 5 requires wow-shape evidence; cap at 4 without it.]',
+        gtm_thesis: '[REPLACE: 3-sentence pattern with Buyer/Champion/NOT-antagonist call-out.] <strong>Buyer:</strong> [persona].'
       }
 
     ]
@@ -214,21 +244,47 @@ const SEGMENTS = [
     desc: 'Companies in the founder\'s near-term ideal customer profile. Lower friction to convert, faster sales cycles.',
     companies: [
 
-      // ── 3. Placeholder mid-market account ──
+      // ── 3. Placeholder mid-market, tier='high'. Same locked 5/4/5 shape.
       {
         name: 'Gamma Health',
         domain: 'gammahealth.example',
-        subtitle: '[REPLACE: company description tied to vertical].',
+        subtitle: '[REPLACE: ≤18 words. Mid-market, vertical-relevant, why-they-fit phrase]',
         tier: 'high',
         tags: [
-          { t: '[Sector]', c: 'neutral' },
-          { t: '[Constraint]', c: 'stack' }
+          { t: '[Industry sector]', c: 'neutral' },
+          { t: '[Specific constraint]', c: 'stack' }
         ],
-        overview: '[REPLACE: paragraph on company and fit.]',
+        overview: '[REPLACE: 3–5 sentences.]',
         sections: [
-          { title: 'Company Profile', rows: [['Industry', '[X]'], ['Revenue', '[X]'], ['Cloud Provider', '[X]'], ['AI Maturity', '[X]']] },
-          { title: '{{OPPORTUNITY_SECTION_TITLE}}', rows: [['Use Cases', '[X]'], ['Current Stack', '[X]'], ['Pain Points', '[X]']] },
-          { title: 'GTM Strategy', rows: [['Approach', '[X]'], ['Key Evidence', '[X]'], ['Target Buyer', '[X]']] }
+          {
+            title: 'Company Profile',
+            rows: [
+              ['Industry', '[X]'],
+              ['Revenue', '[$X]'],
+              ['Employees', '[X]'],
+              ['Cloud Provider', '[X]'],
+              ['AI Maturity', '[X]']
+            ]
+          },
+          {
+            title: '{{SECTION_2_LABEL}}',
+            rows: [
+              ['Use Cases', '[X]'],
+              ['Current Stack', '[X]'],
+              ['Pain Points', '[X — CFO language first]'],
+              ['Estimated Spend', '[$X–$Y]']
+            ]
+          },
+          {
+            title: 'GTM Strategy',
+            rows: [
+              ['Approach', '[X]'],
+              ['Key Evidence', '[X]'],
+              ['Urgency Level', 'HIGH'],
+              ['Target Buyer', 'Buyer: [persona]. Champion: [persona].'],
+              ['Messaging Angle', '[X]']
+            ]
+          }
         ],
         contacts: [],
         signal_score: 4,
@@ -238,24 +294,50 @@ const SEGMENTS = [
         competitive_distress: 4,
         distress_reason: '[Reason]',
         data_residency: 4,
-        residency_reason: '[Reason]',
-        gtm_thesis: '[REPLACE: narrative]'
+        residency_reason: '[Reason. Score 5 requires wow-shape evidence.]',
+        gtm_thesis: '[REPLACE: 3-sentence narrative.] <strong>Buyer:</strong> [persona].'
       },
 
-      // ── 4. Placeholder mid-market account ──
+      // ── 4. Placeholder mid-market, tier='med'.
       {
         name: 'Delta Finance',
         domain: 'deltafin.example',
-        subtitle: '[REPLACE: description].',
+        subtitle: '[REPLACE: ≤18 words]',
         tier: 'med',
         tags: [
-          { t: '[Sector]', c: 'neutral' }
+          { t: '[Industry sector]', c: 'neutral' }
         ],
-        overview: '[REPLACE: paragraph]',
+        overview: '[REPLACE: 3–5 sentences.]',
         sections: [
-          { title: 'Company Profile', rows: [['Industry', '[X]'], ['Revenue', '[X]']] },
-          { title: '{{OPPORTUNITY_SECTION_TITLE}}', rows: [['Use Cases', '[X]'], ['Pain Points', '[X]']] },
-          { title: 'GTM Strategy', rows: [['Approach', '[X]'], ['Target Buyer', '[X]']] }
+          {
+            title: 'Company Profile',
+            rows: [
+              ['Industry', '[X]'],
+              ['Revenue', '[$X]'],
+              ['Employees', '[X]'],
+              ['Cloud Provider', '[X]'],
+              ['AI Maturity', '[X]']
+            ]
+          },
+          {
+            title: '{{SECTION_2_LABEL}}',
+            rows: [
+              ['Use Cases', '[X]'],
+              ['Current Stack', '[X]'],
+              ['Pain Points', '[X — CFO language first]'],
+              ['Estimated Spend', '[$X–$Y]']
+            ]
+          },
+          {
+            title: 'GTM Strategy',
+            rows: [
+              ['Approach', '[X]'],
+              ['Key Evidence', '[X]'],
+              ['Urgency Level', 'MED'],
+              ['Target Buyer', 'Buyer: [persona]. Champion: [persona].'],
+              ['Messaging Angle', '[X]']
+            ]
+          }
         ],
         contacts: [],
         signal_score: 3,
@@ -266,23 +348,49 @@ const SEGMENTS = [
         distress_reason: '[Reason]',
         data_residency: 3,
         residency_reason: '[Reason]',
-        gtm_thesis: '[REPLACE: narrative]'
+        gtm_thesis: '[REPLACE: 3-sentence narrative.] <strong>Buyer:</strong> [persona].'
       },
 
-      // ── 5. Placeholder mid-market account ──
+      // ── 5. Placeholder mid-market, tier='low'. Speculative pattern-match.
       {
         name: 'Epsilon Logistics',
         domain: 'epsilonlogistics.example',
-        subtitle: '[REPLACE: description].',
+        subtitle: '[REPLACE: ≤18 words]',
         tier: 'low',
         tags: [
-          { t: '[Sector]', c: 'neutral' }
+          { t: '[Industry sector]', c: 'neutral' }
         ],
-        overview: '[REPLACE: paragraph]',
+        overview: '[REPLACE: 3–5 sentences.]',
         sections: [
-          { title: 'Company Profile', rows: [['Industry', '[X]'], ['Revenue', '[X]']] },
-          { title: '{{OPPORTUNITY_SECTION_TITLE}}', rows: [['Use Cases', '[X]']] },
-          { title: 'GTM Strategy', rows: [['Approach', '[X]']] }
+          {
+            title: 'Company Profile',
+            rows: [
+              ['Industry', '[X]'],
+              ['Revenue', '[$X]'],
+              ['Employees', '[X]'],
+              ['Cloud Provider', '[X]'],
+              ['AI Maturity', '[X]']
+            ]
+          },
+          {
+            title: '{{SECTION_2_LABEL}}',
+            rows: [
+              ['Use Cases', '[X]'],
+              ['Current Stack', '[X]'],
+              ['Pain Points', '[X — CFO language first]'],
+              ['Estimated Spend', '[$X–$Y]']
+            ]
+          },
+          {
+            title: 'GTM Strategy',
+            rows: [
+              ['Approach', '[X]'],
+              ['Key Evidence', '[X]'],
+              ['Urgency Level', 'COLD'],
+              ['Target Buyer', 'Buyer: [persona]. Champion: [persona].'],
+              ['Messaging Angle', '[X]']
+            ]
+          }
         ],
         contacts: [],
         signal_score: 2,
@@ -293,7 +401,7 @@ const SEGMENTS = [
         distress_reason: '[Reason]',
         data_residency: 2,
         residency_reason: '[Reason]',
-        gtm_thesis: '[REPLACE: narrative]'
+        gtm_thesis: '[REPLACE: 3-sentence narrative.] <strong>Buyer:</strong> [persona].'
       }
 
     ]
