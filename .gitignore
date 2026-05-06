@@ -1,0 +1,24 @@
+# Build intermediates — useful for reproducibility but should not clutter
+# the deployable repo root. Phase 10 of the /generate-fdi-draft skill
+# decides between (a) moving these under .build/ for tracked-but-tucked
+# storage, or (b) ignoring them outright (this file's default).
+#
+# If you want reproducibility tracking, comment out the lines below
+# and instead `git mv` these to a .build/ subdirectory.
+
+webset-spec.json
+webset-response.json
+founder-pick-research.json
+lovelace-contacts.json
+sumble-jobs.json
+curated-10-list.json
+
+# Local plumbing
+.build/
+node_modules/
+*.tmp.json
+*.swp
+.DS_Store
+
+# Per-build derived files
+*-extracted.txt

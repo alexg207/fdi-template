@@ -223,11 +223,11 @@ The pattern works because every subtitle does three jobs in one sentence:
 - **Stuffed parentheticals**: never include revenue, employee count, founding year, or other financial metadata in a subtitle. Bad: *"UK challenger bank ($1.6B FY25, 11M customers), UK-resident-only customer data, real-time fraud inference on payment hotpath..."* That data belongs in the Profile section, not the subtitle. The reader sees the subtitle for half a second; it should land one signal, not five.
 - **Trailing ellipsis**: if the subtitle ends with "..." the truncation rule was violated. Rewrite shorter.
 
-### 9.2 `overview`, 3-5 sentences, named-account positioning
+### 9.2 `overview`, 3-4 sentences, named-account positioning, ≤80 words HARD CAP
 
-The overview paragraph that opens the company card. V1 pattern: **state the company's position in the founder's market story, then connect to the Valar thesis with named adjacencies**.
+The overview paragraph that opens the company card. V1 pattern: **state the company's position in the founder's market story, then connect to the founder's thesis with named adjacencies**. Hard caps: **80 words max, 4 sentences max** (per SKILL.md Output Style Rule #15). Phase 7 self-check counts words and fails the entry if exceeded.
 
-V1 BigPanda example, in full:
+V1 BigPanda example, in full (64 words, 4 sentences):
 > *"BigPanda is one of Valar's two named design partners (alongside Varonis). They run AI-driven incident management for enterprise IT teams, where customer telemetry data flowing through their AI pipelines is highly sensitive, it includes infrastructure topology, alert content, and incident context. Multi-tenant inference clouds are a non-starter. BigPanda's validation as a design partner anchors the BYOC inference thesis for AIOps and observability vendors broadly."*
 
 Notice what this does:
@@ -237,13 +237,17 @@ Notice what this does:
 
 The category connection is critical, it tells the founder why this company matters beyond itself.
 
-### 9.3 `gtm_thesis`, 2-3 sentences ending with a named buyer
+**Anti-pattern (the Plural-build regression):** stacking 4-5 distinct factual claims into a 110-130 word essay paragraph. The Plural FDI Manulife overview shipped at 134 words because it tried to fit (a) named exec + (b) cluster scale + (c) AI mandate + (d) governance quote + (e) wow-shape rubric trace + (f) tier rationale into one block. Trade facts for narrative pacing — the dashboard's Profile + Section 2 + sources list already carry the facts; the overview's job is to position the company inside the founder's story.
 
-This is the single highest-leverage paragraph. Already covered in Section 8. The V1 patterns to internalize:
+**No `(a)/(b)/(c)` enumeration in overview** (per SKILL.md Output Style Rule #16). That tic is reserved for `residency_reason` where it traces the score-5 wow-evidence rubric. If you find yourself writing "(a)... (b)... and (c)..." in an overview, the content belongs in `residency_reason` instead — move it.
+
+### 9.3 `gtm_thesis`, 2-3 sentences ending with a named buyer, ≤75 words HARD CAP
+
+This is the single highest-leverage paragraph. Already covered in Section 8. Hard caps: **75 words max, 3 sentences max** (per SKILL.md Output Style Rule #15). Phase 7 self-check counts words and fails the entry if exceeded. The V1 patterns to internalize (all under 50 words):
 
 **Land status + reference value + buyer call-out**
 
-V1 BigPanda: *"BigPanda is the canonical AIOps reference for the BYOC thesis. Land already executed, focus is on co-developing case study evidence (cost reduction %, SLO improvement, deployment friction) that Valar uses to land peer accounts (Datadog, Splunk-adjacents, Sumo Logic). **Buyer:** Platform Engineering / Site Reliability lead."*
+V1 BigPanda (47 words): *"BigPanda is the canonical AIOps reference for the BYOC thesis. Land already executed, focus is on co-developing case study evidence (cost reduction %, SLO improvement, deployment friction) that Valar uses to land peer accounts (Datadog, Splunk-adjacents, Sumo Logic). **Buyer:** Platform Engineering / Site Reliability lead."*
 
 V1 Varonis: *"Varonis anchors the cyber/DSPM reference. Joint go-to-market motion to land CrowdStrike, SentinelOne, Wiz, Rubrik. **Buyer:** Security/Compliance leadership + Platform Engineering."*
 
@@ -288,6 +292,10 @@ Three brittle pillars: "highest-warmth" (depends on relative contact warmth acro
 **Better V3 version (durable):** *"Capital One is the most AI-forward major bank in the US: production multi-agent AI shipped publicly, dedicated enterprise AI leadership at the EVP level, and a cloud-first but security-obsessed culture that creates a natural fit for Valar's in-cloud deployment under bank governance. Tom's named pipeline pick. Primary network depth here is unusually strong (multiple warm contacts across AI Eng, Platform, and Product). **Buyer:** Platform / Enterprise AI/ML leadership. **Champion:** Distinguished/Staff Engineer cohort inside Enterprise AI. NOT ML engineering function broadly — sequence through platform and product first."*
 
 Same outbound utility, but every claim survives if the named individuals rotate. The names go in CONTACT_MAP where they belong.
+
+**Anti-pattern (the Plural-build bloat regression):** the gtm_thesis stuffed with anchor + motion + verbatim founder quote + Buyer + Champion + "NOT [persona]" + sequencing guidance, all in one paragraph. The Plural FDI shipped at avg 132 words across 10 entries (3.3× the V1 baseline of 40). Diagnosis: the subagent treated gtm_thesis as the place to surface every dimension of the dashboard's analytical work — but those dimensions are *already* surfaced by the GTM Strategy section, the residency_reason, the CONTACT_MAP, and the tags. The gtm_thesis's job is to pose the strategic question (`why this company specifically, why now`); the dashboard's other fields answer it. When the gtm_thesis exceeds 75 words, the answer is leaking into the question.
+
+**Recovery rule:** if a gtm_thesis runs long, move (in this order): the Buyer/Champion/NOT triplet to a single line; the verbatim founder quote splice (keep it — it's the strongest pattern, but compress to 5-10 words); the sequencing guidance ("sequence through X first") to the GTM Strategy → Approach row, where it earns space; the wow-evidence rubric trace ("(a)/(b)/(c)") to residency_reason. What remains is the anchor + motion you started with.
 
 ### 9.4 `tags`, 3-5 chips, mixed colors
 
