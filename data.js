@@ -468,23 +468,34 @@ const COMPANY_SOURCES = {
 
 
 /* ────────────────────────────────────────────────────────────────────────
-   JOB_LISTINGS — active job postings per company
+   JOB_LISTINGS — Hiring evidence per company (verified roles + active reqs)
    ────────────────────────────────────────────────────────────────────────
    Schema:
      "<Company name>": [
-       { title: "Job title", techs: "Comma-separated technologies", url: "https://...", date: "Active 2026" }
+       { title: "Job title", team: "Posting" | "Verified Role",
+         techs: "Comma-separated technologies", url: "https://...",
+         date: "Active 2026" | "Verified Active 2026" }
      ]
-   Drives the Hiring sub-score in the dashboard. Specific tech keywords in
-   `techs` raise the score (see hiring regex in index.html).
+   Two entry types:
+     - team: "Posting"        → active open req from Sumble / careers / LinkedIn / ATS (Phase 6j Steps 1-5)
+     - team: "Verified Role"  → verified named role-bearer mined from Webset
+                                role-evidence enrichment (Phase 6j Step 0).
+                                Doesn't depend on basic-Exa MCP credits;
+                                survives the F11 cascade (basic-Exa 402).
+   Both types feed computeJobSignal() and the Hiring axis. The renderer's
+   reason text in index.html distinguishes them. Specific tech/title keywords
+   matched against HIRING_KEYWORD_REGEX (Phase 5 artifact #2) raise the score.
    For new verticals, UPDATE THE REGEX in index.html → computeJobSignal().
    ──────────────────────────────────────────────────────────────────────── */
 const JOB_LISTINGS = {
   "Acme Corp": [
-    { title: "Senior Engineer — [Domain]", techs: "[Tech 1, Tech 2, Tech 3]", url: "https://example.com/jobs/1", date: "Active 2026" }
+    { title: "Senior Engineer — [Domain]", team: "Posting", techs: "[Tech 1, Tech 2, Tech 3]", url: "https://example.com/jobs/1", date: "Active 2026" }
   ],
   "Beta Industries": [],
   "Gamma Health": [
-    { title: "Director of AI — Open Roles", techs: "[Tech 1, Tech 2]", url: "https://example.com/careers", date: "Active 2026" }
+    // Step-0 verified role example (mined from Webset role-evidence enrichment):
+    { title: "VP of Domain Operations", team: "Verified Role", url: "https://www.linkedin.com/in/example", date: "Verified Active 2026" },
+    { title: "Director of AI — Open Roles", team: "Posting", techs: "[Tech 1, Tech 2]", url: "https://example.com/jobs/specific-req-id", date: "Active 2026" }
   ],
   "Delta Finance": [],
   "Epsilon Logistics": []

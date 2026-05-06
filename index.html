@@ -559,7 +559,21 @@ function buildScoreTips(c){
   var resReason = c.residency_reason || (c.residency_signals||[])[0] || '';
   var trigReason = c.opp_reason || (c.signals||[])[0] || '';
   var jobs = (typeof JOB_LISTINGS !== 'undefined' && JOB_LISTINGS[c.name]) || [];
-  var hireReason = jobs.length ? jobs.length+' active posting'+(jobs.length===1?'':'s')+(jobs[0]?' — top: "'+jobs[0].title+'"':'') : '{{HIRING_FALLBACK_TEXT}}';
+  // Phase 6j Step 0 (per SKILL.md) writes verified named role-bearers to JOB_LISTINGS
+  // with team !== 'Posting' (e.g., team: 'Verified Role'). Steps 1-5 layer in actual
+  // open reqs with team: 'Posting' or unset. The reason text distinguishes both.
+  var verifiedRoles = jobs.filter(function(j){return j.team && j.team !== 'Posting';}).length;
+  var openReqs = jobs.length - verifiedRoles;
+  var hireReason;
+  if (jobs.length === 0) {
+    hireReason = '{{HIRING_FALLBACK_TEXT}}';
+  } else if (verifiedRoles > 0 && openReqs === 0) {
+    hireReason = verifiedRoles+' verified role'+(verifiedRoles===1?'':'s')+' on staff (per Webset enrichment); top: "'+jobs[0].title+'".';
+  } else if (verifiedRoles === 0) {
+    hireReason = openReqs+' active posting'+(openReqs===1?'':'s')+'; top: "'+jobs[0].title+'".';
+  } else {
+    hireReason = verifiedRoles+' verified role'+(verifiedRoles===1?'':'s')+' on staff + '+openReqs+' active posting'+(openReqs===1?'':'s')+'; top: "'+jobs[0].title+'".';
+  }
   var total = pain+res+trig+hir;
   var score = c._signal != null ? c._signal : total*5;
   return {
