@@ -186,9 +186,19 @@ Strip the company name from the gtm_thesis. Could you swap any other company's n
 
 ---
 
-## 9. Field-by-field craft patterns (extracted from the V1 Valar dashboard)
+## 9. Field-by-field craft patterns (apply the *patterns*, not the vocabulary)
 
-The V1 Valar dashboard is the gold-standard reference. The patterns below are extracted from it directly, every example is real V1 copy. Apply these patterns to your own founder's data when populating data.js.
+The patterns below are extracted from the V1 Valar dashboard, the inference-vertical reference build. Every example is real V1 copy. **Apply the patterns to your own founder's data, but never copy the vocabulary.** A non-Valar build that uses Valar's wording (Inference Pain, Data Residency, "tried Fireworks/Together/Baseten/Modal", BYOC inference, etc.) is the F11 failure mode that SKILL.md Output Style Rule #14 ("Reference build is scaffolding, not content") explicitly prevents.
+
+For a non-inference build:
+- The **subtitle pattern** (9.1) — *[what the company is], [why-they-fit phrase], [relationship status]* — works for any vertical. Substitute your founder's vertical-appropriate "why-they-fit phrase" (e.g., "AIOps platform with growing inference spend" → "regional manufacturer with $30M annual unplanned-downtime cost" or "national health insurer with HIPAA-bound EHR pipeline").
+- The **gtm_thesis pattern** (9.3) — anchor sentence + motion sentence + buyer/champion call-out — works for any vertical. The Valar example splices "data never leaves the firewall"; your build should splice the founder's own verbatim quotes from CONTEXT.md.
+- The **locked field sets** (9.8) — Profile (5 rows), Section 2 (4 rows), GTM Strategy (5 rows) — apply universally. Section 2's *label* changes ("Inference Footprint" → "Workflow Footprint" → "Capex Footprint" → "Compliance Footprint" → etc.); the 4-row shape doesn't.
+- The **source quality hierarchy** (9.12) — 6-target / 4-floor with Tier-1 primary record + ≥2 Tier-2 vertical-credible — works for any vertical, but **the Tier-2 source landscape varies by vertical** (engineering blogs for tech-forward; trade press + analyst notes for industrials; clinical trial registries + FDA filings for biotech; etc. — see SKILL.md Output Style Rule #12 for the full list).
+- The **gtm_thesis durability rule** (9.3) — no named individuals, role types only — applies universally.
+- The **antagonist exclusion** (9.10) — every CONTACT_MAP champion must NOT match a `**NOT [persona]**` callout in the gtm_thesis — applies universally; only the antagonist persona varies (ML eng for inference; controls engineers for industrials predictive-maintenance; clinical operations for biotech in some shapes).
+
+The Valar examples below tell you *how the pattern works*. They don't tell you *what to write* for your founder. If your output reads as Valar with names changed, you've under-delivered.
 
 ### 9.1 `subtitle`, one line, dense, signal-rich
 
