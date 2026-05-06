@@ -160,7 +160,7 @@ Sources: [List sources used: investment memo, Granola transcripts, Slack channel
 - "[Direct quote about buyer / messaging]" — [Founder name]
 - "[Direct quote that captures the 'wow' insight]" — [Founder name]
 
-[Aim for 5–15 quotes. They should cover: product vision, ICP, messaging, market timing, competitive view, risk acknowledgment.]
+[Aim for at least 15 quotes. They should cover: product vision, ICP, messaging, market timing, competitive view, risk acknowledgment. Verbatim founder quotes are the leverage point on copy quality — Phase 7 splices them into gtm_thesis paragraphs to give the dashboard the founder's voice.]
 
 ## Lookalike Anchors
 
