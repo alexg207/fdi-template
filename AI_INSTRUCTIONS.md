@@ -24,10 +24,38 @@ Pointers from the template repo back to the canonical sources of truth.
 
 - `data.js` — schema-commented placeholder. The placeholder companies demonstrate the data shape, NOT the writing patterns. Apply the writing patterns from TEMPLATE_GUIDE Section 9, not the placeholder companies' content.
 - `index.html` — renderer. Hardcoded inference-vertical strings exist; SKILL.md Phase 8 enumerates what to find/replace.
+- `landing.html` — OPTIONAL cover-page template (see "Optional landing page" above). Not used by default.
 - `TEMPLATE_GUIDE.md` — craft patterns extracted from the V1 Valar build. Section 9 is the field-by-field reference.
 - `CONTEXT_TEMPLATE.md` — fillable shell for Phase 4 CONTEXT.md.
 - `BUILD_NOTES_TEMPLATE.md` — fillable shell for Phase 9 BUILD_NOTES.md.
 - `CLAUDE_DESIGN_PLAN_TEMPLATE.md` — older artifact; SKILL.md Phase 9 superseded its role.
+
+## v2 defaults (required)
+
+The dashboard (`index.html`) ships these v2 defaults. Do NOT regress them:
+
+- **Dark default + light toggle.** `data-theme` dark tokens are the default; light is opt-in via the `toggleTheme()` button, persisted to the `{{PRODUCT_SLUG}}-theme` localStorage key.
+- **Green / amber score color-coding — NO red.** Tier is two-tone: `co.tier = co._signal>=75?'high':'med'` (`--q-high` green / `--q-med` amber). Do not introduce a red/low tier in tier coloring.
+- **"All" tab is the default view.** `state.tab` defaults to `'all'`; the `data-tab="all"` button is `active` on load.
+- **Typography.** Newsreader (serif) for display/headings, Inter for UI/body, JetBrains Mono for data only (scores, counts, tabular numbers). Do not use mono for prose.
+
+## Optional landing page
+
+`landing.html` is the optional cover-page template (Lantern-style hero). It is NOT used by default. When a build uses it:
+
+1. Rename `index.html` → `dashboard.html`
+2. Rename `landing.html` → `index.html`
+
+The landing's CTAs link to `./dashboard.html`, so the rename makes the links resolve. The landing introduces its own placeholders (in addition to the dashboard's):
+
+- `{{POSITIONING_EYEBROW}}` — the one-line positioning eyebrow above the headline
+- `{{PRODUCT_HEADLINE}}` — the hero headline describing what the founder's product does (may contain `<span class="accent">…</span>`)
+- `{{STAT_1_VALUE}}`..`{{STAT_4_VALUE}}` and `{{STAT_1_LABEL}}`..`{{STAT_4_LABEL}}` — the four hero proof-stat cards
+- `{{PRODUCT_TRANSITION_LEAD}}` — the lead-in sentence that pivots to the dashboard deliverable (the "Primary built {{PRODUCT_NAME}} a custom sales-intelligence dashboard" sentence stays intact)
+- `{{ICP_DESCRIPTION}}` — the target-account noun phrase (e.g. "multi-rooftop dealer group")
+- `{{MARKET_SIZE_PHRASE}}` — the full-universe size phrase (e.g. "18,000 cold names")
+- `{{BUYER_ROLE}}` — the named buyer role per account (e.g. "fixed-ops buyer")
+- plus the shared `{{PRODUCT_NAME}}`, `{{PRODUCT_LOGO_SVG}}`, `{{AXIS1_LABEL}}`, `{{AXIS2_LABEL}}` (the `Buying Trigger` and `Hiring` axis names are generic, not placeholders).
 
 ## When this file gets out of date
 

@@ -656,3 +656,45 @@ These are technically configurable but the defaults are tuned. Don't touch unles
 - The placeholder companies (Acme, Beta, Gamma, Delta, Epsilon).
 - All `[REPLACE]` and `{{PLACEHOLDER}}` strings.
 - **The Webset enrichment descriptions**, generic descriptions get generic data. Tailor every one to the founder's vertical and language. See Section 12.
+
+---
+
+## 15. v2 dashboard defaults, the optional landing page, and silent-render gotchas
+
+### v2 dashboard defaults (don't regress)
+
+The dashboard (`index.html`) now ships these as defaults:
+
+- **Dark default + light toggle.** Dark `data-theme` tokens load by default; the `toggleTheme()` button flips to light and persists the choice to the `{{PRODUCT_SLUG}}-theme` localStorage key.
+- **Green / amber score color-coding, NO red.** Tier is two-tone: `co.tier = co._signal>=75?'high':'med'`, rendered with `--q-high` (green) and `--q-med` (amber). Do not add a red tier in the tier coloring.
+- **"All" tab is the default view.** `state.tab` defaults to `'all'`; the `data-tab="all"` button is `active` on load.
+- **Typography:** Newsreader (serif) for display, Inter for UI/body, JetBrains Mono for data only (scores, counts, tabular nums), never prose.
+
+### The optional landing page (`landing.html`)
+
+`landing.html` is an optional founder cover page (hero + numbered "how the map is built" timeline + "what it unlocks" cards + dashboard CTA card + footer). It is NOT used by default. To use it:
+
+1. Rename `index.html` → `dashboard.html`
+2. Rename `landing.html` → `index.html`
+
+(The landing's CTAs link to `./dashboard.html`, so the rename wires them up.)
+
+Landing-only placeholders, in addition to the dashboard set:
+
+| Placeholder | What it is |
+| --- | --- |
+| `{{POSITIONING_EYEBROW}}` | One-line positioning eyebrow above the hero headline |
+| `{{PRODUCT_HEADLINE}}` | Hero headline: what the founder's product does (may wrap a phrase in `<span class="accent">…</span>`) |
+| `{{STAT_1_VALUE}}`..`{{STAT_4_VALUE}}` | The four hero proof-stat numbers |
+| `{{STAT_1_LABEL}}`..`{{STAT_4_LABEL}}` | The four hero proof-stat captions |
+| `{{PRODUCT_TRANSITION_LEAD}}` | Lead-in that pivots to the deliverable; the "Primary built {{PRODUCT_NAME}} a custom sales-intelligence dashboard" sentence stays structurally intact |
+| `{{ICP_DESCRIPTION}}` | Target-account noun phrase (e.g. "multi-rooftop dealer group") |
+| `{{MARKET_SIZE_PHRASE}}` | Full-universe size phrase (e.g. "18,000 cold names") |
+| `{{BUYER_ROLE}}` | Named buyer role per account (e.g. "fixed-ops buyer") |
+
+Shared with the dashboard on the landing: `{{PRODUCT_NAME}}`, `{{PRODUCT_LOGO_SVG}}`, `{{AXIS1_LABEL}}`, `{{AXIS2_LABEL}}`. The `Buying Trigger` and `Hiring` axis names are generic literals, not placeholders.
+
+### Two silent-render gotchas (both render a blank/stuck page with no error)
+
+1. **Apostrophe in inserted text breaks single-quoted JS strings.** The renderer builds HTML by string concatenation inside single-quoted JS. An apostrophe in a value you splice in (e.g. a company name or a description with `'`) terminates the string and the page hangs on "Loading…". After any edit to the inline `<script>`, run `node --check` on the extracted script before shipping.
+2. **`computeJobSignal()` `/careers` URL filter.** The first regex in `computeJobSignal()` strips generic `/careers` landing-page URLs so they don't count as real open reqs; keep it verbatim. The SECOND regex is the vertical keyword test, replaced by `{{HIRING_KEYWORD_REGEX}}` — set it per vertical or the Hiring axis silently scores everything as 1.
