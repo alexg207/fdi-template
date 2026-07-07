@@ -165,7 +165,7 @@ a{color:inherit;text-decoration:none;}
 .mm-inner .l1{transform:translateZ(70px);filter:drop-shadow(0 0 34px hsl(var(--acc) / .3));opacity:.3;}
 .mm-inner .l2{transform:translateZ(0);opacity:.13;}
 .mm-inner .l3{transform:translateZ(-80px);opacity:.06;filter:blur(2px);}
-@keyframes mmFloat{0%,100%{transform:rotateX(7deg) translateY(0);}50%{transform:rotateX(-4deg) translateY(-26px);}}
+@keyframes mmFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-18px);}}
 
 /* beat 1 — founder-first */
 .intro-beat{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -1397,7 +1397,6 @@ try{
     const group=new THREE.Group();
 
     // ---- named procedural objects: a real volumetric model, not tube art ----
-    let flick=null;
     function buildLantern(){
       const g=new THREE.Group();
       const amber=new THREE.Color().setHSL(24/360,.95,.5);       // deeper amber, less gold
@@ -1426,11 +1425,10 @@ try{
       const flameM=new THREE.MeshStandardMaterial({color:amber,emissive:amber,emissiveIntensity:1.5,transparent:true,opacity:.92});
       const coreM=new THREE.MeshStandardMaterial({color:0xffdfae,emissive:0xffc27a,emissiveIntensity:2.3});
       const flame=new THREE.Mesh(new THREE.SphereGeometry(.34,12,12),flameM);
-      flame.scale.set(.75,1.9,.75);flame.position.set(0,1.5,0);g.add(flame);
+      flame.scale.set(.73,1.76,.73);flame.position.set(0,1.5,0);g.add(flame);
       const core=new THREE.Mesh(new THREE.SphereGeometry(.17,10,10),coreM);
       core.scale.set(.7,1.5,.7);core.position.set(0,1.32,0);g.add(core);
-      const inner=new THREE.PointLight(amber,55,40);inner.position.set(0,1.45,0);g.add(inner);
-      flick={flame,core,light:inner};
+      const inner=new THREE.PointLight(amber,53,40);inner.position.set(0,1.45,0);g.add(inner);
       g.scale.setScalar(1.16); g.position.y=-4.9;   // keep the ring inside frame
       return g;
     }
@@ -1490,18 +1488,9 @@ try{
     const t0=performance.now();
     (function spin(){
       const t=(performance.now()-t0)/1000;
-      group.rotation.y=t*0.24;                       // full 360 every ~26s
-      group.rotation.x=0.10*Math.sin(t*0.5)+0.06;    // gentle tilt wobble
-      if(flick){
-        // flame is FIXED in size and light output - the pulsing read came from
-        // the glow halo breathing with light intensity. Only a slow tip sway remains.
-        flick.flame.scale.set(.73,1.76,.73);
-        flick.core.scale.y=1.5;
-        flick.flame.position.x=.035*(Math.sin(t*1.1)+.5*Math.sin(t*2.3+.7));
-        flick.flame.position.z=.028*Math.sin(t*1.7+.9);
-        flick.flame.rotation.z=.06*Math.sin(t*1.4+.3);
-        flick.light.intensity=53;
-      }
+      group.rotation.y=t*0.24;                       // full 360 every ~26s - pure yaw
+      group.rotation.x=0.06;                          // fixed tilt, no wobble
+
       renderer.render(scene,cam);
       requestAnimationFrame(spin);
     })();
