@@ -25,6 +25,7 @@ window.BUILD_DATA = {
     name: "{{PRODUCT_NAME}}",            // from config.json
     cobrand: "Primary",
     fileNo: "",                          // optional "FDI-###" badge; "" hides it
+    hero3d: "",                          // optional named 3D object for the opener ("lantern" available); omit = neon-tube render of logoSvg
     tagline: "{{PRODUCT_TAGLINE}}",
     oneLine: "{{PRODUCT_ONELINE}}",
     logoSvg: '{{PRODUCT_LOGO_SVG}}'      // inline SVG, stroke-based, 24x24 viewBox

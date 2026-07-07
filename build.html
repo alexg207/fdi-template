@@ -842,7 +842,7 @@ a{color:inherit;text-decoration:none;}
     '<div class="mml l1">'+D.founder.logoSvg+'</div>'+
     '<div class="mml l2">'+D.founder.logoSvg+'</div>'+
     '<div class="mml l3">'+D.founder.logoSvg+'</div>';
-  window.__FDI3D={logo:D.founder.logoSvg,acc:ACCENT,reduced:REDUCED};
+  window.__FDI3D={logo:D.founder.logoSvg,acc:ACCENT,reduced:REDUCED,hero3d:D.founder.hero3d||''};
   document.getElementById('heroBadge').innerHTML='Live build · <b>'+NAME+'</b>'+(D.founder.fileNo?' · '+D.founder.fileNo:'');
   document.getElementById('heroTitle').innerHTML=(N.heroTitle&&N.heroTitle.length===2?N.heroTitle:[fmt(D.scan.universe)+' '+D.scan.universeLabel+' in.','The readiest buyers out.']).join('<br>');
   document.getElementById('heroSubP').innerHTML=N.heroSub||('The machine we built around <b>'+NAME+'</b> - custom signals, cited evidence, a readiness score on every account, and a warm path in. Scroll to watch it run.');
@@ -1389,8 +1389,40 @@ try{
     }
     const accent=hsl2hex(cfg.acc||'26 96% 58%');
 
-    const data=new SVGLoader().parse(cfg.logo);
     const group=new THREE.Group();
+
+    // ---- named procedural objects: a real volumetric model, not tube art ----
+    function buildLantern(){
+      const g=new THREE.Group();
+      const metal=new THREE.MeshStandardMaterial({color:0x3a2b1c,metalness:.7,roughness:.34,emissive:accent,emissiveIntensity:.14});
+      const glass=new THREE.MeshStandardMaterial({color:accent,transparent:true,opacity:.2,emissive:accent,emissiveIntensity:.3,side:THREE.DoubleSide});
+      const flameM=new THREE.MeshStandardMaterial({color:accent,emissive:accent,emissiveIntensity:1.6});
+      const add=(geo,mat,x,y,z,rx,ry)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);if(rx)m.rotation.x=rx;if(ry)m.rotation.y=ry;g.add(m);return m;};
+      // hanging ring + finial
+      add(new THREE.TorusGeometry(1.5,.22,12,40),metal,0,8.6,0);
+      add(new THREE.CylinderGeometry(.32,.42,1.1,10),metal,0,6.9,0);
+      // pyramidal roof (4-sided) + cap plate
+      add(new THREE.ConeGeometry(3.5,2.4,4,1),metal,0,5.4,0,0,Math.PI/4);
+      add(new THREE.BoxGeometry(4.9,.34,4.9),metal,0,4.05,0);
+      // cage: 4 corner posts + glass panels + bottom plate
+      for(const sx of [-1,1])for(const sz of [-1,1])
+        add(new THREE.BoxGeometry(.4,5.1,.4),metal,sx*2.05,1.45,sz*2.05);
+      add(new THREE.BoxGeometry(3.9,4.7,3.9),glass,0,1.45,0);
+      add(new THREE.BoxGeometry(4.9,.4,4.9),metal,0,-1.25,0);
+      for(const sx of [-1,1])for(const sz of [-1,1])
+        add(new THREE.BoxGeometry(.5,.5,.5),metal,sx*1.9,-1.7,sz*1.9);
+      // the flame
+      add(new THREE.CylinderGeometry(.5,.7,.5,10),metal,0,-.9,0);
+      add(new THREE.SphereGeometry(.62,14,14),flameM,0,.1,0).scale.y=1.5;
+      const inner=new THREE.PointLight(accent,55,40);inner.position.set(0,.4,0);g.add(inner);
+      g.scale.setScalar(1.28); g.position.y=-4.6;
+      return g;
+    }
+
+    if(cfg.hero3d==='lantern'){
+      group.add(buildLantern());
+    }else{
+    const data=new SVGLoader().parse(cfg.logo);
     const mat=new THREE.MeshStandardMaterial({color:accent.clone().multiplyScalar(.55),emissive:accent,emissiveIntensity:.75,metalness:.25,roughness:.35});
     // collect all subpath point sets first to compute a shared bbox
     const sets=[];
@@ -1417,18 +1449,20 @@ try{
         }
       }
     });
+    }
 
     const scene=new THREE.Scene();
     scene.add(group);
     scene.add(new THREE.AmbientLight(0xffffff,.35));
-    const key=new THREE.DirectionalLight(0xffffff,1.15);key.position.set(6,8,10);scene.add(key);
+    const key=new THREE.DirectionalLight(0xffffff,1.7);key.position.set(6,8,10);scene.add(key);
+    const rim=new THREE.DirectionalLight(accent,1.3);rim.position.set(-7,4,-9);scene.add(rim);
     const warm=new THREE.PointLight(accent,60,60);warm.position.set(-6,-3,8);scene.add(warm);
     const cam=new THREE.PerspectiveCamera(34,1,.1,100);cam.position.set(0,0,27);
 
     const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
     renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
     renderer.setSize(size,size);
-    renderer.domElement.style.cssText='width:100%;height:100%;display:block;opacity:.34;filter:drop-shadow(0 0 42px hsl('+cfg.acc+' / .3));';
+    renderer.domElement.style.cssText='width:100%;height:100%;display:block;opacity:.5;filter:drop-shadow(0 0 42px hsl('+cfg.acc+' / .3));';
     host.innerHTML='';host.style.animation='none';host.appendChild(renderer.domElement);
 
     const t0=performance.now();
