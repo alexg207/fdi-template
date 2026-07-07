@@ -157,7 +157,8 @@ a{color:inherit;text-decoration:none;}
 .mega-mark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;perspective:1200px;}
 .mm-scroll{will-change:transform,opacity;}
 .mm-tilt{transform-style:preserve-3d;animation:mmFloat 10s ease-in-out infinite;}
-.mm-inner{position:relative;width:min(98vh,920px);height:min(98vh,920px);transform-style:preserve-3d;animation:mmSpin 26s linear infinite;}
+.mm-inner{position:relative;width:min(98vh,920px);height:min(98vh,920px);transform-style:preserve-3d;animation:mmSpin 26s linear infinite;opacity:0;transition:opacity 1.2s ease;}
+.mm-inner.mm-on{opacity:1;}
 @keyframes mmSpin{from{transform:rotateY(0deg);}to{transform:rotateY(360deg);}}
 .mm-inner .mml{position:absolute;inset:0;}
 .mm-inner .mml svg{width:100%;height:100%;fill:none;stroke:hsl(var(--acc));stroke-linecap:round;stroke-linejoin:round;stroke-width:.3;}
@@ -843,6 +844,10 @@ a{color:inherit;text-decoration:none;}
     '<div class="mml l2">'+D.founder.logoSvg+'</div>'+
     '<div class="mml l3">'+D.founder.logoSvg+'</div>';
   window.__FDI3D={logo:D.founder.logoSvg,acc:ACCENT,reduced:REDUCED,hero3d:D.founder.hero3d||''};
+  // show the flat fallback only if the 3D module hasn't mounted quickly -
+  // avoids the fallback->canvas pop on load
+  setTimeout(function(){var mi=document.getElementById('mmInner');
+    if(mi&&!mi.querySelector('canvas'))mi.classList.add('mm-on');},1400);
   document.getElementById('heroBadge').innerHTML='Live build · <b>'+NAME+'</b>'+(D.founder.fileNo?' · '+D.founder.fileNo:'');
   document.getElementById('heroTitle').innerHTML=(N.heroTitle&&N.heroTitle.length===2?N.heroTitle:[fmt(D.scan.universe)+' '+D.scan.universeLabel+' in.','The readiest buyers out.']).join('<br>');
   document.getElementById('heroSubP').innerHTML=N.heroSub||('The machine we built around <b>'+NAME+'</b> - custom signals, cited evidence, a readiness score on every account, and a warm path in. Scroll to watch it run.');
@@ -1474,7 +1479,13 @@ try{
     renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
     renderer.setSize(size,size);
     renderer.domElement.style.cssText='width:100%;height:100%;display:block;opacity:.58;filter:drop-shadow(0 0 42px hsl('+cfg.acc+' / .3));';
-    host.innerHTML='';host.style.animation='none';host.appendChild(renderer.domElement);
+    // render the first frame before the canvas is ever visible, then fade in
+    renderer.render(scene,cam);
+    const attach=()=>{host.innerHTML='';host.style.animation='none';host.appendChild(renderer.domElement);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>host.classList.add('mm-on')));};
+    if(host.classList.contains('mm-on')){   // fallback already faded in - cross it out first
+      host.classList.remove('mm-on');setTimeout(attach,650);
+    }else{attach();}
 
     const t0=performance.now();
     (function spin(){
