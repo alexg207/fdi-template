@@ -671,15 +671,12 @@ The dashboard (`index.html`) now ships these as defaults:
 - **Typography (Ember system):** Space Grotesk for display, Inter for UI/body, JetBrains Mono for data only (scores, counts, tabular nums), never prose.
 - **Ember color system:** cool ink canvas (`240`-hue near-black) + one ember accent ramp (`26 96% 58%` / soft `33 100% 68%` / deep `20 88% 46%`). Neutrals stay cool - never tint the greys with the accent hue; the canvas/accent temperature contrast is the look.
 
-### The landing page (`landing.html`) — STANDARD
+### The landing page (`landing.html`) — OPTIONAL (off by default)
 
-`landing.html` is the founder cover page (hero + numbered "how the map is built" timeline + "what it unlocks" cards + dashboard CTA card + footer). Every build ships it. Wiring:
+Since the walkthrough became the entry page (Section 16), the separate cover page is redundant — its intro job moved into the walkthrough's beat-1 opener. Build `landing.html` only on an explicit ask. Standard wiring is now:
 
-1. Rename `index.html` → `dashboard.html`
-2. Rename `landing.html` → `index.html`
-3. Copy `build.html` verbatim + generate `build-data.js` (Section 16)
-
-(The landing's hero CTA links to `./build.html`; everything else links to `./dashboard.html`, so the rename wires them up.)
+1. Rename `index.html` (dashboard template) → `dashboard.html`
+2. Copy `build.html` verbatim → the build's `index.html` + generate `build-data.js` (Section 16)
 
 Landing-only placeholders, in addition to the dashboard set:
 
@@ -703,15 +700,15 @@ Shared with the dashboard on the landing: `{{PRODUCT_NAME}}`, `{{PRODUCT_LOGO_SV
 
 ## 16. The scroll cinematic (`build.html` + `build-data.js`) — STANDARD
 
-Every build ships the "watch how we built this" scroll cinematic between the landing and the dashboard: **index (landing) → build.html (cinematic) → dashboard.html.**
+Every build ships TWO pages: **index.html (the scroll walkthrough) → dashboard.html.** The walkthrough IS the entry page.
 
 ### What it is
 
-An Apple-style scroll-scrubbed walkthrough of the build, 10 scenes: 3D dashboard hero → process pipeline (light beam) → ICP → signal ring-meters → market scan sweep → evidence terminal → score blend → ranked shortlist → warm-path network fan → finale CTA. Pre-baked and deterministic - no live API calls, plays identically every run. Smooth-wheel scrolling, `space` auto-plays the current act (demo-safe), `←`/`→` jump acts, `esc` exits to the dashboard, `?act=0-9` deep-links, reduced-motion renders a static article.
+An Apple-style scroll-scrubbed walkthrough of the build. It opens with a TWO-BEAT hero: beat 1 = the founder front and center (glowing tile, wordmark × Primary, tagline, product headline from `narration.introHeadline`) with the founder's own `logoSvg` floating huge in 3D behind them (three depth-stacked copies, idle float, recedes on scroll — the per-founder wow layer); beat 2 = the dashboard pivot (punch headline, build stats, 3D preview). Then the acts: process pipeline (light beam) → ICP → signal ring-meters → market scan sweep → evidence terminal → score blend → ranked shortlist → warm-path network fan → finale CTA. Pre-baked and deterministic - no live API calls, plays identically every run. Smooth-wheel scrolling, `space` auto-plays the current act (demo-safe), `←`/`→` jump acts, `esc` exits to the dashboard, `?act=0-9` deep-links, reduced-motion renders a static article.
 
 ### The contract (the whole point)
 
-`build.html` is **100% generic**. Copy it into the build repo VERBATIM - never edit its HTML/CSS/JS per founder. Everything founder-specific lives in `build-data.js` (schema: `build-data-template.js`). If you feel the urge to edit build.html for one founder, the thing you want is almost certainly a `narration` key or a schema extension - fix it in the template repo for everyone, or put it in the data.
+`build.html` is **100% generic**. Copy it into the build repo VERBATIM as `index.html` - never edit its HTML/CSS/JS per founder. Everything founder-specific lives in `build-data.js` (schema: `build-data-template.js`). If you feel the urge to edit build.html for one founder, the thing you want is almost certainly a `narration` key or a schema extension - fix it in the template repo for everyone, or put it in the data.
 
 ### Generating `build-data.js`
 

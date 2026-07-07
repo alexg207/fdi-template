@@ -37,6 +37,7 @@ window.BUILD_DATA = {
   // ---- per-founder copy for every act (all REQUIRED; generic fallbacks exist
   //      in build.html but shipping fallbacks fails the Phase 10 check) -------
   narration: {
+    introHeadline: "",                   // beat 1 product headline (accent spans allowed: <span class="accent">...</span>); falls back to founder.oneLine
     heroTitle: ["", ""],                 // 2 lines. Line 1 = scale in; line 2 = quality out
     heroSub: "",                         // may contain <b>...</b>; ends "Scroll to watch it run."
     heroStats: [                         // exactly 4; all values REAL

@@ -24,8 +24,8 @@ Pointers from the template repo back to the canonical sources of truth.
 
 - `data.js` — schema-commented placeholder. The placeholder companies demonstrate the data shape, NOT the writing patterns. Apply the writing patterns from TEMPLATE_GUIDE Section 9, not the placeholder companies' content.
 - `index.html` — dashboard renderer. Hardcoded inference-vertical strings exist; SKILL.md Phase 8 enumerates what to find/replace.
-- `landing.html` — STANDARD cover-page template (see "Landing page" below). Every build ships it as the final `index.html`.
-- `build.html` — the scroll cinematic ("watch how we built this"). 100% generic; driven entirely by `build-data.js`. Copy VERBATIM into the build repo — never edit its HTML/CSS/JS per founder.
+- `landing.html` — OPTIONAL extra cover page, off by default (the walkthrough is the entry page).
+- `build.html` — the scroll walkthrough, shipped as the build's `index.html` (the entry page). 100% generic; driven entirely by `build-data.js`. Copy VERBATIM — never edit its HTML/CSS/JS per founder.
 - `build-data-template.js` — schema-commented shell for `build-data.js`, the cinematic's only founder-specific input. SKILL.md Phase 8c generates it.
 - `assets/logos/` — tool logos (Exa, Clay, SEC, etc.) referenced by the cinematic's process act. Copy into the build repo as-is.
 - `TEMPLATE_GUIDE.md` — craft patterns extracted from the V1 Valar build. Section 9 is the field-by-field reference.
@@ -43,15 +43,14 @@ The dashboard (`index.html`) ships these v2 defaults. Do NOT regress them:
 - **Typography (Ember system).** Space Grotesk for display/headings, Inter for UI/body, JetBrains Mono for data only (scores, counts, tabular numbers). Do not use mono for prose.
 - **Ember color system.** Cool ink canvas (`hsl(240 14% 5%)` family) + single ember accent (`26 96% 58%` ramp). Do not tint neutrals with the accent hue - canvas/accent temperature contrast is the point. Per-founder accent overrides go through `BUILD_DATA.founder.themeAccent` in the cinematic and the token block in the dashboard; never fork the palette ad hoc.
 
-## Landing page (standard) + cinematic
+## The two standard pages
 
-Every build ships three pages: **landing → cinematic → dashboard.** File wiring:
+Every build ships: **index.html (the scroll walkthrough, two-beat founder opener) → dashboard.html.** File wiring:
 
-1. Rename `index.html` → `dashboard.html`
-2. Rename `landing.html` → `index.html`
-3. Copy `build.html` verbatim + generate `build-data.js` (SKILL.md Phase 8c)
+1. Rename `index.html` (dashboard template) → `dashboard.html`
+2. Copy `build.html` verbatim → the build's `index.html` + generate `build-data.js` (SKILL.md Phase 8c)
 
-Landing hero CTA → `./build.html` ("Watch how we built this"); cinematic finale CTA + skip link → `./dashboard.html`.
+Walkthrough finale CTA + skip link → `./dashboard.html`. `landing.html` only on explicit request.
 
 The landing's CTAs link to `./dashboard.html`, so the rename makes the links resolve. The landing introduces its own placeholders (in addition to the dashboard's):
 

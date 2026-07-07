@@ -20,19 +20,21 @@ This repo is the starting point for step 3. It contains:
 ## The three standard pages (every build)
 
 ```
-index.html  ──[ Watch how we built this ]──▶  build.html  ──▶  dashboard.html
- (landing)          (scroll cinematic)           (the product)
+index.html  ──────────────────────▶  dashboard.html
+ (the scroll walkthrough:               (the product)
+  two-beat founder opener,
+  then the acts)
 ```
 
-All three ship in the **Ember design system**: cool ink canvas, single ember accent, Space Grotesk display / Inter body / JetBrains Mono data. The cinematic is an Apple-style scroll-scrubbed walkthrough of the build (10 scenes, deterministic, `space` auto-plays acts) driven entirely by `build-data.js` — see TEMPLATE_GUIDE Section 16.
+Both ship in the **Ember design system**: cool ink canvas, single ember accent, Space Grotesk display / Inter body / JetBrains Mono data. The walkthrough opens on the founder (their own mark floating huge in 3D behind the intro), pivots to the dashboard punch, then scrolls through the acts — deterministic, `space` auto-plays acts, driven entirely by `build-data.js`. See TEMPLATE_GUIDE Section 16. `landing.html` remains as an OPTIONAL extra cover page (off by default).
 
 ## Files
 
 | File | Purpose |
 |------|---------|
 | `index.html` | The dashboard template (renamed to `dashboard.html` in a build). CSS + JS intact from Valar; brand strings + signal labels are placeholders. |
-| `landing.html` | The cover page (renamed to `index.html` in a build). Hero CTA → the cinematic. |
-| `build.html` | The scroll cinematic. 100% generic — copied verbatim, driven only by `build-data.js`. |
+| `landing.html` | OPTIONAL extra cover page (off by default since the walkthrough became the entry). |
+| `build.html` | The scroll walkthrough — ships as the build's `index.html`. 100% generic; copied verbatim, driven only by `build-data.js`. |
 | `build-data-template.js` | Schema-commented shell for `build-data.js` (the cinematic's only founder-specific input). |
 | `assets/logos/` | Tool logos used by the cinematic's process act. Copied as-is. |
 | `data.js` | Schema-commented data layer for the dashboard. 5 placeholder companies in 2 segments to demonstrate shape. |

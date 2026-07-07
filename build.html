@@ -145,9 +145,47 @@ a{color:inherit;text-decoration:none;}
   
   box-shadow:0 20px 50px hsl(28 40% 2% / .4),inset 0 1px 0 hsl(40 40% 90% / .06);}
 
-/* ---------- hero (scrub: 3D preview flattens) ---------- */
-#s-hero.scene[data-scrub]{height:220vh;}
+/* ---------- hero: two-beat opener ----------
+   Beat 1 = the founder, front and center, with their own mark floating huge
+   in 3D behind them. Beat 2 = the pivot to what the dashboard accomplishes
+   (punch headline, build stats, 3D preview). Scroll hands off between beats. */
+#s-hero.scene[data-scrub]{height:300vh;}
 #s-hero .pin{justify-content:flex-start;padding-top:96px;}
+.hero-stage{position:relative;width:100%;max-width:1080px;flex:1;text-align:center;}
+
+/* the giant floating founder mark */
+.mega-mark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;perspective:1200px;}
+.mm-scroll{will-change:transform,opacity;}
+.mm-inner{position:relative;width:min(82vh,780px);height:min(82vh,780px);transform-style:preserve-3d;animation:mmFloat 10s ease-in-out infinite;}
+.mm-inner .mml{position:absolute;inset:0;}
+.mm-inner .mml svg{width:100%;height:100%;fill:none;stroke:hsl(var(--acc));stroke-linecap:round;stroke-linejoin:round;stroke-width:.3;}
+.mm-inner .l1{transform:translateZ(70px);filter:drop-shadow(0 0 34px hsl(var(--acc) / .3));opacity:.3;}
+.mm-inner .l2{transform:translateZ(0);opacity:.13;}
+.mm-inner .l3{transform:translateZ(-80px);opacity:.06;filter:blur(2px);}
+@keyframes mmFloat{0%,100%{transform:rotateY(-16deg) rotateX(6deg) translateY(0);}50%{transform:rotateY(16deg) rotateX(-5deg) translateY(-26px);}}
+
+/* beat 1 — founder-first */
+.intro-beat{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;z-index:1;will-change:transform,opacity;}
+.intro-tile{width:92px;height:92px;border-radius:22px;background:var(--glass-2);border:1px solid var(--border-hot);
+  display:flex;align-items:center;justify-content:center;margin-bottom:26px;
+  box-shadow:0 0 0 1px hsl(var(--acc) / .2),0 0 60px hsl(var(--acc) / .3);}
+.intro-tile svg{width:56px;height:56px;stroke:var(--amber);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;
+  filter:drop-shadow(0 0 12px hsl(var(--acc) / .5));}
+.intro-word{font-family:var(--display);font-size:clamp(44px,6vw,72px);font-weight:600;letter-spacing:-.03em;line-height:1;margin-bottom:16px;}
+.intro-word .ix{color:var(--text-faint);font-weight:400;font-size:.5em;margin:0 14px;vertical-align:.22em;}
+.intro-word .ip{color:var(--text-muted);font-weight:500;font-size:.42em;vertical-align:.32em;}
+.intro-tag{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:hsl(var(--acc-soft));
+  font-weight:500;margin-bottom:26px;}
+.intro-head{font-family:var(--display);font-size:clamp(22px,2.6vw,34px);font-weight:500;letter-spacing:-.02em;line-height:1.3;
+  max-width:860px;margin:0 auto;color:var(--text-mid);}
+.intro-head .accent{color:hsl(var(--acc-soft));font-weight:600;}
+
+/* beat 2 — the dashboard pivot */
+.punch-beat{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  z-index:1;opacity:0;pointer-events:none;will-change:transform,opacity;}
+.punch-h{font-family:var(--display);font-size:clamp(38px,5.6vw,68px);font-weight:600;letter-spacing:-.038em;line-height:1.0;
+  max-width:940px;margin:0 auto 18px;}
 .hero-inner{width:100%;max-width:1080px;text-align:center;}
 .hero-badge{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;
   text-transform:uppercase;color:var(--text-mid);background:var(--glass);border:1px solid var(--border);border-radius:999px;
@@ -450,7 +488,11 @@ a{color:inherit;text-decoration:none;}
 @media (max-height:900px){
   #s-hero .pin{padding-top:84px;}
   .hero-badge{margin-bottom:18px;}
-  .hero h1{font-size:clamp(34px,4.6vw,54px);margin-bottom:14px;}
+  .punch-h{font-size:clamp(34px,4.6vw,54px);margin-bottom:14px;}
+  .intro-word{font-size:clamp(38px,5vw,58px);}
+  .intro-tile{width:76px;height:76px;margin-bottom:20px;}
+  .intro-head{font-size:clamp(19px,2.2vw,26px);}
+  .mm-inner{width:min(56vh,520px);height:min(56vh,520px);}
   .hero .sub{font-size:14.5px;margin-bottom:20px;}
   .hero-stats{margin-bottom:28px;}
   .hstat .n{font-size:22px;}
@@ -466,7 +508,11 @@ a{color:inherit;text-decoration:none;}
   .pin{padding:70px 18px 28px;}
   .act-title{font-size:28px;}
   .act-narr{font-size:13.5px;margin-bottom:22px;}
-  .hero h1{font-size:36px;}
+  .punch-h{font-size:36px;}
+  .intro-word{font-size:38px;}
+  .intro-head{font-size:17px;padding:0 8px;}
+  .intro-tag{font-size:10px;letter-spacing:.14em;}
+  .mm-inner{width:min(44vh,340px);height:min(44vh,340px);}
   .hero .sub{font-size:14px;margin-bottom:22px;}
   .hero-stats{gap:22px;margin-bottom:30px;}
   .hstat .n{font-size:20px;}
@@ -518,9 +564,13 @@ a{color:inherit;text-decoration:none;}
   .pin{position:static;height:auto;padding:104px 44px;}
   .rv{opacity:1 !important;transform:none !important;transition:none !important;}
   .preview{transform:none !important;}
-  .mesh i,.axis-card.wow::before,.hero-badge .pulse,.scroll-cue .sc-line::after{animation:none !important;}
+  .mesh i,.axis-card.wow::before,.hero-badge .pulse,.scroll-cue .sc-line::after,.mm-inner{animation:none !important;}
   .qual-item .tick svg{stroke-dashoffset:0;}
   .pipe-beam i{transform:scaleX(1) !important;}
+  /* beats stack statically; the floating mark hides */
+  .mega-mark{display:none;}
+  .intro-beat,.punch-beat{position:static;opacity:1 !important;transform:none !important;pointer-events:auto !important;}
+  .intro-beat{margin-bottom:64px;}
 }
 </style>
 </head>
@@ -542,17 +592,27 @@ a{color:inherit;text-decoration:none;}
 
 <!-- ================= hero: 3D preview flattens on scroll ================= -->
 <section class="scene" data-scrub id="s-hero">
-  <div class="pin"><div class="hero-inner hero">
-    <div class="hero-badge"><span class="pulse"></span> <span id="heroBadge"></span></div>
-    <h1><span class="grad" id="heroTitle"></span></h1>
-    <p class="sub" id="heroSubP"></p>
-    <div class="hero-stats" id="heroStats"></div>
-    <div class="preview-wrap"><div class="preview" id="preview">
-      <img src="./assets/dashboard-preview.png" alt="Intelligence dashboard preview" id="previewImg" onerror="this.closest('.preview-wrap').style.display='none'">
-      <div class="sheen" id="sheen"></div>
-    </div></div>
-  </div>
-  <div class="scroll-cue"><span class="sc-t">Scroll</span><span class="sc-line"></span></div>
+  <div class="pin">
+    <div class="mega-mark"><div class="mm-scroll" id="mmScroll"><div class="mm-inner" id="mmInner"></div></div></div>
+    <div class="hero-stage">
+      <div class="intro-beat" id="introBeat">
+        <div class="intro-tile" id="introTile"></div>
+        <div class="intro-word"><span id="introName"></span><span class="ix">×</span><span class="ip">Primary</span></div>
+        <div class="intro-tag" id="introTag"></div>
+        <h1 class="intro-head" id="introHead"></h1>
+      </div>
+      <div class="punch-beat hero" id="punchBeat">
+        <div class="hero-badge"><span class="pulse"></span> <span id="heroBadge"></span></div>
+        <h2 class="punch-h"><span class="grad" id="heroTitle"></span></h2>
+        <p class="sub" id="heroSubP"></p>
+        <div class="hero-stats" id="heroStats"></div>
+        <div class="preview-wrap"><div class="preview" id="preview">
+          <img src="./assets/dashboard-preview.png" alt="Intelligence dashboard preview" id="previewImg" onerror="this.closest('.preview-wrap').style.display='none'">
+          <div class="sheen" id="sheen"></div>
+        </div></div>
+      </div>
+    </div>
+    <div class="scroll-cue"><span class="sc-t">Scroll</span><span class="sc-line"></span></div>
   </div>
 </section>
 
@@ -777,6 +837,16 @@ a{color:inherit;text-decoration:none;}
   document.title='How we built '+NAME+'’s sales intelligence · Primary FDI';
   document.getElementById('brandMark').innerHTML=D.founder.logoSvg;
   document.getElementById('brandName').textContent=NAME;
+  // beat 1: the founder, front and center
+  document.getElementById('introTile').innerHTML=D.founder.logoSvg;
+  document.getElementById('introName').textContent=NAME;
+  document.getElementById('introTag').textContent=D.founder.tagline||'';
+  document.getElementById('introHead').innerHTML=N.introHeadline||D.founder.oneLine||'';
+  // the wow layer: three depth-stacked copies of the founder's own mark
+  document.getElementById('mmInner').innerHTML=
+    '<div class="mml l1">'+D.founder.logoSvg+'</div>'+
+    '<div class="mml l2">'+D.founder.logoSvg+'</div>'+
+    '<div class="mml l3">'+D.founder.logoSvg+'</div>';
   document.getElementById('heroBadge').innerHTML='Live build · <b>'+NAME+'</b>'+(D.founder.fileNo?' · '+D.founder.fileNo:'');
   document.getElementById('heroTitle').innerHTML=(N.heroTitle&&N.heroTitle.length===2?N.heroTitle:[fmt(D.scan.universe)+' '+D.scan.universeLabel+' in.','The readiest buyers out.']).join('<br>');
   document.getElementById('heroSubP').innerHTML=N.heroSub||('The machine we built around <b>'+NAME+'</b> - custom signals, cited evidence, a readiness score on every account, and a warm path in. Scroll to watch it run.');
@@ -1047,7 +1117,7 @@ a{color:inherit;text-decoration:none;}
     svgEl2.addEventListener('mouseleave',endDrag);
   }
 
-  /* ---- hero count-ups on load ---- */
+  /* ---- hero count-ups: fire when beat 2 first reveals ---- */
   function countUp(el,to,dur){
     if(REDUCED){el.textContent=fmt(to);return;}
     var t0=null;
@@ -1055,7 +1125,12 @@ a{color:inherit;text-decoration:none;}
       el.textContent=fmt(Math.round(to*e));if(p<1)requestAnimationFrame(step);}
     requestAnimationFrame(step);
   }
-  qsa('.hstat .n').forEach(function(el,i){setTimeout(function(){countUp(el,parseInt(el.getAttribute('data-count'),10),1400);},300+i*150);});
+  var statsStarted=false;
+  function runCountUps(){
+    if(statsStarted)return; statsStarted=true;
+    qsa('.hstat .n').forEach(function(el,i){setTimeout(function(){countUp(el,parseInt(el.getAttribute('data-count'),10),1400);},i*120);});
+  }
+  if(REDUCED)runCountUps();
 
   /* ---- rail ---- */
   var ACTS=[
@@ -1092,9 +1167,11 @@ a{color:inherit;text-decoration:none;}
   /* cached per-scene state — zero DOM queries per frame */
   var SECS=scenes.map(function(sec){
     var o={el:sec,id:sec.id,scrub:sec.hasAttribute('data-scrub'),sp:0,
-      inner:sec.querySelector('.pin-inner')||sec.querySelector('.hero-inner'),
+      inner:sec.querySelector('.pin-inner')||sec.querySelector('.hero-stage'),
       rvs:qsa('.rv',sec).map(function(el){return {el:el,at:parseFloat(el.getAttribute('data-at')||'0'),on:null};})};
-    if(sec.id==='s-hero')o.cue=sec.querySelector('.scroll-cue');
+    if(sec.id==='s-hero'){o.cue=sec.querySelector('.scroll-cue');
+      o.intro2=document.getElementById('introBeat');o.punch=document.getElementById('punchBeat');
+      o.mm=document.getElementById('mmScroll');}
     if(sec.id==='s-process')o.stages=qsa('.pstage',sec).map(function(st){return {el:st,lit:parseFloat(st.getAttribute('data-lit')),on:null};});
     if(sec.id==='s-signals')o.rings=qsa('.ring .val',sec).map(function(c){
       return {c:c,t0:parseFloat(c.getAttribute('data-t')),w:parseFloat(c.getAttribute('data-w')),v:c.closest('.axis-card').querySelector('.cnum .v')};});
@@ -1162,9 +1239,24 @@ a{color:inherit;text-decoration:none;}
       o.rvs.forEach(function(rv){var on=p>=rv.at;if(on!==rv.on){rv.on=on;rv.el.classList.toggle('on',on);}});
 
       if(o.id==='s-hero'){
-        var t=seg(sp,0,0.75);
+        // beat handoff: founder intro out, dashboard pivot in
+        var introT=1-seg(sp,0.08,0.3);
+        o.intro2.style.opacity=String(introT);
+        o.intro2.style.transform='translateY('+(-46*(1-introT))+'px)';
+        o.intro2.style.pointerEvents=introT>0.5?'auto':'none';
+        var punchT=seg(sp,0.26,0.46);
+        o.punch.style.opacity=String(punchT);
+        o.punch.style.transform='translateY('+(36*(1-punchT))+'px)';
+        o.punch.style.pointerEvents=punchT>0.5?'auto':'none';
+        if(punchT>0.15)runCountUps();
+        // the giant mark recedes as the pivot lands
+        var mT=seg(sp,0.1,0.62);
+        o.mm.style.transform='translateY('+(-30*mT)+'vh) scale('+(1-0.5*mT)+')';
+        o.mm.style.opacity=String(1-seg(sp,0.32,0.66));
+        // dashboard preview flattens through beat 2
+        var t=seg(sp,0.36,0.86);
         preview.style.transform='rotateX('+(32*(1-t))+'deg) scale('+(0.94+0.06*t)+')';
-        sheen.style.transform='translateX('+(-120+240*seg(sp,0.25,0.9))+'%)';
+        sheen.style.transform='translateX('+(-120+240*seg(sp,0.5,0.96))+'%)';
         if(o.cue)o.cue.style.opacity=p>0.04?0:1;
       }
       else if(o.id==='s-process'){
