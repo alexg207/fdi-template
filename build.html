@@ -1392,11 +1392,13 @@ try{
     const group=new THREE.Group();
 
     // ---- named procedural objects: a real volumetric model, not tube art ----
+    let flick=null;
     function buildLantern(){
       const g=new THREE.Group();
-      const metal=new THREE.MeshStandardMaterial({color:0x3a2b1c,metalness:.7,roughness:.34,emissive:accent,emissiveIntensity:.14});
-      const glass=new THREE.MeshStandardMaterial({color:accent,transparent:true,opacity:.2,emissive:accent,emissiveIntensity:.3,side:THREE.DoubleSide});
-      const flameM=new THREE.MeshStandardMaterial({color:accent,emissive:accent,emissiveIntensity:1.6});
+      const amber=new THREE.Color().setHSL(24/360,.95,.5);       // deeper amber, less gold
+      const amberDeep=new THREE.Color().setHSL(18/360,.9,.42);
+      const metal=new THREE.MeshStandardMaterial({color:0x3a2b1c,metalness:.7,roughness:.34,emissive:amberDeep,emissiveIntensity:.14});
+      const glass=new THREE.MeshStandardMaterial({color:amber,transparent:true,opacity:.2,emissive:amberDeep,emissiveIntensity:.3,side:THREE.DoubleSide});
       const add=(geo,mat,x,y,z,rx,ry)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);if(rx)m.rotation.x=rx;if(ry)m.rotation.y=ry;g.add(m);return m;};
       // hanging ring + finial
       add(new THREE.TorusGeometry(1.5,.22,12,40),metal,0,8.6,0);
@@ -1411,11 +1413,20 @@ try{
       add(new THREE.BoxGeometry(4.9,.4,4.9),metal,0,-1.25,0);
       for(const sx of [-1,1])for(const sz of [-1,1])
         add(new THREE.BoxGeometry(.5,.5,.5),metal,sx*1.9,-1.7,sz*1.9);
-      // the flame
-      add(new THREE.CylinderGeometry(.5,.7,.5,10),metal,0,-.9,0);
-      add(new THREE.SphereGeometry(.62,14,14),flameM,0,.1,0).scale.y=1.5;
-      const inner=new THREE.PointLight(accent,55,40);inner.position.set(0,.4,0);g.add(inner);
-      g.scale.setScalar(1.28); g.position.y=-4.6;
+      // a burning candle
+      add(new THREE.CylinderGeometry(.66,.74,.4,14),metal,0,-1,0);   // drip cup
+      const wax=new THREE.MeshStandardMaterial({color:0xf3e2c4,roughness:.55,emissive:0xb96f22,emissiveIntensity:.1});
+      add(new THREE.CylinderGeometry(.5,.56,1.7,16),wax,0,-.1,0);
+      add(new THREE.CylinderGeometry(.045,.045,.32,6),new THREE.MeshStandardMaterial({color:0x1c1208}),0,.85,0);
+      const flameM=new THREE.MeshStandardMaterial({color:amber,emissive:amber,emissiveIntensity:1.5,transparent:true,opacity:.92});
+      const coreM=new THREE.MeshStandardMaterial({color:0xffdfae,emissive:0xffc27a,emissiveIntensity:2.3});
+      const flame=new THREE.Mesh(new THREE.SphereGeometry(.34,12,12),flameM);
+      flame.scale.set(.75,1.9,.75);flame.position.set(0,1.5,0);g.add(flame);
+      const core=new THREE.Mesh(new THREE.SphereGeometry(.17,10,10),coreM);
+      core.scale.set(.7,1.5,.7);core.position.set(0,1.32,0);g.add(core);
+      const inner=new THREE.PointLight(amber,55,40);inner.position.set(0,1.45,0);g.add(inner);
+      flick={flame,core,light:inner};
+      g.scale.setScalar(1.16); g.position.y=-4.9;   // keep the ring inside frame
       return g;
     }
 
@@ -1455,8 +1466,8 @@ try{
     scene.add(group);
     scene.add(new THREE.AmbientLight(0xffffff,.35));
     const key=new THREE.DirectionalLight(0xffffff,1.7);key.position.set(6,8,10);scene.add(key);
-    const rim=new THREE.DirectionalLight(accent,1.3);rim.position.set(-7,4,-9);scene.add(rim);
-    const warm=new THREE.PointLight(accent,60,60);warm.position.set(-6,-3,8);scene.add(warm);
+    const rim=new THREE.DirectionalLight(new THREE.Color().setHSL(24/360,.9,.5),1.3);rim.position.set(-7,4,-9);scene.add(rim);
+    const warm=new THREE.PointLight(new THREE.Color().setHSL(24/360,.9,.5),60,60);warm.position.set(-6,-3,8);scene.add(warm);
     const cam=new THREE.PerspectiveCamera(34,1,.1,100);cam.position.set(0,0,27);
 
     const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
@@ -1470,6 +1481,13 @@ try{
       const t=(performance.now()-t0)/1000;
       group.rotation.y=t*0.24;                       // full 360 every ~26s
       group.rotation.x=0.10*Math.sin(t*0.5)+0.06;    // gentle tilt wobble
+      if(flick){                                      // candle breathes
+        const f=1+.13*Math.sin(t*11)+.07*Math.sin(t*23+1.7)+.05*Math.sin(t*5.3+.6);
+        flick.flame.scale.set(.75*(1.07-.07*f),1.9*f,.75*(1.07-.07*f));
+        flick.core.scale.y=1.5*f;
+        flick.flame.position.x=.05*Math.sin(t*7.3);
+        flick.light.intensity=55*(.8+.25*f);
+      }
       renderer.render(scene,cam);
       requestAnimationFrame(spin);
     })();
