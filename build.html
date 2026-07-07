@@ -1493,15 +1493,14 @@ try{
       group.rotation.y=t*0.24;                       // full 360 every ~26s
       group.rotation.x=0.10*Math.sin(t*0.5)+0.06;    // gentle tilt wobble
       if(flick){
-        // candle in still air: slow, smooth, languid — the tip drifts and
-        // leans over seconds; height barely changes; light drifts with it
-        const n=Math.sin(t*1.3)+.6*Math.sin(t*2.9+1.3)+.4*Math.sin(t*.7+2.1);
-        flick.flame.scale.set(.73,1.76,.73);   // fixed small flame - no size oscillation
+        // flame is FIXED in size and light output - the pulsing read came from
+        // the glow halo breathing with light intensity. Only a slow tip sway remains.
+        flick.flame.scale.set(.73,1.76,.73);
         flick.core.scale.y=1.5;
-        flick.flame.position.x=.05*(Math.sin(t*1.1)+.5*Math.sin(t*2.3+.7));
-        flick.flame.position.z=.04*Math.sin(t*1.7+.9);
-        flick.flame.rotation.z=.09*Math.sin(t*1.4+.3)+.04*Math.sin(t*3.1);
-        flick.light.intensity=55*(.97+.04*n);
+        flick.flame.position.x=.035*(Math.sin(t*1.1)+.5*Math.sin(t*2.3+.7));
+        flick.flame.position.z=.028*Math.sin(t*1.7+.9);
+        flick.flame.rotation.z=.06*Math.sin(t*1.4+.3);
+        flick.light.intensity=53;
       }
       renderer.render(scene,cam);
       requestAnimationFrame(spin);
