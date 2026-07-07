@@ -17,7 +17,7 @@ This repo is the starting point for step 3. It contains:
 - Two markdown guide docs that tell Claude (and you) how to use the template.
 - Fillable shells for the two outputs: `CONTEXT.md` and `CLAUDE_DESIGN_PLAN.md`.
 
-## The three standard pages (every build)
+## The two standard pages (every build)
 
 ```
 index.html  ──────────────────────▶  dashboard.html
