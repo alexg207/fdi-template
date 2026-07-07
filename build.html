@@ -102,7 +102,7 @@ a{color:inherit;text-decoration:none;}
 .logo-mark svg{width:17px;height:17px;stroke:var(--amber-deep);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round;}
 .brand .nm{font-family:var(--display);font-size:14.5px;font-weight:600;letter-spacing:-.01em;}
 .brand .x{color:var(--text-faint);margin:0 6px;}
-.brand .pv{color:var(--text-mid);font-weight:500;}
+.pv-lockup{height:14px;display:inline-block;vertical-align:-2px;opacity:.92;}
 .skip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;color:var(--text-mid);
   border:1px solid var(--border);border-radius:8px;padding:7px 13px;background:var(--glass);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:color .15s,border-color .15s;}
@@ -172,7 +172,7 @@ a{color:inherit;text-decoration:none;}
   text-align:center;z-index:1;will-change:transform,opacity;}
 .intro-word{font-family:var(--display);font-size:clamp(44px,6vw,72px);font-weight:600;letter-spacing:-.03em;line-height:1;margin-bottom:16px;}
 .intro-word .ix{color:var(--text-faint);font-weight:400;font-size:.5em;margin:0 14px;vertical-align:.22em;}
-.intro-word .ip{color:var(--text-muted);font-weight:500;font-size:.42em;vertical-align:.32em;}
+.ip-lockup{height:.44em;display:inline-block;vertical-align:.1em;opacity:.95;}
 .intro-tag{font-family:var(--display);font-size:16px;font-weight:500;letter-spacing:-.01em;color:hsl(var(--acc));
   margin-bottom:26px;}
 .intro-head{font-family:var(--display);font-size:clamp(24px,2.7vw,37px);font-weight:600;letter-spacing:-.03em;line-height:1.24;
@@ -580,7 +580,7 @@ a{color:inherit;text-decoration:none;}
 <header class="topbar">
   <div class="brand">
     <div class="logo-mark" id="brandMark"></div>
-    <span class="nm"><span id="brandName"></span><span class="x">×</span><span class="pv">Primary</span></span>
+    <span class="nm"><span id="brandName"></span><span class="x">×</span><img class="pv-lockup" src="./assets/primary-lockup.svg" alt="Primary"></span>
   </div>
   <a class="skip" href="./dashboard.html">Skip to dashboard <svg viewBox="0 0 24 24"><polyline points="9,6 15,12 9,18"/></svg></a>
 </header>
@@ -593,7 +593,7 @@ a{color:inherit;text-decoration:none;}
     <div class="mega-mark"><div class="mm-scroll" id="mmScroll"><div class="mm-tilt"><div class="mm-inner" id="mmInner"></div></div></div></div>
     <div class="hero-stage">
       <div class="intro-beat" id="introBeat">
-        <div class="intro-word"><span id="introName"></span><span class="ix">×</span><span class="ip">Primary</span></div>
+        <div class="intro-word"><span id="introName"></span><span class="ix">×</span><img class="ip-lockup" src="./assets/primary-lockup.svg" alt="Primary"></div>
         <div class="intro-tag" id="introTag"></div>
         <h1 class="intro-head" id="introHead"></h1>
       </div>
@@ -1098,7 +1098,12 @@ a{color:inherit;text-decoration:none;}
     });
     // Primary, bottom-center
     zoomG.appendChild(mk('circle',{cx:cx,cy:cy,r:42,fill:'hsl(240 10% 12%)',stroke:'hsl('+accHS()+' 58%)','stroke-width':2.6,style:'filter:drop-shadow(0 0 24px hsl('+accHS()+' 58% / .42))'}));
-    var lt=mk('text',{x:cx,y:cy+1,'text-anchor':'middle','font-size':17,'font-weight':700,fill:'hsl(0 0% 97%)',style:'font-family:var(--display)'});lt.textContent=D.network.hub||'Primary';zoomG.appendChild(lt);
+    if((D.network.hub||'Primary')==='Primary'){
+      var li=mk('image',{x:cx-34,y:cy-13,width:68,height:17});
+      li.setAttribute('href','./assets/primary-lockup.svg');zoomG.appendChild(li);
+    }else{
+      var lt=mk('text',{x:cx,y:cy+1,'text-anchor':'middle','font-size':17,'font-weight':700,fill:'hsl(0 0% 97%)',style:'font-family:var(--display)'});lt.textContent=D.network.hub;zoomG.appendChild(lt);
+    }
     var lp=mk('text',{x:cx,y:cy+17,'text-anchor':'middle','font-size':9,'font-weight':500,fill:'hsl(225 7% 68%)'});lp.textContent='the network';zoomG.appendChild(lp);
     // legend: one row per connector color + account encoding
     document.getElementById('netLegend').innerHTML=
