@@ -156,30 +156,27 @@ a{color:inherit;text-decoration:none;}
 /* the giant floating founder mark */
 .mega-mark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;perspective:1200px;}
 .mm-scroll{will-change:transform,opacity;}
-.mm-inner{position:relative;width:min(82vh,780px);height:min(82vh,780px);transform-style:preserve-3d;animation:mmFloat 10s ease-in-out infinite;}
+.mm-tilt{transform-style:preserve-3d;animation:mmFloat 10s ease-in-out infinite;}
+.mm-inner{position:relative;width:min(98vh,920px);height:min(98vh,920px);transform-style:preserve-3d;animation:mmSpin 26s linear infinite;}
+@keyframes mmSpin{from{transform:rotateY(0deg);}to{transform:rotateY(360deg);}}
 .mm-inner .mml{position:absolute;inset:0;}
 .mm-inner .mml svg{width:100%;height:100%;fill:none;stroke:hsl(var(--acc));stroke-linecap:round;stroke-linejoin:round;stroke-width:.3;}
 .mm-inner .l1{transform:translateZ(70px);filter:drop-shadow(0 0 34px hsl(var(--acc) / .3));opacity:.3;}
 .mm-inner .l2{transform:translateZ(0);opacity:.13;}
 .mm-inner .l3{transform:translateZ(-80px);opacity:.06;filter:blur(2px);}
-@keyframes mmFloat{0%,100%{transform:rotateY(-16deg) rotateX(6deg) translateY(0);}50%{transform:rotateY(16deg) rotateX(-5deg) translateY(-26px);}}
+@keyframes mmFloat{0%,100%{transform:rotateX(7deg) translateY(0);}50%{transform:rotateX(-4deg) translateY(-26px);}}
 
 /* beat 1 — founder-first */
 .intro-beat{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;z-index:1;will-change:transform,opacity;}
-.intro-tile{width:92px;height:92px;border-radius:22px;background:var(--glass-2);border:1px solid var(--border-hot);
-  display:flex;align-items:center;justify-content:center;margin-bottom:26px;
-  box-shadow:0 0 0 1px hsl(var(--acc) / .2),0 0 60px hsl(var(--acc) / .3);}
-.intro-tile svg{width:56px;height:56px;stroke:var(--amber);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;
-  filter:drop-shadow(0 0 12px hsl(var(--acc) / .5));}
 .intro-word{font-family:var(--display);font-size:clamp(44px,6vw,72px);font-weight:600;letter-spacing:-.03em;line-height:1;margin-bottom:16px;}
 .intro-word .ix{color:var(--text-faint);font-weight:400;font-size:.5em;margin:0 14px;vertical-align:.22em;}
 .intro-word .ip{color:var(--text-muted);font-weight:500;font-size:.42em;vertical-align:.32em;}
 .intro-tag{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:hsl(var(--acc-soft));
   font-weight:500;margin-bottom:26px;}
-.intro-head{font-family:var(--display);font-size:clamp(22px,2.6vw,34px);font-weight:500;letter-spacing:-.02em;line-height:1.3;
-  max-width:860px;margin:0 auto;color:var(--text-mid);}
-.intro-head .accent{color:hsl(var(--acc-soft));font-weight:600;}
+.intro-head{font-family:var(--sans);font-size:clamp(17px,1.9vw,22px);font-weight:400;letter-spacing:-.005em;line-height:1.6;
+  max-width:720px;margin:0 auto;color:var(--text-muted);}
+.intro-head b,.intro-head .accent{color:hsl(var(--acc-soft));font-weight:600;}
 
 /* beat 2 — the dashboard pivot */
 .punch-beat{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
@@ -490,7 +487,6 @@ a{color:inherit;text-decoration:none;}
   .hero-badge{margin-bottom:18px;}
   .punch-h{font-size:clamp(34px,4.6vw,54px);margin-bottom:14px;}
   .intro-word{font-size:clamp(38px,5vw,58px);}
-  .intro-tile{width:76px;height:76px;margin-bottom:20px;}
   .intro-head{font-size:clamp(19px,2.2vw,26px);}
   .mm-inner{width:min(56vh,520px);height:min(56vh,520px);}
   .hero .sub{font-size:14.5px;margin-bottom:20px;}
@@ -593,10 +589,9 @@ a{color:inherit;text-decoration:none;}
 <!-- ================= hero: 3D preview flattens on scroll ================= -->
 <section class="scene" data-scrub id="s-hero">
   <div class="pin">
-    <div class="mega-mark"><div class="mm-scroll" id="mmScroll"><div class="mm-inner" id="mmInner"></div></div></div>
+    <div class="mega-mark"><div class="mm-scroll" id="mmScroll"><div class="mm-tilt"><div class="mm-inner" id="mmInner"></div></div></div></div>
     <div class="hero-stage">
       <div class="intro-beat" id="introBeat">
-        <div class="intro-tile" id="introTile"></div>
         <div class="intro-word"><span id="introName"></span><span class="ix">×</span><span class="ip">Primary</span></div>
         <div class="intro-tag" id="introTag"></div>
         <h1 class="intro-head" id="introHead"></h1>
@@ -838,7 +833,6 @@ a{color:inherit;text-decoration:none;}
   document.getElementById('brandMark').innerHTML=D.founder.logoSvg;
   document.getElementById('brandName').textContent=NAME;
   // beat 1: the founder, front and center
-  document.getElementById('introTile').innerHTML=D.founder.logoSvg;
   document.getElementById('introName').textContent=NAME;
   document.getElementById('introTag').textContent=D.founder.tagline||'';
   document.getElementById('introHead').innerHTML=N.introHeadline||D.founder.oneLine||'';
