@@ -659,7 +659,7 @@ These are technically configurable but the defaults are tuned. Don't touch unles
 
 ---
 
-## 15. v2 dashboard defaults, the optional landing page, and silent-render gotchas
+## 15. v2 dashboard defaults, the landing page, and silent-render gotchas
 
 ### v2 dashboard defaults (don't regress)
 
@@ -668,16 +668,18 @@ The dashboard (`index.html`) now ships these as defaults:
 - **Dark default + light toggle.** Dark `data-theme` tokens load by default; the `toggleTheme()` button flips to light and persists the choice to the `{{PRODUCT_SLUG}}-theme` localStorage key.
 - **Green / amber score color-coding, NO red.** Tier is two-tone: `co.tier = co._signal>=75?'high':'med'`, rendered with `--q-high` (green) and `--q-med` (amber). Do not add a red tier in the tier coloring.
 - **"All" tab is the default view.** `state.tab` defaults to `'all'`; the `data-tab="all"` button is `active` on load.
-- **Typography:** Newsreader (serif) for display, Inter for UI/body, JetBrains Mono for data only (scores, counts, tabular nums), never prose.
+- **Typography (Ember system):** Space Grotesk for display, Inter for UI/body, JetBrains Mono for data only (scores, counts, tabular nums), never prose.
+- **Ember color system:** cool ink canvas (`240`-hue near-black) + one ember accent ramp (`26 96% 58%` / soft `33 100% 68%` / deep `20 88% 46%`). Neutrals stay cool - never tint the greys with the accent hue; the canvas/accent temperature contrast is the look.
 
-### The optional landing page (`landing.html`)
+### The landing page (`landing.html`) — STANDARD
 
-`landing.html` is an optional founder cover page (hero + numbered "how the map is built" timeline + "what it unlocks" cards + dashboard CTA card + footer). It is NOT used by default. To use it:
+`landing.html` is the founder cover page (hero + numbered "how the map is built" timeline + "what it unlocks" cards + dashboard CTA card + footer). Every build ships it. Wiring:
 
 1. Rename `index.html` → `dashboard.html`
 2. Rename `landing.html` → `index.html`
+3. Copy `build.html` verbatim + generate `build-data.js` (Section 16)
 
-(The landing's CTAs link to `./dashboard.html`, so the rename wires them up.)
+(The landing's hero CTA links to `./build.html`; everything else links to `./dashboard.html`, so the rename wires them up.)
 
 Landing-only placeholders, in addition to the dashboard set:
 
@@ -698,3 +700,39 @@ Shared with the dashboard on the landing: `{{PRODUCT_NAME}}`, `{{PRODUCT_LOGO_SV
 
 1. **Apostrophe in inserted text breaks single-quoted JS strings.** The renderer builds HTML by string concatenation inside single-quoted JS. An apostrophe in a value you splice in (e.g. a company name or a description with `'`) terminates the string and the page hangs on "Loading…". After any edit to the inline `<script>`, run `node --check` on the extracted script before shipping.
 2. **`computeJobSignal()` `/careers` URL filter.** The first regex in `computeJobSignal()` strips generic `/careers` landing-page URLs so they don't count as real open reqs; keep it verbatim. The SECOND regex is the vertical keyword test, replaced by `{{HIRING_KEYWORD_REGEX}}` — set it per vertical or the Hiring axis silently scores everything as 1.
+
+## 16. The scroll cinematic (`build.html` + `build-data.js`) — STANDARD
+
+Every build ships the "watch how we built this" scroll cinematic between the landing and the dashboard: **index (landing) → build.html (cinematic) → dashboard.html.**
+
+### What it is
+
+An Apple-style scroll-scrubbed walkthrough of the build, 10 scenes: 3D dashboard hero → process pipeline (light beam) → ICP → signal ring-meters → market scan sweep → evidence terminal → score blend → ranked shortlist → warm-path network fan → finale CTA. Pre-baked and deterministic - no live API calls, plays identically every run. Smooth-wheel scrolling, `space` auto-plays the current act (demo-safe), `←`/`→` jump acts, `esc` exits to the dashboard, `?act=0-9` deep-links, reduced-motion renders a static article.
+
+### The contract (the whole point)
+
+`build.html` is **100% generic**. Copy it into the build repo VERBATIM - never edit its HTML/CSS/JS per founder. Everything founder-specific lives in `build-data.js` (schema: `build-data-template.js`). If you feel the urge to edit build.html for one founder, the thing you want is almost certainly a `narration` key or a schema extension - fix it in the template repo for everyone, or put it in the data.
+
+### Generating `build-data.js`
+
+Fill every key from the build's real artifacts (mapping is commented per-key in `build-data-template.js`). Rules:
+
+- **Copy voice:** confident analyst briefing the founder. Hyphens only, never em dashes. Hero frames account **quality**, not count ("18,000 rooftops in. The readiest buyers out."). Narrations ≤2 sentences. Keep the honest hedges ("illustrative warm-path layer", "where we have one").
+- **Numbers and citations are real.** `evidenceFeed` lines come from the scored companies' own sources; hero stats are the build's actual counts. Never fabricate.
+- **Exactly one axis carries `wowNote`** - the founder-specific WOW signal. Its body is the "why this signal wins" reasoning from CONTEXT.md, in 3-4 sentences.
+- **Network stays role-based illustrative** (`illustrative: true`) unless real Affinity/LinkedIn connector data is supplied. Each account belongs to exactly one connector (partition); secondary paths go in `alsoReaches`.
+- **Theme:** omit `founder.themeAccent` to keep Ember (default). Override only when the founder's brand demands it; values are raw HSL triples.
+- **Apostrophe gotcha applies:** curly `’` inside JS strings, then `node --check build-data.js`.
+
+### Assets
+
+- `assets/logos/` (tool logos for the process act) copies from the template as-is.
+- `assets/dashboard-preview.png` is a screenshot of THIS build's finished dashboard, used by the hero's 3D preview. Capture it after the dashboard is populated (1600×1000, 2x). If it's missing the hero degrades gracefully (preview hides) - ship it anyway; the hero is much weaker without it.
+
+### Self-check before shipping
+
+1. `node --check build-data.js` passes.
+2. Every `narration` key filled (shipping the generic fallbacks fails the build QA).
+3. `grep -i` the previous founder's name in build-data.js → 0 hits.
+4. Open `build.html?act=N` for N=0..9 - every scene renders with this build's data.
+5. Weights in `axes[]` sum to 100; `companies[0]` is the intended hero account (act 6 uses it).

@@ -17,14 +17,27 @@ This repo is the starting point for step 3. It contains:
 - Two markdown guide docs that tell Claude (and you) how to use the template.
 - Fillable shells for the two outputs: `CONTEXT.md` and `CLAUDE_DESIGN_PLAN.md`.
 
+## The three standard pages (every build)
+
+```
+index.html  ──[ Watch how we built this ]──▶  build.html  ──▶  dashboard.html
+ (landing)          (scroll cinematic)           (the product)
+```
+
+All three ship in the **Ember design system**: cool ink canvas, single ember accent, Space Grotesk display / Inter body / JetBrains Mono data. The cinematic is an Apple-style scroll-scrubbed walkthrough of the build (10 scenes, deterministic, `space` auto-plays acts) driven entirely by `build-data.js` — see TEMPLATE_GUIDE Section 16.
+
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `index.html` | The dashboard template. CSS + JS intact from Valar; brand strings + signal labels are placeholders. |
-| `data.js` | Schema-commented data layer. 5 placeholder companies in 2 segments to demonstrate shape. |
-| `AI_INSTRUCTIONS.md` | **Read first.** The operating manual for Claude when running the build skill. |
-| `TEMPLATE_GUIDE.md` | Reference encyclopedia. For each structural element: what it does, when to use, when to skip. |
+| `index.html` | The dashboard template (renamed to `dashboard.html` in a build). CSS + JS intact from Valar; brand strings + signal labels are placeholders. |
+| `landing.html` | The cover page (renamed to `index.html` in a build). Hero CTA → the cinematic. |
+| `build.html` | The scroll cinematic. 100% generic — copied verbatim, driven only by `build-data.js`. |
+| `build-data-template.js` | Schema-commented shell for `build-data.js` (the cinematic's only founder-specific input). |
+| `assets/logos/` | Tool logos used by the cinematic's process act. Copied as-is. |
+| `data.js` | Schema-commented data layer for the dashboard. 5 placeholder companies in 2 segments to demonstrate shape. |
+| `AI_INSTRUCTIONS.md` | **Read first.** Pointers to the canonical SKILL.md + file inventory. |
+| `TEMPLATE_GUIDE.md` | Reference encyclopedia. For each structural element: what it does, when to use, when to skip. Section 16 = the cinematic. |
 | `CONTEXT_TEMPLATE.md` | Fillable shell for the founder research dump. Output of `kickoff-fdi`, input to build. |
 | `CLAUDE_DESIGN_PLAN_TEMPLATE.md` | Fillable shell documenting the structural choices the build skill made for this project. |
 | `README.md` | This file. |

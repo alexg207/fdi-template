@@ -124,3 +124,13 @@ To rerun Phase 7 only without re-firing the Webset:
 3. [Vertical-specific actions: e.g., for industrials founders, validate the wow-evidence shape against actual operational data]
 4. Spot-check 3 random gtm_thesis paragraphs against Output Style Rule #14 ("Reference build is scaffolding") — if the output reads as inference-vertical for a non-inference founder, regression
 5. Push to the GitHub remote (`git push`) and connect to Vercel for hosted preview if needed
+
+## Cinematic (build.html + build-data.js)
+
+- **build.html copied verbatim from template:** [yes — required; never edit per founder]
+- **narration voice decisions:** [hero title line 2 framing, what the wow-note argues, any deviations from default narration patterns]
+- **evidenceFeed sources:** [which companies' citations were used; tier mix]
+- **wowNote axis:** [which axis carries it and why]
+- **themeAccent:** [omitted (Ember default) / overridden to X because Y]
+- **dashboard-preview.png:** [captured at NxN after dashboard populated / pending]
+- **self-check:** [node --check pass; previous-founder-name grep = 0; ?act=0-9 verified]

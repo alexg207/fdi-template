@@ -23,8 +23,11 @@ Pointers from the template repo back to the canonical sources of truth.
 ## What's IN this template repo
 
 - `data.js` — schema-commented placeholder. The placeholder companies demonstrate the data shape, NOT the writing patterns. Apply the writing patterns from TEMPLATE_GUIDE Section 9, not the placeholder companies' content.
-- `index.html` — renderer. Hardcoded inference-vertical strings exist; SKILL.md Phase 8 enumerates what to find/replace.
-- `landing.html` — OPTIONAL cover-page template (see "Optional landing page" above). Not used by default.
+- `index.html` — dashboard renderer. Hardcoded inference-vertical strings exist; SKILL.md Phase 8 enumerates what to find/replace.
+- `landing.html` — STANDARD cover-page template (see "Landing page" below). Every build ships it as the final `index.html`.
+- `build.html` — the scroll cinematic ("watch how we built this"). 100% generic; driven entirely by `build-data.js`. Copy VERBATIM into the build repo — never edit its HTML/CSS/JS per founder.
+- `build-data-template.js` — schema-commented shell for `build-data.js`, the cinematic's only founder-specific input. SKILL.md Phase 8c generates it.
+- `assets/logos/` — tool logos (Exa, Clay, SEC, etc.) referenced by the cinematic's process act. Copy into the build repo as-is.
 - `TEMPLATE_GUIDE.md` — craft patterns extracted from the V1 Valar build. Section 9 is the field-by-field reference.
 - `CONTEXT_TEMPLATE.md` — fillable shell for Phase 4 CONTEXT.md.
 - `BUILD_NOTES_TEMPLATE.md` — fillable shell for Phase 9 BUILD_NOTES.md.
@@ -37,14 +40,18 @@ The dashboard (`index.html`) ships these v2 defaults. Do NOT regress them:
 - **Dark default + light toggle.** `data-theme` dark tokens are the default; light is opt-in via the `toggleTheme()` button, persisted to the `{{PRODUCT_SLUG}}-theme` localStorage key.
 - **Green / amber score color-coding — NO red.** Tier is two-tone: `co.tier = co._signal>=75?'high':'med'` (`--q-high` green / `--q-med` amber). Do not introduce a red/low tier in tier coloring.
 - **"All" tab is the default view.** `state.tab` defaults to `'all'`; the `data-tab="all"` button is `active` on load.
-- **Typography.** Newsreader (serif) for display/headings, Inter for UI/body, JetBrains Mono for data only (scores, counts, tabular numbers). Do not use mono for prose.
+- **Typography (Ember system).** Space Grotesk for display/headings, Inter for UI/body, JetBrains Mono for data only (scores, counts, tabular numbers). Do not use mono for prose.
+- **Ember color system.** Cool ink canvas (`hsl(240 14% 5%)` family) + single ember accent (`26 96% 58%` ramp). Do not tint neutrals with the accent hue - canvas/accent temperature contrast is the point. Per-founder accent overrides go through `BUILD_DATA.founder.themeAccent` in the cinematic and the token block in the dashboard; never fork the palette ad hoc.
 
-## Optional landing page
+## Landing page (standard) + cinematic
 
-`landing.html` is the optional cover-page template (Lantern-style hero). It is NOT used by default. When a build uses it:
+Every build ships three pages: **landing → cinematic → dashboard.** File wiring:
 
 1. Rename `index.html` → `dashboard.html`
 2. Rename `landing.html` → `index.html`
+3. Copy `build.html` verbatim + generate `build-data.js` (SKILL.md Phase 8c)
+
+Landing hero CTA → `./build.html` ("Watch how we built this"); cinematic finale CTA + skip link → `./dashboard.html`.
 
 The landing's CTAs link to `./dashboard.html`, so the rename makes the links resolve. The landing introduces its own placeholders (in addition to the dashboard's):
 
