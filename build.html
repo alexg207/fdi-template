@@ -157,7 +157,7 @@ a{color:inherit;text-decoration:none;}
 .mega-mark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;perspective:1200px;}
 .mm-scroll{will-change:transform,opacity;}
 .mm-tilt{transform-style:preserve-3d;animation:mmFloat 10s ease-in-out infinite;}
-.mm-inner{position:relative;width:min(72vh,680px);height:min(72vh,680px);transform-style:preserve-3d;animation:mmSpin 26s linear infinite;opacity:0;transition:opacity 1.2s ease;}
+.mm-inner{position:relative;width:min(80vh,44vw,780px);height:min(80vh,44vw,780px);transform-style:preserve-3d;animation:mmSpin 26s linear infinite;opacity:0;transition:opacity 1.2s ease;}
 .mm-inner.mm-on{opacity:1;}
 @keyframes mmSpin{from{transform:rotateY(0deg);}to{transform:rotateY(360deg);}}
 .mm-inner .mml{position:absolute;inset:0;}
@@ -1482,6 +1482,10 @@ try{
     renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
     renderer.setSize(size,size);
     renderer.domElement.style.cssText='width:100%;height:100%;display:block;opacity:.58;filter:drop-shadow(0 0 42px hsl('+cfg.acc+' / .3));';
+    if(window.ResizeObserver)new ResizeObserver(function(){
+      var s2=Math.round(host.getBoundingClientRect().width);
+      if(s2>0)renderer.setSize(s2,s2,false);
+    }).observe(host);
     // render the first frame before the canvas is ever visible, then fade in
     renderer.render(scene,cam);
     const attach=()=>{host.innerHTML='';host.style.animation='none';host.appendChild(renderer.domElement);
