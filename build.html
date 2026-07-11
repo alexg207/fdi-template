@@ -102,7 +102,7 @@ a{color:inherit;text-decoration:none;}
 .logo-mark svg{width:17px;height:17px;stroke:var(--amber-deep);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round;}
 .brand .nm{font-family:var(--display);font-size:14.5px;font-weight:600;letter-spacing:-.01em;}
 .brand .x{color:var(--text-faint);margin:0 6px;}
-.pv-lockup{height:14px;display:inline-block;vertical-align:-2px;opacity:.92;}
+.pv-lockup{height:1.15em;display:inline-block;vertical-align:-.3em;opacity:.95;}
 .skip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;color:var(--text-mid);
   border:1px solid var(--border);border-radius:8px;padding:7px 13px;background:var(--glass);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:color .15s,border-color .15s;}
@@ -172,8 +172,8 @@ a{color:inherit;text-decoration:none;}
   text-align:center;z-index:1;will-change:transform,opacity;}
 .intro-word{font-family:var(--display);font-size:clamp(44px,6vw,72px);font-weight:600;letter-spacing:-.03em;line-height:1;margin-bottom:16px;}
 .intro-word .ix{color:var(--text-faint);font-weight:400;font-size:.5em;margin:0 14px;vertical-align:.22em;}
-.ip-lockup{height:.44em;display:inline-block;vertical-align:.1em;opacity:.95;}
-.intro-tag{font-family:var(--display);font-size:16px;font-weight:500;letter-spacing:-.01em;color:hsl(var(--acc));
+.ip-lockup{height:.95em;display:inline-block;vertical-align:-.24em;opacity:.95;}
+.intro-tag{font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:-.01em;color:hsl(var(--acc-soft));text-shadow:0 1px 4px hsl(var(--bgh) / .95),0 0 22px hsl(var(--bgh) / .9),0 0 44px hsl(var(--bgh) / .7);
   margin-bottom:26px;}
 .intro-head{font-family:var(--display);font-size:clamp(24px,2.7vw,37px);font-weight:600;letter-spacing:-.03em;line-height:1.24;
   max-width:880px;margin:0 auto;color:var(--text);}
@@ -199,12 +199,12 @@ a{color:inherit;text-decoration:none;}
 .hstat{text-align:center;}
 .hstat .n{font-family:var(--mono);font-size:26px;font-weight:600;letter-spacing:-.02em;color:var(--amber-soft);line-height:1;}
 .hstat .l{font-size:12px;color:var(--text-muted);margin-top:7px;letter-spacing:.02em;}
-.preview-wrap{perspective:1300px;max-width:880px;margin:0 auto;}
+.preview-wrap{perspective:1300px;max-width:min(880px,calc((100vh - 520px)*1.7));margin:0 auto;}
 .preview{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--border-hot);
   transform:rotateX(32deg) scale(.94);transform-origin:center top;will-change:transform;
   box-shadow:0 0 0 1px hsl(var(--acc) / .18),0 40px 110px hsl(28 40% 2% / .75),0 0 90px hsl(var(--acc) / .16);}
 .preview img{display:block;width:100%;height:auto;}
-.preview::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,hsl(36 95% 60% / .06),transparent 34%);pointer-events:none;}
+.preview::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,hsl(var(--acc) / .06),transparent 34%);pointer-events:none;}
 .preview .sheen{position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,hsl(40 80% 85% / .14) 46%,transparent 58%);
   transform:translateX(-120%);pointer-events:none;}
 .scroll-cue{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:9px;
@@ -342,7 +342,7 @@ a{color:inherit;text-decoration:none;}
 .term-head .td:nth-child(3){background:hsl(150 55% 45% / .8);}
 .term-head .tt{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint);margin-left:8px;display:flex;align-items:center;gap:8px;}
 .term-head .live{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:pulse 1.5s ease-in-out infinite;}
-.term-body{padding:12px 16px 14px;height:336px;overflow:hidden;font-family:var(--mono);font-size:12px;}
+.term-body{padding:12px 16px 14px;min-height:336px;font-family:var(--mono);font-size:12px;}
 .tline2{display:flex;gap:10px;padding:5.5px 0;align-items:baseline;border-bottom:1px solid hsl(var(--nh) 11%);}
 .tline2 .tb{font-size:9px;font-weight:600;letter-spacing:.04em;padding:2px 7px;border-radius:4px;flex-shrink:0;}
 .tb.t1{background:hsl(150 55% 45% / .14);color:var(--ok);}
@@ -493,11 +493,11 @@ a{color:inherit;text-decoration:none;}
   .hero .sub{font-size:14.5px;margin-bottom:20px;}
   .hero-stats{margin-bottom:28px;}
   .hstat .n{font-size:22px;}
-  .preview-wrap{max-width:720px;}
+  .preview-wrap{max-width:min(720px,calc((100vh - 470px)*1.7));}
 }
 @media (max-height:760px){
   .hero .sub{display:none;}
-  .preview-wrap{max-width:600px;}
+  .preview-wrap{max-width:min(600px,calc((100vh - 380px)*1.7));}
   .hero-stats{gap:26px;}
 }
 @media (max-width:900px){
@@ -508,7 +508,7 @@ a{color:inherit;text-decoration:none;}
   .punch-h{font-size:36px;}
   .intro-word{font-size:38px;}
   .intro-head{font-size:19px;padding:0 8px;}
-  .intro-tag{font-size:13.5px;}
+  .intro-tag{font-size:15px;}
   .mm-inner{width:min(44vh,340px);height:min(44vh,340px);}
   .hero .sub{font-size:14px;margin-bottom:22px;}
   .hero-stats{gap:22px;margin-bottom:30px;}
@@ -542,7 +542,7 @@ a{color:inherit;text-decoration:none;}
   .ev-grid{grid-template-columns:1fr;gap:12px;}
   .ev-col{padding:6px 11px;font-size:11.5px;gap:8px;}
   .ev-col .s{display:none;}
-  .term-body{height:168px;font-size:10px;}
+  .term-body{min-height:168px;font-size:10px;}
   .score-grid{grid-template-columns:1fr;gap:14px;}
   .score-arrow{display:none;}
   .composite{padding:18px 16px;}
@@ -805,7 +805,33 @@ a{color:inherit;text-decoration:none;}
   sizeCanvas(); window.addEventListener('resize',sizeCanvas);
   // deterministic pseudo-random so the field is stable run to run
   var sd=42; function rnd(){sd=(sd*16807)%2147483647;return (sd-1)/2147483646;}
-  for(var i=0;i<110;i++){pts.push({x:rnd()*1.2-0.1,y:rnd()*1.2-0.1,r:rnd()*1.5+0.4,s:rnd()*0.00022+0.00006,tw:rnd()*Math.PI*2,amber:rnd()<0.22});}
+  for(var i=0;i<70;i++){pts.push({x:rnd()*1.2-0.1,y:rnd()*1.2-0.1,r:rnd()*1.5+0.4,s:rnd()*0.00022+0.00006,tw:rnd()*Math.PI*2,amber:rnd()<0.22});}
+  // snowfall: small line-drawn snowflakes (the brand mark) drifting down the
+  // whole page - three depth bands so it reads as gentle weather, not confetti
+  var flakes=[];
+  for(var i=0;i<77;i++){
+    var depth=rnd();
+    flakes.push({x:rnd()*1.2-0.1,y:rnd()*1.2-0.1,
+      r:2.4+depth*5.1,                     // near flakes bigger
+      s:(0.0008+depth*0.0013),             // and faster
+      sw:0.006+rnd()*0.01,                 // sway amplitude
+      ph:rnd()*Math.PI*2,
+      rot:rnd()*Math.PI*2,rs:(rnd()-.5)*0.014,
+      a:0.11+depth*0.33});
+  }
+  function drawFlake(x,y,r,rot,alpha){
+    ctx.save();ctx.translate(x,y);ctx.rotate(rot);
+    ctx.strokeStyle='hsl(203 85% 84% / '+alpha+')';
+    ctx.lineWidth=Math.max(.6,r*.15);ctx.lineCap='round';
+    var b=r*.32,yb=r*.56;
+    for(var k=0;k<3;k++){
+      ctx.beginPath();ctx.moveTo(0,-r);ctx.lineTo(0,r);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(-b*.72,yb-b);ctx.lineTo(0,yb);ctx.lineTo(b*.72,yb-b);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(-b*.72,-(yb-b));ctx.lineTo(0,-yb);ctx.lineTo(b*.72,-(yb-b));ctx.stroke();
+      ctx.rotate(Math.PI/3);
+    }
+    ctx.restore();
+  }
   var scrollDrift=0;
   function drawField(t){
     var w=window.innerWidth,h=window.innerHeight;
@@ -817,6 +843,17 @@ a{color:inherit;text-decoration:none;}
       ctx.arc(p.x*w,(p.y*h+scrollDrift)%h,p.r,0,Math.PI*2);
       ctx.fillStyle=p.amber?'hsl('+ACCENT+' / '+a*0.8+')':'hsl(0 0% 92% / '+a*0.4+')';
       ctx.fill();
+    });
+    // full wow on the opening screen only: once the user scrolls past the
+    // intro, flakes dim 30% so they never fight the copy (eases both ways)
+    var flakeDim=1-0.55*Math.min(1,window.scrollY/(h*0.8));
+    flakes.forEach(function(f){
+      f.y+=f.s; f.rot+=f.rs;
+      if(f.y>1.12){f.y=-0.12;f.x=rnd()*1.2-0.1;}
+      var fx=(f.x+Math.sin(t*0.00032+f.ph)*f.sw)*w;
+      // no scroll-drift modulo: wrapping the DRAWN position teleported
+      // flakes mid-screen while scrolling - now they fall clean off the bottom
+      drawFlake(fx,f.y*h,f.r,f.rot,f.a*flakeDim);
     });
   }
   // master loop: particles + scrub smoothing share one rAF (started after SECS init below)
@@ -838,7 +875,12 @@ a{color:inherit;text-decoration:none;}
   document.getElementById('introTag').textContent=D.founder.tagline||'';
   document.getElementById('introHead').innerHTML=N.introHeadline||D.founder.oneLine||'';
   // the wow layer: flat layered fallback first; the WebGL module below swaps
-  // in a true 3D neon-tube sculpture of the same mark when it loads
+  // in a true 3D neon-tube sculpture of the same mark when it loads.
+  // hero3d:"snow" retires the central mark entirely - the atmosphere canvas
+  // carries the brand as ambient snowfall instead.
+  if((D.founder.hero3d||'')==='snow'){
+    var mmWrap=document.querySelector('.mega-mark');if(mmWrap)mmWrap.style.display='none';
+  }else{
   document.getElementById('mmInner').innerHTML=
     '<div class="mml l1">'+D.founder.logoSvg+'</div>'+
     '<div class="mml l2">'+D.founder.logoSvg+'</div>'+
@@ -848,6 +890,7 @@ a{color:inherit;text-decoration:none;}
   // avoids the fallback->canvas pop on load
   setTimeout(function(){var mi=document.getElementById('mmInner');
     if(mi&&!mi.querySelector('canvas'))mi.classList.add('mm-on');},1400);
+  }
   document.getElementById('heroBadge').innerHTML='Live build · <b>'+NAME+'</b>'+(D.founder.fileNo?' · '+D.founder.fileNo:'');
   document.getElementById('heroTitle').innerHTML=(N.heroTitle&&N.heroTitle.length===2?N.heroTitle:[fmt(D.scan.universe)+' '+D.scan.universeLabel+' in.','The readiest buyers out.']).join('<br>');
   document.getElementById('heroSubP').innerHTML=N.heroSub||('The machine we built around <b>'+NAME+'</b> - custom signals, cited evidence, a readiness score on every account, and a warm path in. Scroll to watch it run.');
@@ -1438,8 +1481,39 @@ try{
       return g;
     }
 
+    function buildSnowflake(){
+      const g=new THREE.Group();
+      const ice=new THREE.Color().setHSL(200/360,.95,.62);
+      const iceDeep=new THREE.Color().setHSL(215/360,.85,.45);
+      const crystal=new THREE.MeshStandardMaterial({color:0xdff3ff,metalness:.15,roughness:.18,emissive:iceDeep,emissiveIntensity:.27,transparent:true,opacity:.96});
+      const bright=new THREE.MeshStandardMaterial({color:0xeaf7ff,emissive:ice,emissiveIntensity:.62,metalness:.1,roughness:.22});
+      const arm=(parent,len,r0,r1)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r0,len,8),crystal);m.position.y=len/2;parent.add(m);return m;};
+      const R=6.4;
+      for(let i=0;i<6;i++){
+        const a=new THREE.Group();a.rotation.z=i*Math.PI/3;
+        arm(a,R,.30,.15);                                        // tapered main spoke
+        const tip=new THREE.Mesh(new THREE.OctahedronGeometry(.44),bright);
+        tip.position.y=R+.15;tip.rotation.z=Math.PI/6;a.add(tip); // faceted tip crystal
+        for(const bh of [[.44,2.5],[.70,1.55]]){                  // two rings of branchlets
+          for(const s of [-1,1]){
+            const b=new THREE.Group();b.position.y=R*bh[0];b.rotation.z=s*Math.PI/3;
+            arm(b,bh[1],.15,.06);
+            const bt=new THREE.Mesh(new THREE.SphereGeometry(.11,8,8),bright);
+            bt.position.y=bh[1]+.04;b.add(bt);a.add(b);
+          }
+        }
+        g.add(a);
+      }
+      const hex=new THREE.Mesh(new THREE.CylinderGeometry(1.05,1.05,.5,6),bright); // hexagonal heart
+      hex.rotation.x=Math.PI/2;g.add(hex);
+      const glow=new THREE.PointLight(ice,30,50);glow.position.set(0,0,4);g.add(glow);
+      return g;
+    }
+
     if(cfg.hero3d==='lantern'){
       group.add(buildLantern());
+    }else if(cfg.hero3d==='snowflake'){
+      group.add(buildSnowflake());
     }else{
     const data=new SVGLoader().parse(cfg.logo);
     const mat=new THREE.MeshStandardMaterial({color:accent.clone().multiplyScalar(.55),emissive:accent,emissiveIntensity:.75,metalness:.25,roughness:.35});
@@ -1474,14 +1548,15 @@ try{
     scene.add(group);
     scene.add(new THREE.AmbientLight(0xffffff,.35));
     const key=new THREE.DirectionalLight(0xffffff,1.9);key.position.set(6,8,10);scene.add(key);
-    const rim=new THREE.DirectionalLight(new THREE.Color().setHSL(24/360,.9,.5),1.3);rim.position.set(-7,4,-9);scene.add(rim);
-    const warm=new THREE.PointLight(new THREE.Color().setHSL(24/360,.9,.5),60,60);warm.position.set(-6,-3,8);scene.add(warm);
+    const accHue=((parseFloat(String(cfg.acc||'26').split(/\s+/)[0])||26))/360;
+    const rim=new THREE.DirectionalLight(new THREE.Color().setHSL(accHue,.9,.55),1.3);rim.position.set(-7,4,-9);scene.add(rim);
+    const warm=new THREE.PointLight(new THREE.Color().setHSL(accHue,.9,.55),60,60);warm.position.set(-6,-3,8);scene.add(warm);
     const cam=new THREE.PerspectiveCamera(34,1,.1,100);cam.position.set(0,0,27);
 
     const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
     renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
     renderer.setSize(size,size);
-    renderer.domElement.style.cssText='width:100%;height:100%;display:block;opacity:.58;filter:drop-shadow(0 0 42px hsl('+cfg.acc+' / .3));';
+    renderer.domElement.style.cssText='width:100%;height:100%;display:block;opacity:.78;filter:drop-shadow(0 0 22px hsl('+cfg.acc+' / .18));';
     if(window.ResizeObserver)new ResizeObserver(function(){
       var s2=Math.round(host.getBoundingClientRect().width);
       if(s2>0)renderer.setSize(s2,s2,false);

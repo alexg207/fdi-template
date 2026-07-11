@@ -27,7 +27,7 @@ Pointers from the template repo back to the canonical sources of truth.
 - `landing.html` — OPTIONAL extra cover page, off by default (the walkthrough is the entry page).
 - `build.html` — the scroll walkthrough, shipped as the build's `index.html` (the entry page). 100% generic; driven entirely by `build-data.js`. Copy VERBATIM — never edit its HTML/CSS/JS per founder.
 - `build-data-template.js` — schema-commented shell for `build-data.js`, the cinematic's only founder-specific input. SKILL.md Phase 8c generates it.
-- `assets/logos/` — tool logos (Exa, Clay, SEC, etc.) referenced by the cinematic's process act. Copy into the build repo as-is.
+- `assets/` — copy the WHOLE tree into the build repo (`cp -R template/assets/. assets/`): `logos/` (tool logos for the process act) AND `primary-lockup.svg` (topbar, intro, network hub — three broken images if missed; it has been missed on real builds).
 - `TEMPLATE_GUIDE.md` — craft patterns extracted from the V1 Valar build. Section 9 is the field-by-field reference.
 - `CONTEXT_TEMPLATE.md` — fillable shell for Phase 4 CONTEXT.md.
 - `BUILD_NOTES_TEMPLATE.md` — fillable shell for Phase 9 BUILD_NOTES.md.

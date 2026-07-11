@@ -667,6 +667,7 @@ function timeAgo(idx){
 
 // Compute aggregate signal score (0-100) from 4 sub-scores, each 0-5.
 function computeSignal(c){
+  if (typeof c.composite === 'number') return c.composite;  // Phase-7 evidence-strength tiebreak (coarse 0-5 axes tie easily; a five-way 85 looks fake)
   var pain = c.competitive_distress || 0;
   var res = c.data_residency || 0;
   var trig = c.signal_score || 0;
