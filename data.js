@@ -88,6 +88,13 @@ const ROW_SOURCES = {
      residency_signal_types     array   — 'positive' | 'negative' per item.
      gtm_thesis                 string  — One-paragraph buy-side narrative.
                                           Embedded HTML allowed (e.g., <strong>).
+     composite                  number  — OPTIONAL 0–100 override of the computed
+                                          /100 signal. Use ONLY to break ties when
+                                          whole-point axes collide (e.g. five accounts
+                                          all at 85); rank tied accounts by cited
+                                          evidence strength. computeSignal() returns it
+                                          when present (clamped 0–100); keep the matching
+                                          build-data.js companies[].score equal.
    ──────────────────────────────────────────────────────────────────────── */
 const SEGMENTS = [
 

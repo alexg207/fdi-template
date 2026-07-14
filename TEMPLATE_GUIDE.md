@@ -92,6 +92,10 @@ Imagine the founder is automating prior authorization workflows for hospitals.
 
 The dashboard now reads like it was built for a healthcare founder, not for Valar.
 
+### Breaking score ties
+
+Axes grade in whole 0–5 points, so the /100 composite collides constantly — the canonical case is five accounts all landing on 17/20 axis totals → all 85. When two or more companies tie, rank the tied group by (1) cited evidence strength on the wow axis (primary/first-party beats inferred), (2) larger cited scale, (3) more total sources, (4) alphabetical as the final deterministic fallback — then give each a distinct integer `composite: <n>` override on its data.js company object. The overrides must be **collision-free and order-preserving across the whole board**: place them strictly between the nearest distinct composites above and below the tied cluster so none equals another account's score and none leapfrogs a higher account or drops below a lower one (e.g. a lone 85 tie between a 90 and an 80 → 87/86/85/84/83; if the integer gap is too tight for the count, widen it by also overriding the bracketing non-tied accounts, staying within the tier). `computeSignal()` returns the override first (clamped 0–100), so the card number, tooltip total, and tier all follow it — and the tooltip's axis breakdown still shows the raw 0–5 dots and the "weighted blend" wording (intentional; the override is a display-order tiebreak, not a re-weighting). Carry the same numbers into `build-data.js` `companies[].score`. Use `composite` for genuine ties only, never to rescore a non-tied account.
+
 ---
 
 ## 4. The Network view
@@ -654,6 +658,7 @@ These are technically configurable but the defaults are tuned. Don't touch unles
 - The hiring keyword regex.
 - The tab labels (if your segment IDs differ from default).
 - The placeholder companies (Acme, Beta, Gamma, Delta, Epsilon).
+- The dashboard feedback-card body (`{{FEEDBACK_CARD_BODY}}`) — per-founder warmth copy at the bottom of the dashboard (the "How'd we do?" card). Explicit two-sided feedback ask, partnership tone, distinct from the walkthrough's warmth lines.
 - All `[REPLACE]` and `{{PLACEHOLDER}}` strings.
 - **The Webset enrichment descriptions**, generic descriptions get generic data. Tailor every one to the founder's vertical and language. See Section 12.
 
@@ -712,7 +717,7 @@ An Apple-style scroll-scrubbed walkthrough of the build. It opens with a TWO-BEA
 
 ### Generating `build-data.js`
 
-Fill every key from the build's real artifacts (mapping is commented per-key in `build-data-template.js`). Rules:
+Fill every key from the build's real artifacts (mapping is commented per-key in `build-data-template.js`). Every narration key is **required for a newly generated build**; the small set of guarded optional fields (`introWarmth`, `finaleWarmth`, `scan.methodNote`) are **optional at runtime** — the template hides them cleanly when absent so older builds don't break, but a new build must fill them. Rules:
 
 - **Copy voice:** confident analyst briefing the founder. Hyphens only, never em dashes. Hero frames account **quality**, not count ("18,000 rooftops in. The readiest buyers out."). Narrations ≤2 sentences. Keep the honest hedges ("illustrative warm-path layer", "where we have one").
 - **Numbers and citations are real.** `evidenceFeed` lines come from the scored companies' own sources; hero stats are the build's actual counts. Never fabricate.
@@ -720,10 +725,15 @@ Fill every key from the build's real artifacts (mapping is commented per-key in 
 - **Network stays role-based illustrative** (`illustrative: true`) unless real Affinity/LinkedIn connector data is supplied. Each account belongs to exactly one connector (partition); secondary paths go in `alsoReaches`.
 - **Theme:** omit `founder.themeAccent` to keep Ember (default). Override only when the founder's brand demands it; values are raw HSL triples.
 - **Apostrophe gotcha applies:** curly `’` inside JS strings, then `node --check build-data.js`.
+- **Warmth lines (partnership tone):** `narration.introWarmth` (one sentence under the intro headline) and `narration.finaleWarmth` (one sentence between the finale CTA and replay, `<b>` on the close) are confident-partnership lines — never self-deprecating (no "we gave it our best shot"). Both render via `innerHTML` (trusted HTML: `<b>`/accent spans allowed) and are **guarded** — an absent key hides the element cleanly, so old builds that lack them don't break. The three warmth strings (these two + the dashboard's `{{FEEDBACK_CARD_BODY}}`) play **distinct rhetorical roles and must not repeat each other**: intro = "our deep dive into your world, excited to keep exploring together"; finale = "the start of a conversation, looking forward to continuing the research together"; dashboard card = the explicit two-sided feedback ask, closing on making it stronger together.
+- **TAM discipline:** `scan.universe` is the NARROW-ICP estimate that matches the scan query (the population that would pass all ICP criteria), **not** the broad market TAM. Funnel universe label = "est. in [Founder]'s ICP". `heroStats` = 5 stats leading with the ICP-TAM estimate; `finaleSub` restates the same number in prose. `scan.methodNote` (optional; replaces the generic scan-note when present) tells the full funnel story in plain language, **≤~40 words** (line count is viewport-dependent, so budget words not lines): TAM est. → surfaced & analyzed → strongest fits → curated to final N. Ground the TAM in a real bottom-up method, named in BUILD_NOTES.
+- **Tagline anti-duplication:** `founder.tagline` renders directly above `introHeadline`. If it would restate the headline, set it to `""` — beat 1 renders cleanly without it.
+- **Score parity on ties:** if Phase 7 broke composite ties with `composite` overrides in data.js, `companies[].score` here carries the identical numbers (see §3 "Breaking score ties"). Walkthrough shortlist and dashboard must agree. (Manual check — `universe` is a number and `finaleSub` is prose, so there's no automated equality gate; eyeball that they state the same figure.)
 
 ### Assets
 
 - `assets/logos/` (tool logos for the process act) copies from the template as-is.
+- `assets/primary-lockup.svg` is **mandatory** — both the walkthrough intro lockup and the dashboard topbar reference `./assets/primary-lockup.svg`. Copy the WHOLE `template/assets/` tree (never cherry-pick `logos/`); a missing file 404s the lockup on both pages. Verify it returns HTTP 200 (or exists on disk) before shipping.
 - `assets/dashboard-preview.png` is a screenshot of THIS build's finished dashboard, used by the hero's 3D preview. Capture it after the dashboard is populated (1600×1000, 2x). If it's missing the hero degrades gracefully (preview hides) - ship it anyway; the hero is much weaker without it.
 
 ### Self-check before shipping
@@ -733,3 +743,5 @@ Fill every key from the build's real artifacts (mapping is commented per-key in 
 3. `grep -i` the previous founder's name in build-data.js → 0 hits.
 4. Open `build.html?act=N` for N=0..9 - every scene renders with this build's data.
 5. Weights in `axes[]` sum to 100; `companies[0]` is the intended hero account (act 6 uses it).
+6. Warmth lines render under the headline / between finale CTA and replay when present, and disappear cleanly (no gap) when the keys are removed; `scan.methodNote` replaces the generic scan-note line.
+7. `heroStats` has exactly 5 entries leading with the TAM stat; `scan.universe` (narrow-ICP estimate) and `finaleSub` state the same figure; `founder.tagline` does not restate `introHeadline`.

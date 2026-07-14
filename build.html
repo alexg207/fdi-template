@@ -178,6 +178,9 @@ a{color:inherit;text-decoration:none;}
 .intro-head{font-family:var(--display);font-size:clamp(24px,2.7vw,37px);font-weight:600;letter-spacing:-.03em;line-height:1.24;
   max-width:880px;margin:0 auto;color:var(--text);}
 .intro-head b,.intro-head .accent{color:hsl(var(--acc));font-weight:600;}
+/* optional warmth line under the intro headline (narration.introWarmth) — trusted HTML, hidden when key absent */
+.intro-warmth{font-size:15px;color:var(--text-muted);max-width:620px;margin:18px auto 0;line-height:1.6;}
+.intro-warmth b{color:var(--text-mid);font-weight:600;}
 
 /* beat 2 — the dashboard pivot */
 .punch-beat{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
@@ -199,7 +202,7 @@ a{color:inherit;text-decoration:none;}
 .hstat{text-align:center;}
 .hstat .n{font-family:var(--mono);font-size:26px;font-weight:600;letter-spacing:-.02em;color:var(--amber-soft);line-height:1;}
 .hstat .l{font-size:12px;color:var(--text-muted);margin-top:7px;letter-spacing:.02em;}
-.preview-wrap{perspective:1300px;max-width:min(880px,calc((100vh - 520px)*1.7));margin:0 auto;}
+.preview-wrap{perspective:1300px;max-width:min(880px,max(280px,calc((100vh - 520px)*1.7)));margin:0 auto;}
 .preview{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--border-hot);
   transform:rotateX(32deg) scale(.94);transform-origin:center top;will-change:transform;
   box-shadow:0 0 0 1px hsl(var(--acc) / .18),0 40px 110px hsl(28 40% 2% / .75),0 0 90px hsl(var(--acc) / .16);}
@@ -342,7 +345,7 @@ a{color:inherit;text-decoration:none;}
 .term-head .td:nth-child(3){background:hsl(150 55% 45% / .8);}
 .term-head .tt{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint);margin-left:8px;display:flex;align-items:center;gap:8px;}
 .term-head .live{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:pulse 1.5s ease-in-out infinite;}
-.term-body{padding:12px 16px 14px;min-height:336px;font-family:var(--mono);font-size:12px;}
+.term-body{padding:12px 16px 14px;min-height:336px;max-height:60vh;overflow-y:auto;font-family:var(--mono);font-size:12px;}
 .tline2{display:flex;gap:10px;padding:5.5px 0;align-items:baseline;border-bottom:1px solid hsl(var(--nh) 11%);}
 .tline2 .tb{font-size:9px;font-weight:600;letter-spacing:.04em;padding:2px 7px;border-radius:4px;flex-shrink:0;}
 .tb.t1{background:hsl(150 55% 45% / .14);color:var(--ok);}
@@ -429,6 +432,9 @@ a{color:inherit;text-decoration:none;}
 .axis-mini{font-family:var(--mono);font-size:10.5px;color:var(--text-mid);background:hsl(var(--acc) / .09);border:1px solid hsl(var(--acc) / .26);border-radius:7px;padding:5px 12px;}
 .replay{font-size:13px;color:var(--text-faint);cursor:pointer;background:none;border:none;transition:color .15s;margin-top:18px;font-family:var(--sans);}
 .replay:hover{color:var(--text-mid);}
+/* optional warmth line between the endcard CTA and replay (narration.finaleWarmth) — specificity beats .endcard p; trusted HTML */
+.endcard p.fin-warmth{font-family:var(--display);font-size:17px;font-weight:500;letter-spacing:-.01em;color:var(--text-mid);max-width:600px;margin:34px auto 0;line-height:1.55;}
+.endcard p.fin-warmth b{color:hsl(var(--acc));font-weight:600;}
 
 /* ---------- end card ---------- */
 .endcard{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:84px 44px;text-align:center;position:relative;}
@@ -493,11 +499,11 @@ a{color:inherit;text-decoration:none;}
   .hero .sub{font-size:14.5px;margin-bottom:20px;}
   .hero-stats{margin-bottom:28px;}
   .hstat .n{font-size:22px;}
-  .preview-wrap{max-width:min(720px,calc((100vh - 470px)*1.7));}
+  .preview-wrap{max-width:min(720px,max(280px,calc((100vh - 470px)*1.7)));}
 }
 @media (max-height:760px){
   .hero .sub{display:none;}
-  .preview-wrap{max-width:min(600px,calc((100vh - 380px)*1.7));}
+  .preview-wrap{max-width:min(600px,max(280px,calc((100vh - 380px)*1.7)));}
   .hero-stats{gap:26px;}
 }
 @media (max-width:900px){
@@ -596,6 +602,7 @@ a{color:inherit;text-decoration:none;}
         <div class="intro-word"><span id="introName"></span><span class="ix">×</span><img class="ip-lockup" src="./assets/primary-lockup.svg" alt="Primary"></div>
         <div class="intro-tag" id="introTag"></div>
         <h1 class="intro-head" id="introHead"></h1>
+        <p class="intro-warmth" id="introWarmth"></p>
       </div>
       <div class="punch-beat hero" id="punchBeat">
         <div class="hero-badge"><span class="pulse"></span> <span id="heroBadge"></span></div>
@@ -754,6 +761,7 @@ a{color:inherit;text-decoration:none;}
   <div class="cta-row">
     <a class="cta" href="./dashboard.html">Enter the Intelligence Dashboard <svg viewBox="0 0 24 24"><polyline points="9,6 15,12 9,18"/></svg></a>
   </div>
+  <p class="fin-warmth" id="finWarmth"></p>
   <button class="replay" id="replayBtn">Replay the walkthrough</button>
   <div class="keyhint"><kbd>space</kbd> play act · <kbd>←</kbd><kbd>→</kbd> jump acts · <kbd>esc</kbd> dashboard</div>
 </section>
@@ -874,6 +882,9 @@ a{color:inherit;text-decoration:none;}
   document.getElementById('introName').textContent=NAME;
   document.getElementById('introTag').textContent=D.founder.tagline||'';
   document.getElementById('introHead').innerHTML=N.introHeadline||D.founder.oneLine||'';
+  // optional warmth line (narration.introWarmth) — trusted HTML like introHeadline; hidden when the key is absent
+  var iw=document.getElementById('introWarmth');
+  if(iw){if(N.introWarmth)iw.innerHTML=N.introWarmth;else iw.style.display='none';}
   // the wow layer: flat layered fallback first; the WebGL module below swaps
   // in a true 3D neon-tube sculpture of the same mark when it loads.
   // hero3d:"snow" retires the central mark entirely - the atmosphere canvas
@@ -984,6 +995,9 @@ a{color:inherit;text-decoration:none;}
     '<div class="fstat rv" data-at="0.56"><div class="n">'+fmt(D.scan.universe)+'</div><div class="l">'+(FUN.universe||'in the universe')+'</div></div>'+farrow('0.6')+
     '<div class="fstat rv" data-at="0.62"><div class="n">'+fmt(D.scan.groups)+'</div><div class="l">'+(FUN.groups||'clear the structural gate')+'</div></div>'+farrow('0.66')+
     '<div class="fstat match rv" data-at="0.68"><div class="n">'+D.scan.matched+'</div><div class="l">'+(FUN.matched||'high-fit matches')+'</div></div>';
+  // optional methodology note (scan.methodNote) — replaces the generic scan-note line when present
+  var mn=document.querySelector('#s-scan .scan-note');
+  if(mn&&D.scan.methodNote)mn.textContent=D.scan.methodNote;
   document.getElementById('excludes').innerHTML=
     '<div class="ex-lead rv" data-at="0.78">'+(N.excludeLabel||'Excluded up front')+'</div>'+
     D.scan.excludes.map(function(e,i){return '<span class="ex" data-strike="'+(0.8+i*0.012).toFixed(3)+'">'+e+'</span>';}).join('');
@@ -1028,6 +1042,9 @@ a{color:inherit;text-decoration:none;}
   document.getElementById('finMark').innerHTML=D.founder.logoSvg;
   document.getElementById('finSub').textContent=N.finaleSub||('From '+fmt(D.scan.universe)+' '+D.scan.universeLabel+' down to a ranked shortlist - each account with its score, its evidence, and a warm path in where we have one.');
   document.getElementById('finAxes').innerHTML=D.axes.map(function(a){return '<span class="axis-mini">'+a.name+'</span>';}).join('');
+  // optional warmth line (narration.finaleWarmth) — trusted HTML; hidden when the key is absent
+  var fw=document.getElementById('finWarmth');
+  if(fw){if(N.finaleWarmth)fw.innerHTML=N.finaleWarmth;else fw.style.display='none';}
   document.getElementById('replayBtn').addEventListener('click',function(){window.scrollTo(0,0);});
 
   /* ---- act 8: network map (ported from build.html; wheel-zoom removed so it

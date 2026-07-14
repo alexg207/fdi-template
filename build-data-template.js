@@ -26,7 +26,7 @@ window.BUILD_DATA = {
     cobrand: "Primary",
     fileNo: "",                          // optional "FDI-###" badge; "" hides it
     hero3d: "",                          // optional named 3D object for the opener ("lantern" available); omit = neon-tube render of logoSvg
-    tagline: "{{PRODUCT_TAGLINE}}",
+    tagline: "{{PRODUCT_TAGLINE}}",       // renders above introHeadline in beat 1; set "" if it would restate the headline (anti-duplication)
     oneLine: "{{PRODUCT_ONELINE}}",
     logoSvg: '{{PRODUCT_LOGO_SVG}}'      // inline SVG, stroke-based, 24x24 viewBox
     // themeAccent (optional): per-founder override of the Ember default.
@@ -39,13 +39,15 @@ window.BUILD_DATA = {
   //      in build.html but shipping fallbacks fails the Phase 10 check) -------
   narration: {
     introHeadline: "",                   // beat 1 product headline (accent spans allowed: <span class="accent">...</span>); falls back to founder.oneLine
+    introWarmth: "",                     // optional warmth line under the headline; 1 sentence, partnership tone (Rule #18); <b> ok; hidden when absent
     heroTitle: ["", ""],                 // 2 lines. Line 1 = scale in; line 2 = quality out
     heroSub: "",                         // may contain <b>...</b>; ends "Scroll to watch it run."
-    heroStats: [                         // exactly 4; all values REAL
-      { n: 0, label: "" },               // e.g. universe scanned
+    heroStats: [                         // exactly 5; all values REAL; lead with the narrow-ICP TAM estimate (== scan.universe)
+      { n: 0, label: "TAM (US + Canada)" },   // scan.universe — the ICP-TAM estimate; adjust geo label if not US/Canada
+      { n: 0, label: "companies analyzed" },
       { n: 0, label: "custom signals" },
       { n: 0, label: "accounts curated" },
-      { n: 0, label: "named buyers" }
+      { n: 0, label: "named contacts" }
     ],
     icp: "",                             // act 02 narration, <=2 sentences
     signals: "",                         // act 03
@@ -53,7 +55,8 @@ window.BUILD_DATA = {
     score: "",                           // act 06 — mention founder weights; score orders, not qualifies
     shortlist: "",                       // act 07 — quality framing
     network: "",                         // act 08 — Primary's network, real relationships
-    finaleSub: "",                       // finale — universe -> shortlist -> warm path
+    finaleSub: "",                       // finale — universe -> shortlist -> warm path; restates the scan.universe TAM number in prose
+    finaleWarmth: "",                    // optional warmth line between the finale CTA and replay; 1 sentence, <b> on the close (Rule #18); hidden when absent
     scanCollapsedLabel: "high-fit matches we research in depth",
     excludeLabel: ""                     // "Excluded up front: ..." one line
   },
@@ -88,10 +91,11 @@ window.BUILD_DATA = {
 
   // ---- act 04: scan the market ----------------------------------------------
   scan: {
-    universeLabel: "",                   // plural noun phrase, e.g. "franchised dealership rooftops"
-    universe: 0, groups: 0, matched: 0, curated: 10, partners: 0,
+    universeLabel: "",                   // plural noun phrase, e.g. "companies in [Founder]'s ICP, est."
+    universe: 0, groups: 0, matched: 0, curated: 10, partners: 0,   // universe = NARROW-ICP estimate matching the scan query, NOT broad TAM
     query: "",                           // the Webset search query, human-readable
-    funnel: { universe: "", groups: "", matched: "high-fit matches" },  // 3 short stat labels
+    funnel: { universe: "est. in [Founder]'s ICP", groups: "", matched: "high-fit matches" },  // 3 short stat labels
+    methodNote: "",                      // optional; replaces the generic scan-note. Full funnel story in plain language, <=~40 words: TAM est. -> surfaced & analyzed -> strongest fits -> curated to final N
     excludes: [ "" ]                     // competitor/vendor names struck out on screen
   },
 

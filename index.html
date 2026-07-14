@@ -455,6 +455,10 @@ a{color:inherit;}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important;}
 }
 [data-theme="light"] .pv-lockup-d{filter:invert(1);}
+/* end-of-dashboard feedback card ({{FEEDBACK_CARD_BODY}}) — persists across tabs; theme-mapped tokens so light mode works for free */
+.fin-outro-dash{margin:48px auto 0;max-width:560px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px 28px;}
+.fin-outro-dash .fod-title{font-size:16px;font-weight:600;color:var(--text);letter-spacing:-.01em;margin-bottom:8px;}
+.fin-outro-dash .fod-body{font-size:13px;color:var(--text-muted);line-height:1.6;margin:0;}
 </style>
 </head>
 <body>
@@ -562,6 +566,12 @@ a{color:inherit;}
     <div id="detail-content"></div>
   </div>
 
+  <!-- end-of-dashboard feedback card — outside the view-* divs so it persists across every tab -->
+  <div class="fin-outro-dash">
+    <div class="fod-title">How’d we do?</div>
+    <p class="fod-body">{{FEEDBACK_CARD_BODY}}</p>
+  </div>
+
 </main>
 
 <script src="data.js"></script>
@@ -667,7 +677,7 @@ function timeAgo(idx){
 
 // Compute aggregate signal score (0-100) from 4 sub-scores, each 0-5.
 function computeSignal(c){
-  if (typeof c.composite === 'number') return c.composite;  // Phase-7 evidence-strength tiebreak (coarse 0-5 axes tie easily; a five-way 85 looks fake)
+  if (Number.isFinite(c.composite)) return Math.max(0, Math.min(100, c.composite));  // Phase-7 evidence-strength tiebreak (coarse 0-5 axes tie easily; a five-way 85 looks fake); clamped 0-100, guards NaN/Infinity/out-of-range
   var pain = c.competitive_distress || 0;
   var res = c.data_residency || 0;
   var trig = c.signal_score || 0;
