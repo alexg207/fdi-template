@@ -30,7 +30,9 @@ window.BUILD_DATA = {
     oneLine: "{{PRODUCT_ONELINE}}",
     logoSvg: '{{PRODUCT_LOGO_SVG}}'      // inline SVG, stroke-based, 24x24 viewBox
     // themeAccent (optional): per-founder override of the Ember default.
-    // Omit entirely to keep Ember. Values are raw HSL triples (no hsl() wrapper).
+    // AUTO-FILLED by the skill (Phase 8c) from the chosen preset in theme-presets.json
+    // when config.theme_color is set; omit to keep Ember. Hand-set to override a preset.
+    // Values are raw HSL triples (no hsl() wrapper).
     // themeAccent: { acc: "26 96% 58%", accSoft: "33 100% 68%", accDeep: "20 88% 46%",
     //                acc2: "262 80% 60%", bgh: "240 14% 5%", nh: "240 8%" }
   },
