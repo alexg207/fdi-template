@@ -511,6 +511,8 @@ a{color:inherit;}
 .nm-badge.aff{background:var(--tag-bg);color:var(--tag-text);border:1px solid var(--tag-border);}
 .nm-badge.li{background:var(--surface3);color:var(--text-muted);border:1px solid var(--border-mid);}
 .nm-badge.sen{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);}
+.nm-badge.err{background:color-mix(in srgb, var(--q-high) 14%, var(--surface));color:var(--q-high-d);border:1px solid color-mix(in srgb, var(--q-high) 40%, transparent);}
+.network-row.nm-err{border-left:2px solid var(--q-high);}
 
 .nm-empty-state{border:1px dashed var(--border-mid);border-radius:10px;background:var(--surface);padding:40px 28px;text-align:center;}
 .nm-empty-state .nm-es-icon{width:40px;height:40px;margin:0 auto 14px;color:var(--text-faint);}
@@ -1345,7 +1347,6 @@ function getAllCompaniesFlat(){
 // an IIFE so only the four entry points below leak into the global scope.
 (function(){
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-  function jsq(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
   function trunc(s,n){s=String(s==null?'':s);return s.length>n?s.slice(0,n-1)+'…':s;}
 
   function nd(){return window.NETWORK_DATA || null;}
@@ -1358,8 +1359,18 @@ function getAllCompaniesFlat(){
   function domainFor(c){ if(c.domain) return c.domain; var m=meta(c.company); return m?m.domain:''; }
   function categoryFor(c){ var m=meta(c.company); return m?(m.subtitle||m.category||''):''; }
 
+  // any resolved paths at all (interaction OR linkedin-only) — used to decide whether to draw a graph
   function hasPaths(c){ return c.status==='resolved' && Array.isArray(c.paths) && c.paths.length>0; }
-  function isShown(c){ return c.status==='resolved' || c.status==='no_relationships'; }
+  // a WARM path = a real interaction path with a numeric score. LinkedIn-only (type:"linkedin", score:null) is never warm.
+  function isWarmPath(p){ return p && p.type==='interaction' && typeof p.score==='number'; }
+  function warmPaths(c){ return hasPaths(c) ? c.paths.filter(isWarmPath) : []; }
+  function hasWarm(c){ return warmPaths(c).length>0; }
+  function isError(c){ return c.status==='error'; }
+  // shown in the list: resolved, no_relationships, and error (surfaced distinctly). not_found is hidden.
+  function isShown(c){ return c.status==='resolved' || c.status==='no_relationships' || c.status==='error'; }
+
+  // only allow http(s) links; anything else (javascript:, data:, …) is dropped
+  function safeUrl(u){ return (typeof u==='string' && /^https?:\/\//i.test(u)) ? u : null; }
 
   // warmth tier from a 0-100 score; null => LinkedIn-only (never treated as warm)
   function tier(score){
@@ -1368,12 +1379,12 @@ function getAllCompaniesFlat(){
     if(score>=40) return {key:'mid', color:'var(--nm-w-mid)', dark:'var(--nm-w-mid-d)', label:'Mid'};
     return {key:'lo', color:'var(--nm-w-lo)', dark:'var(--nm-w-lo)', label:'Low'};
   }
+  // best WARMTH score for the company: only real interaction paths count. null when there are no warm paths.
   function bestScoreTier(c){
-    if(!hasPaths(c)) return null;
-    var b = (typeof c.best_score==='number') ? c.best_score : null;
-    if(b===null){ // fall back to max interaction score
-      c.paths.forEach(function(p){ if(typeof p.score==='number' && (b===null||p.score>b)) b=p.score; });
-    }
+    var wp=warmPaths(c);
+    if(wp.length===0) return null;
+    var b=null;
+    wp.forEach(function(p){ if(b===null||p.score>b) b=p.score; });
     return b;
   }
 
@@ -1448,19 +1459,24 @@ function getAllCompaniesFlat(){
     paths.forEach(function(p){ if(!(p.connector in connIdx)){ connIdx[p.connector]=connectors.length; connectors.push(p.connector); } });
 
     var W=880;
-    var rows=Math.max(paths.length, connectors.length);
-    var H=Math.max(320, rows*74 + 76);
-    var padTop=56, padBot=34;
-    function spread(n,i){ if(n<=1) return H/2; return padTop + i*((H-padTop-padBot)/(n-1)); }
+    // fixed vertical rhythm so nodes stay a constant, readable size no matter how many paths (up to the 25 cap).
+    var GAP=76, padTop=58, padBot=38;
+    var rows=Math.max(paths.length, connectors.length, 1);
+    var H=padTop + padBot + (rows-1)*GAP;           // full graph height (can be tall)
+    var VBH=Math.min(H, 640);                        // stable initial viewport window; pan/zoom reveals the rest
+    function spread(n,i,top,bot){ if(n<=1) return (top+bot)/2; return top + i*((bot-top)/(n-1)); }
     var xConn=96, xContact=W*0.5, xCo=W-118;
-    var yConn={}; connectors.forEach(function(n,i){ yConn[n]=spread(connectors.length,i); });
-    var yCo=H/2;
+    // connectors (few Primary hubs) anchored within the visible window; contacts spread across the full height
+    var yConn={}; connectors.forEach(function(n,i){ yConn[n]=spread(connectors.length,i,padTop,VBH-padBot); });
+    function yContact(i){ return spread(paths.length,i,padTop,H-padBot); }
+    var yCo=VBH/2;
+    var tall = H>VBH;
 
     var edges='', nodes='';
 
     // edges: connector -> contact, and contact -> company
     paths.forEach(function(p,i){
-      var yc=spread(paths.length,i);
+      var yc=yContact(i);
       var t=tier(p.score);
       var w = (p.score===null||p.score===undefined) ? 1.8 : (1.6 + (p.score/100)*3.4);
       var dash = (p.type==='linkedin' || p.score===null) ? ' stroke-dasharray="4 4"' : '';
@@ -1485,7 +1501,7 @@ function getAllCompaniesFlat(){
 
     // contact nodes
     paths.forEach(function(p,i){
-      var y=spread(paths.length,i);
+      var y=yContact(i);
       var t=tier(p.score);
       var dash=(p.type==='linkedin'||p.score===null)?' stroke-dasharray="3 3"':'';
       var scoreTxt=(p.score===null||p.score===undefined)?'LinkedIn':(p.score+'%');
@@ -1514,7 +1530,7 @@ function getAllCompaniesFlat(){
       '<text x="'+xContact+'" y="26" text-anchor="middle" class="nm-col-cap">Contact</text>' +
       '<text x="'+xCo+'" y="26" text-anchor="middle" class="nm-col-cap">Target</text>';
 
-    var svg='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet">' +
+    var svg='<svg viewBox="0 0 '+W+' '+VBH+'" preserveAspectRatio="xMidYMid meet">' +
       '<g class="nm-zoom">'+caps+edges+nodes+'</g></svg>';
 
     var legend='<div class="nm-legend">' +
@@ -1524,7 +1540,8 @@ function getAllCompaniesFlat(){
       '<div class="nm-legend-item"><span class="nm-legend-swatch li"></span>LinkedIn only</div>' +
       '</div>';
     var zoom='<div class="nm-zoom-btns"><button type="button" data-nmz="in" title="Zoom in">+</button><button type="button" data-nmz="out" title="Zoom out">−</button><button type="button" data-nmz="reset" title="Reset" style="font-size:11px;">⤢</button></div>';
-    return '<div class="nm-graph-wrap">'+svg+legend+zoom+'<div class="nm-controls-hint">drag to pan · scroll to zoom</div></div>';
+    var hint = tall ? ('showing top of '+paths.length+' paths · drag to pan · scroll to zoom') : 'drag to pan · scroll to zoom';
+    return '<div class="nm-graph-wrap">'+svg+legend+zoom+'<div class="nm-controls-hint">'+hint+'</div></div>';
   }
 
   function wireGraph(){
@@ -1562,13 +1579,16 @@ function getAllCompaniesFlat(){
     var paths=(c.paths||[]).slice();
     // strongest first; null-score (LinkedIn-only) always after scored paths
     paths.sort(function(a,b){
-      var as=(a.score===null||a.score===undefined), bs=(b.score===null||b.score===undefined);
+      var as=!isWarmPath(a), bs=!isWarmPath(b);
       if(as!==bs) return as?1:-1;
       if(as&&bs) return 0;
       return b.score-a.score;
     });
-    return '<div class="nm-paths-head">'+paths.length+' warm path'+(paths.length!==1?'s':'')+
-      (typeof c.total_paths==='number' && c.total_paths>paths.length ? ' · '+c.total_paths+' in Affinity' : '')+'</div>' +
+    var warm=paths.filter(isWarmPath).length, liOnly=paths.length-warm;
+    var head=warm+' warm path'+(warm!==1?'s':'');
+    if(liOnly>0) head+=' · '+liOnly+' LinkedIn-only';
+    if(typeof c.total_paths==='number' && c.total_paths>paths.length) head+=' · '+c.total_paths+' in Affinity';
+    return '<div class="nm-paths-head">'+head+'</div>' +
       paths.map(function(p){
         var t=tier(p.score);
         var isLi=(p.type==='linkedin'||p.score===null);
@@ -1580,7 +1600,8 @@ function getAllCompaniesFlat(){
         }
         if(isLi){ badges += '<span class="nm-badge li">LinkedIn only</span>'; }
         if(p.seniority){ badges += '<span class="nm-badge sen">'+esc(p.seniority)+'</span>'; }
-        var li = p.linkedin_url ? '<a class="nm-li-link" href="'+esc(p.linkedin_url)+'" target="_blank" rel="noopener">in ↗</a>' : '';
+        var liHref=safeUrl(p.linkedin_url);
+        var li = liHref ? '<a class="nm-li-link" href="'+esc(liHref)+'" target="_blank" rel="noopener">in ↗</a>' : '';
         var last = relDate(p.last_contact);
         var metaBits=[];
         if(p.at_target_company) metaBits.push('@ '+esc(c.company));
@@ -1638,7 +1659,7 @@ function getAllCompaniesFlat(){
 
     rows.sort(function(a,b){
       if(state.nmSort==='name') return (a.company||'').localeCompare(b.company||'');
-      var ap=hasPaths(a)?0:1, bp=hasPaths(b)?0:1;
+      var ap=hasWarm(a)?0:1, bp=hasWarm(b)?0:1;
       if(ap!==bp) return ap-bp;
       var abs=bestScoreTier(a)||-1, bbs=bestScoreTier(b)||-1;
       if(abs!==bbs) return bbs-abs;
@@ -1646,7 +1667,7 @@ function getAllCompaniesFlat(){
     });
 
     var cnt=document.getElementById('nm-count');
-    var withPath=rows.filter(hasPaths).length;
+    var withPath=rows.filter(hasWarm).length;
     if(cnt) cnt.textContent = rows.length+' account'+(rows.length!==1?'s':'')+' · '+withPath+' with paths';
 
     var list=document.getElementById('network-list');
@@ -1656,17 +1677,32 @@ function getAllCompaniesFlat(){
       return;
     }
     list.innerHTML=rows.map(function(c){
-      var hp=hasPaths(c);
+      var hw=hasWarm(c);            // warm-path company: at least one scored interaction path
+      var hp=hasPaths(c);           // has any resolved paths at all (may be LinkedIn-only)
+      var err=isError(c);
       var b=bestScoreTier(c);
       var isActive=state.nmSelected===c.company;
       var dom=domainFor(c);
-      var chipCls = {hi:'high',mid:'med',lo:'low',li:'low'}[tier(b).key] || 'med';
-      var chip = hp ? '<span class="dt-tier-chip '+chipCls+'" style="font-size:8.5px;padding:2px 6px;flex-shrink:0;"><span class="chip-dot"></span>'+b+'%</span>'
-                    : '<span class="nm-badge li" style="flex-shrink:0;">no paths</span>';
-      var info = hp
-        ? (c.paths.length+' path'+(c.paths.length!==1?'s':'')+(typeof c.total_paths==='number'&&c.total_paths>c.paths.length?' · '+c.total_paths+' total':''))
-        : 'Primary knows no one here yet';
-      return '<div class="network-row'+(isActive?' active':'')+(hp?'':' nm-nopath')+'" data-nm-name="'+esc(c.company)+'" onclick="selectNetworkCompany(\''+jsq(c.company)+'\')">' +
+      var chip, info, infoColor;
+      if(hw){
+        var chipCls={hi:'high',mid:'med',lo:'low'}[tier(b).key]||'med';
+        chip='<span class="dt-tier-chip '+chipCls+'" style="font-size:8.5px;padding:2px 6px;flex-shrink:0;"><span class="chip-dot"></span>'+b+'%</span>';
+        info=warmPaths(c).length+' warm path'+(warmPaths(c).length!==1?'s':'')+(typeof c.total_paths==='number'&&c.total_paths>c.paths.length?' · '+c.total_paths+' total':'');
+        infoColor='var(--green-dark)';
+      } else if(err){
+        chip='<span class="nm-badge err" style="flex-shrink:0;">unavailable</span>';
+        info='Fetch error — could not resolve';
+        infoColor='var(--q-high-d)';
+      } else if(hp){
+        chip='<span class="nm-badge li" style="flex-shrink:0;">LinkedIn only</span>';
+        info='LinkedIn-only connections · no warm path';
+        infoColor='var(--text-faint)';
+      } else {
+        chip='<span class="nm-badge li" style="flex-shrink:0;">no paths</span>';
+        info='Primary knows no one here yet';
+        infoColor='var(--text-faint)';
+      }
+      return '<div class="network-row'+(isActive?' active':'')+(hw?'':' nm-nopath')+(err?' nm-err':'')+'" data-nm-name="'+esc(c.company)+'">' +
         '<div style="display:flex;align-items:center;gap:8px;">' +
           (dom?'<img src="'+esc(faviconUrl(dom))+'" style="width:22px;height:22px;border-radius:5px;border:1px solid var(--border);flex-shrink:0;" onerror="this.style.opacity=0">':'') +
           '<div style="flex:1;min-width:0;">' +
@@ -1677,9 +1713,13 @@ function getAllCompaniesFlat(){
             '<div style="font-size:10px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-mono);">'+esc(categoryFor(c)||dom||'')+'</div>' +
           '</div>' +
         '</div>' +
-        '<div class="network-conn-info" style="color:'+(hp?'var(--green-dark)':'var(--text-faint)')+';">'+esc(info)+'</div>' +
+        '<div class="network-conn-info" style="color:'+infoColor+';">'+esc(info)+'</div>' +
       '</div>';
     }).join('');
+    // attach listeners instead of inline onclick with interpolated names (company names may contain quotes)
+    list.querySelectorAll('.network-row').forEach(function(el){
+      el.addEventListener('click', function(){ selectNetworkCompany(el.dataset.nmName); });
+    });
 
     if(state.nmSelected && rows.find(function(c){return c.company===state.nmSelected;})){
       selectNetworkCompany(state.nmSelected);
@@ -1701,7 +1741,7 @@ function getAllCompaniesFlat(){
     }
     var dom=domainFor(c);
     var b=bestScoreTier(c);
-    var openBtn = meta(c.company) ? '<button class="btn btn-ghost" style="height:30px;padding:0 12px;font-size:11.5px;" onclick="openDetail(\''+jsq(c.company)+'\')">Open profile ↗</button>' : '';
+    var openBtn = meta(c.company) ? '<button class="btn btn-ghost" data-nm-open="'+esc(c.company)+'" style="height:30px;padding:0 12px;font-size:11.5px;">Open profile ↗</button>' : '';
     var head =
       '<div class="nm-panel-head">' +
         (dom?'<img src="'+esc(faviconUrl(dom))+'" style="width:38px;height:38px;border-radius:7px;border:1px solid var(--border);" onerror="this.style.opacity=0">':'') +
@@ -1713,15 +1753,25 @@ function getAllCompaniesFlat(){
         openBtn +
       '</div>';
 
+    function wireOpen(){ var ob=panel.querySelector('[data-nm-open]'); if(ob) ob.addEventListener('click', function(){ openDetail(ob.dataset.nmOpen); }); }
+
+    if(isError(c)){
+      panel.innerHTML = head + emptyStateHtml('Account unavailable',
+        'Affinity could not resolve <strong>'+esc(c.company)+'</strong> for this build (fetch error). Warm paths could not be computed — this is different from having no relationships. Re-run the build to try again.');
+      wireOpen();
+      return;
+    }
     if(!hasPaths(c)){
       var msg = c.status==='no_relationships'
         ? 'The Primary network has <strong>no mapped relationships</strong> at or near '+esc(c.company)+' yet. There are no warm paths to surface — this account would need a cold approach or a new introduction.'
         : 'This account could not be resolved in Affinity, so no warm paths are available.';
       panel.innerHTML = head + emptyStateHtml('No warm paths yet', msg);
+      wireOpen();
       return;
     }
 
     panel.innerHTML = head + buildGraph(c) + rankedList(c);
+    wireOpen();
     wireGraph();
   }
 
