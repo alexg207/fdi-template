@@ -512,7 +512,12 @@ a{color:inherit;}
 #view-network .nm-score,#view-network .nm-stat-val,#view-network .nm-pm-val{font-family:var(--font-num);font-variant-numeric:normal;letter-spacing:0;}
 .nm-legend-swatch{width:17px;flex-shrink:0;height:0;border-top:3px solid var(--nm-w-mid);}
 /* node-click detail card (overlay inside the graph) */
-.nm-detail{position:absolute;top:12px;right:12px;width:274px;max-height:calc(100% - 24px);overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 16px;box-shadow:0 10px 30px rgba(0,0,0,.30);z-index:6;}
+.nm-detail{position:absolute;top:12px;right:12px;width:288px;max-height:calc(100% - 24px);overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 18px 15px 16px;box-shadow:0 10px 30px rgba(0,0,0,.30);z-index:6;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:var(--border-mid) transparent;}
+.nm-detail::-webkit-scrollbar{width:6px;}
+.nm-detail::-webkit-scrollbar-thumb{background:var(--border-mid);border-radius:9999px;}
+.nm-detail::-webkit-scrollbar-track{background:transparent;margin:10px 0;}
+/* long affiliation badges wrap instead of running under the scrollbar */
+.nm-detail .nm-badge{white-space:normal;text-align:left;line-height:1.45;}
 .nm-d-close{position:absolute;top:7px;right:11px;background:none;border:none;color:var(--text-muted);font-size:19px;line-height:1;cursor:pointer;padding:2px;}
 .nm-d-close:hover{color:var(--text);}
 .nm-d-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px;padding-right:16px;}
