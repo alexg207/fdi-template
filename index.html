@@ -501,6 +501,7 @@ a{color:inherit;}
 .nm-legend-row{display:flex;flex-wrap:wrap;gap:3px 11px;}
 .nm-legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text-mid);}
 .nm-legend-note{font-size:9.5px;color:var(--text-faint);line-height:1.35;}
+.nm-legend-hint{font-size:9.5px;color:var(--text-faint);margin-top:5px;padding-top:5px;border-top:1px solid var(--border-soft);}
 .nm-legend-swatch{width:16px;flex-shrink:0;height:0;border-top:3px solid var(--nm-w-mid);}
 .nm-legend-swatch.hi{border-top-color:var(--nm-w-hi);}
 .nm-legend-swatch.mid{border-top-color:var(--nm-w-mid);}
@@ -1579,7 +1580,10 @@ function getAllCompaniesFlat(){
     var svg='<svg viewBox="0 '+vy0.toFixed(0)+' '+W+' '+vbh.toFixed(0)+'" preserveAspectRatio="xMidYMid meet">' +
       '<g class="nm-zoom">'+arcs+edges+centerNode+nodes+hubs+'</g></svg>';
     var zoom='<div class="nm-zoom-btns"><button type="button" data-nmz="in" title="Zoom in">+</button><button type="button" data-nmz="out" title="Zoom out">−</button><button type="button" data-nmz="reset" title="Reset" style="font-size:11px;">⤢</button></div>';
-    return '<div class="nm-graph-wrap">'+svg+legendHtml+zoom+'<div class="nm-controls-hint">'+esc(hintText||'')+'</div></div>';
+    // fold the interaction hint into the legend box (its own line) so there is no
+    // separate floating text to collide with the legend or the graph.
+    var legendFull = hintText ? legendHtml.replace(/<\/div>\s*$/, '<div class="nm-legend-hint">'+esc(hintText)+'</div></div>') : legendHtml;
+    return '<div class="nm-graph-wrap">'+svg+legendFull+zoom+'</div>';
   }
 
   // company-centric: target company at center, Primary connectors as hubs
@@ -1594,7 +1598,7 @@ function getAllCompaniesFlat(){
     });
     return radialGraph({label:c.company, domain:domainFor(c), initials:initials(c.company)}, groups,
       warmthLegend('Spoke to target = connector','works at the target company'),
-      paths.length+' path'+(paths.length!==1?'s':'')+' · click a connector to see all their contacts · drag to pan');
+      'Click a connector for their full network · drag to pan');
   }
 
   // connector-centric: the Primary PERSON at center, the ICP COMPANIES they reach
@@ -1607,8 +1611,8 @@ function getAllCompaniesFlat(){
           tooltip:p.contact_name+(p.contact_title?' — '+p.contact_title:'')+' · '+(p.score===null?'LinkedIn only':'warmth '+p.score)+' · at '+co.company }; }) };
     });
     return radialGraph({label:conn.name, domain:null, initials:initials(conn.name)}, groups,
-      warmthLegend('spoke from '+esc(fname(conn.name))+' = a company they reach','contact works at that company'),
-      conn.total+' contact'+(conn.total!==1?'s':'')+' across '+conn.companies.length+' compan'+(conn.companies.length!==1?'ies':'y')+' · click a company · drag to pan');
+      warmthLegend('Spoke from '+esc(fname(conn.name))+' = a company they reach','contact works at that company'),
+      'Click a company to focus it · drag to pan');
   }
 
   function wireGraph(){
