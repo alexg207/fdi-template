@@ -503,8 +503,9 @@ a{color:inherit;}
 #view-network, #view-network *{font-family:var(--font-sans);}
 /* boxed legend as a horizontal bar ABOVE the graph — boxed look, never overlaps
    nodes at any density. */
-.nm-legend{display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:12px 15px;margin-bottom:12px;border:1px solid var(--border);border-radius:9px;background:var(--surface);}
-.nm-legend-code{display:flex;flex-wrap:wrap;align-items:center;gap:9px 18px;width:100%;}
+.nm-legend{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:12px 15px;margin-bottom:12px;border:1px solid var(--border);border-radius:9px;background:var(--surface);}
+.nm-legend-text{display:flex;flex-direction:column;gap:9px;flex:1;min-width:0;}
+.nm-legend-code{display:flex;flex-wrap:wrap;align-items:center;gap:9px 18px;}
 .nm-legend-meta{width:100%;}
 .nm-lg-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);}
 .nm-lg-div{width:1px;height:16px;background:var(--border);}
@@ -647,7 +648,7 @@ a{color:inherit;}
 /* ranked path list */
 .nm-paths-head{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-faint);margin:4px 0 10px;scroll-margin-top:88px;}
 /* map / list view toggle — wayfinding so people know the list below the map exists */
-.nm-legend-toggle{margin-left:auto;}
+.nm-legend-toggle{flex-shrink:0;}
 .nm-viewseg{display:inline-flex;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:3px;gap:2px;}
 .nm-viewseg-btn{display:inline-flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--text-muted);font-family:var(--font-sans);font-size:12.5px;font-weight:600;padding:6px 13px;border-radius:6px;cursor:pointer;transition:background 120ms,color 120ms;}
 .nm-viewseg-btn:hover{color:var(--text);}
@@ -1723,17 +1724,19 @@ function getAllCompaniesFlat(){
     return 8; }
   function warmthLegend(spokeNote, ringNote){
     return '<div class="nm-legend">' +
-      '<div class="nm-legend-code">' +
-        '<span class="nm-lg-title">Warmth</span>' +
-        '<span class="nm-legend-item"><span class="nm-legend-swatch hi"></span>75+</span>' +
-        '<span class="nm-legend-item"><span class="nm-legend-swatch mid"></span>40–74</span>' +
-        '<span class="nm-legend-item"><span class="nm-legend-swatch lo"></span>Low</span>' +
-        '<span class="nm-legend-item"><span class="nm-legend-swatch li"></span>LinkedIn only</span>' +
-        '<span class="nm-lg-div"></span>' +
-        '<span class="nm-legend-item"><span class="nm-legend-swatch conn"></span>'+spokeNote+'</span>' +
-        '<div class="nm-legend-toggle">'+viewToggle()+'</div>' +
+      '<div class="nm-legend-text">' +
+        '<div class="nm-legend-code">' +
+          '<span class="nm-lg-title">Warmth</span>' +
+          '<span class="nm-legend-item"><span class="nm-legend-swatch hi"></span>75+</span>' +
+          '<span class="nm-legend-item"><span class="nm-legend-swatch mid"></span>40–74</span>' +
+          '<span class="nm-legend-item"><span class="nm-legend-swatch lo"></span>Low</span>' +
+          '<span class="nm-legend-item"><span class="nm-legend-swatch li"></span>LinkedIn only</span>' +
+          '<span class="nm-lg-div"></span>' +
+          '<span class="nm-legend-item"><span class="nm-legend-swatch conn"></span>'+spokeNote+'</span>' +
+        '</div>' +
+        '<div class="nm-legend-meta"><span class="nm-legend-note">size = seniority · ring = '+ringNote+' · click a dot for details</span></div>' +
       '</div>' +
-      '<div class="nm-legend-meta"><span class="nm-legend-note">size = seniority · ring = '+ringNote+' · click a dot for details</span></div>' +
+      '<div class="nm-legend-toggle">'+viewToggle()+'</div>' +
       '</div>';
   }
 
