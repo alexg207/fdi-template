@@ -15,8 +15,9 @@ export default function middleware(request) {
     let decoded = '';
     try { decoded = atob(header.slice(6)); } catch (e) { decoded = ''; }
     const i = decoded.indexOf(':');
+    const user = i >= 0 ? decoded.slice(0, i) : '';
     const pass = i >= 0 ? decoded.slice(i + 1) : '';
-    if (pass === expected) return; // authorized — continue to the static asset
+    if (user === 'primary' && pass === expected) return; // authorized — continue to the static asset
   }
   return new Response('Authentication required.', {
     status: 401,

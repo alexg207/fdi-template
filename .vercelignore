@@ -1,0 +1,14 @@
+/*
+!/assets
+!/assets/**
+!/index.html
+!/dashboard.html
+!/data.js
+!/network-data.js
+!/build-data.js
+!/middleware.js
+!/vercel.json
+!/package.json
+!/favicon.ico
+!/favicon.svg
+!/robots.txt
