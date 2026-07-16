@@ -102,10 +102,10 @@ a{color:inherit;}
 .product-name{font-family:var(--font-display);font-size:16px;font-weight:600;letter-spacing:-.005em;color:var(--text);}
 .env-pill{font-size:11px;color:var(--text-muted);font-weight:500;background:var(--surface2);padding:3px 8px;border-radius:4px;letter-spacing:.02em;}
 .tab-nav{display:flex;gap:0;align-self:stretch;align-items:stretch;}
-.tab-link{display:flex;align-items:center;padding:0 16px;font-size:13px;font-weight:500;text-decoration:none;border-bottom:2px solid transparent;transition:all 150ms;cursor:pointer;color:var(--text-muted);background:transparent;border-top:none;border-left:none;border-right:none;font-family:inherit;letter-spacing:-.005em;gap:8px;}
+.tab-link{display:flex;align-items:center;padding:0 18px;font-size:15px;font-weight:600;text-decoration:none;border-bottom:2px solid transparent;transition:all 150ms;cursor:pointer;color:var(--text-mid);background:transparent;border-top:none;border-left:none;border-right:none;font-family:inherit;letter-spacing:-.01em;gap:8px;}
 .tab-link:hover{color:var(--text);}
-.tab-link.active{color:var(--purple-dark);border-bottom-color:var(--purple);font-weight:600;}
-.tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:16px;padding:0 5px;border-radius:9999px;background:var(--surface2);color:var(--text-muted);font-size:10px;font-weight:500;font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+.tab-link.active{color:var(--purple-dark);border-bottom-color:var(--purple);font-weight:700;}
+.tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 6px;border-radius:9999px;background:var(--surface2);color:var(--text-muted);font-size:11px;font-weight:600;font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
 .tab-link.active .tab-count{background:var(--purple-tint);color:var(--purple-dark);}
 .shell-right{display:flex;align-items:center;gap:14px;}
 .partner-mark{font-family:var(--font-sans);font-size:13px;font-weight:600;color:var(--text);letter-spacing:-.01em;display:flex;align-items:center;gap:6px;}
@@ -147,9 +147,9 @@ a{color:inherit;}
 
 /* === PAGE TABS (below header) === */
 .page-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:24px;gap:0;}
-.page-tab{padding:12px 22px;font-size:13px;font-weight:500;cursor:pointer;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--text-muted);font-family:inherit;letter-spacing:-.005em;display:flex;align-items:center;gap:8px;transition:color 120ms;}
+.page-tab{padding:13px 22px;font-size:15px;font-weight:600;cursor:pointer;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--text-mid);font-family:inherit;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;transition:color 120ms;}
 .page-tab:hover{color:var(--text);}
-.page-tab.active{color:var(--purple-dark);border-bottom-color:var(--purple);font-weight:600;}
+.page-tab.active{color:var(--purple-dark);border-bottom-color:var(--purple);font-weight:700;}
 .page-tab .tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:16px;padding:0 5px;border-radius:9999px;background:var(--surface2);color:var(--text-muted);font-size:10px;font-weight:500;font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
 .page-tab.active .tab-count{background:var(--purple-tint);color:var(--purple-dark);}
 
@@ -475,7 +475,7 @@ a{color:inherit;}
 .nm-panel-metric .nm-pm-val{font-family:var(--font-mono);font-size:22px;font-weight:600;color:var(--green-dark);line-height:1;font-variant-numeric:tabular-nums;}
 .nm-panel-metric .nm-pm-lbl{font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-top:3px;}
 
-.nm-graph-wrap{position:relative;border:1px solid var(--border);border-radius:8px;background:var(--bg);height:560px;overflow:hidden;margin-bottom:18px;}
+.nm-graph-wrap{position:relative;border:1px solid var(--border);border-radius:8px;background:var(--bg);height:560px;overflow:hidden;margin-bottom:18px;scroll-margin-top:76px;}
 .nm-cnode{cursor:default;}
 .nm-hub-click{cursor:pointer;}
 /* warmth colors applied via CSS classes, not SVG fill/stroke attributes:
@@ -636,7 +636,14 @@ a{color:inherit;}
 .nm-legend-swatch.conn{border-top:3px solid var(--text-muted);}
 
 /* ranked path list */
-.nm-paths-head{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-faint);margin:4px 0 10px;}
+.nm-paths-head{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-faint);margin:4px 0 10px;scroll-margin-top:88px;}
+/* map / list view toggle — wayfinding so people know the list below the map exists */
+.nm-viewbar{display:flex;justify-content:flex-end;margin:2px 0 10px;}
+.nm-viewseg{display:inline-flex;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:3px;gap:2px;}
+.nm-viewseg-btn{display:inline-flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--text-muted);font-family:var(--font-sans);font-size:12.5px;font-weight:600;padding:6px 13px;border-radius:6px;cursor:pointer;transition:background 120ms,color 120ms;}
+.nm-viewseg-btn:hover{color:var(--text);}
+.nm-viewseg-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.28);}
+.nm-viewseg-btn svg{width:13px;height:13px;}
 .nm-path-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);margin-bottom:9px;}
 .nm-path-row.nm-li{border-style:dashed;background:var(--surface2);}
 .nm-path-av{width:34px;height:34px;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;font-family:var(--font-mono);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);}
@@ -1989,6 +1996,24 @@ function getAllCompaniesFlat(){
   }
 
   // ---- ranked path list -----------------------------------------------------
+  // Map / List wayfinding toggle: shown above the graph so people discover the
+  // ranked list below it. Map = center the graph; List = jump to the list.
+  function viewToggle(){
+    return '<div class="nm-viewbar"><div class="nm-viewseg">' +
+      '<button type="button" class="nm-viewseg-btn active" data-nm-view="map"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="5.5"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/></svg>Map view</button>' +
+      '<button type="button" class="nm-viewseg-btn" data-nm-view="list"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 4h10M3 8h10M3 12h10"/></svg>List view</button>' +
+    '</div></div>';
+  }
+  function wireViewToggle(panel){
+    var btns=panel.querySelectorAll('[data-nm-view]');
+    btns.forEach(function(b){ b.addEventListener('click', function(){
+      btns.forEach(function(x){ x.classList.remove('active'); }); b.classList.add('active');
+      var isList=b.dataset.nmView==='list';
+      var tgt=isList ? panel.querySelector('#nm-list-anchor') : panel.querySelector('.nm-graph-wrap');
+      if(tgt) tgt.scrollIntoView({behavior:'smooth', block:isList?'start':'center'});
+    }); });
+  }
+
   function rankedList(c){
     _nmList=[];
     var paths=(c.paths||[]).filter(senPass);
@@ -2003,7 +2028,7 @@ function getAllCompaniesFlat(){
     var head=warm+' warm path'+(warm!==1?'s':'');
     if(liOnly>0) head+=' · '+liOnly+' LinkedIn-only';
     if(typeof c.total_paths==='number' && c.total_paths>paths.length) head+=' · '+c.total_paths+' in Affinity';
-    return '<div class="nm-paths-head">'+head+'</div>' +
+    return '<div class="nm-paths-head" id="nm-list-anchor">'+head+'</div>' +
       paths.map(function(p){
         var t=tier(p.score);
         var isLi=(p.type==='linkedin'||p.score===null);
@@ -2253,8 +2278,9 @@ function getAllCompaniesFlat(){
       return;
     }
 
-    panel.innerHTML = head + buildGraph(c) + rankedList(c);
+    panel.innerHTML = head + viewToggle() + buildGraph(c) + rankedList(c);
     wireOpen();
+    wireViewToggle(panel);
     wireGraph();
     wireHubClicks();
     wirePathRows(panel);
@@ -2298,7 +2324,7 @@ function getAllCompaniesFlat(){
   function connectorList(conn){
     _nmList=[];
     conn={name:conn.name,total:conn.total,companies:conn.companies.map(function(co){return {company:co.company,domain:co.domain,paths:co.paths.filter(senPass)};}).filter(function(co){return co.paths.length;})};
-    return '<div class="nm-paths-head">'+conn.total+' contact'+(conn.total!==1?'s':'')+' · '+conn.companies.length+' compan'+(conn.companies.length!==1?'ies':'y')+'</div>' +
+    return '<div class="nm-paths-head" id="nm-list-anchor">'+conn.total+' contact'+(conn.total!==1?'s':'')+' · '+conn.companies.length+' compan'+(conn.companies.length!==1?'ies':'y')+'</div>' +
       conn.companies.map(function(co){
         return '<div class="nm-cgroup">' +
           '<div class="nm-cgroup-head">' +
@@ -2340,7 +2366,8 @@ function getAllCompaniesFlat(){
         '</div>' +
         '<button class="btn btn-ghost" id="nm-back" style="height:30px;padding:0 12px;font-size:11.5px;">← Accounts</button>' +
       '</div>';
-    panel.innerHTML = head + buildConnectorGraph(conn) + connectorList(conn);
+    panel.innerHTML = head + viewToggle() + buildConnectorGraph(conn) + connectorList(conn);
+    wireViewToggle(panel);
     var bk=panel.querySelector('#nm-back'); if(bk) bk.addEventListener('click', function(){ state.nmMode='company'; state.nmConnector=null; renderNetworkMap(); });
     panel.querySelectorAll('.nm-cgroup-name').forEach(function(el){ el.addEventListener('click', function(){ selectNetworkCompany(el.dataset.nmName); }); });
     wireGraph();
