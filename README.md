@@ -26,7 +26,9 @@ index.html  ──────────────────────�
   then the acts)
 ```
 
-Both ship in the **Ember design system**: cool ink canvas, single ember accent, Space Grotesk display / Inter body / JetBrains Mono data. The walkthrough opens on the founder (their own mark floating huge in 3D behind the intro), pivots to the dashboard punch, then scrolls through the acts — deterministic, `space` auto-plays acts, driven entirely by `build-data.js`. See TEMPLATE_GUIDE Section 16. `landing.html` remains as an OPTIONAL extra cover page (off by default).
+Both use the cool-ink canvas + single accent ramp. **Typography differs by page:** the **walkthrough** (`build.html`) + `landing.html` use the Ember system (Space Grotesk display / Inter body / **JetBrains Mono** for data); the **dashboard** uses Space Grotesk display + Inter body + **Newsreader** serif for prominent figures and **NO monospace** (Lyric match, 2026-07-16). The walkthrough opens on the founder (their own mark floating huge in 3D behind the intro), pivots to the dashboard punch, then scrolls through the acts — deterministic, `space` auto-plays acts, driven entirely by `build-data.js`. See TEMPLATE_GUIDE Section 16. `landing.html` remains as an OPTIONAL extra cover page (off by default).
+
+The dashboard carries two data-driven relationship tabs — **Network** (radial warm-path map per account) and **Contacts** (filterable worklist) — driven solely by `window.NETWORK_DATA` from `network-data.js`, which the **FDI engine generates from Affinity after the build** (not the skill). They show designed empty states until that file exists.
 
 ## Files
 
@@ -37,7 +39,10 @@ Both ship in the **Ember design system**: cool ink canvas, single ember accent, 
 | `build.html` | The scroll walkthrough — ships as the build's `index.html`. 100% generic; copied verbatim, driven only by `build-data.js`. |
 | `build-data-template.js` | Schema-commented shell for `build-data.js` (the cinematic's only founder-specific input). |
 | `assets/logos/` | Tool logos used by the cinematic's process act. Copied as-is. |
-| `data.js` | Schema-commented data layer for the dashboard. 5 placeholder companies in 2 segments to demonstrate shape. |
+| `data.js` | Schema-commented data layer for the dashboard. Placeholder companies demonstrate shape. `PRIMARY_TEAM` is fictional + unused by the UI. |
+| `network-data.js` | FICTIONAL dev fixture for the Network/Contacts tabs. The **engine overwrites it per-build** with real Affinity data. Skill never touches it. |
+| `middleware.js` | Edge Basic-Auth gate (fail-closed) so deployed dashboards aren't public; engine sets `FDI_DASHBOARD_PASSWORD`. |
+| `vercel.json` | `{"framework": null}` static serving. |
 | `AI_INSTRUCTIONS.md` | **Read first.** Pointers to the canonical SKILL.md + file inventory. |
 | `TEMPLATE_GUIDE.md` | Reference encyclopedia. For each structural element: what it does, when to use, when to skip. Section 16 = the cinematic. |
 | `CONTEXT_TEMPLATE.md` | Fillable shell for the founder research dump. Output of `kickoff-fdi`, input to build. |

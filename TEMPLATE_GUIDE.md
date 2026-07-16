@@ -98,23 +98,24 @@ Axes grade in whole 0–5 points, so the /100 composite collides constantly — 
 
 ---
 
-## 4. The Network view
+## 4. The Network + Contacts tabs (engine data, do not build per-founder)
 
-### What it does
-A separate tab showing companies + warm-intro contacts overlaid with which Primary team members can make introductions. Drives the "request warm intro" workflow.
+**Rewritten 2026-07-16.** These are now standing, fully data-driven tabs — NOT a keep/drop decision and NOT built from CONTACT_MAP.
 
-### When to keep
-- Founder cares about warm intros (most do, if they're going outbound).
-- Primary team has meaningful connections into the target accounts (CONTACT_MAP has data).
+### What they do
+- **Network** — a radial warm-path map per target account: the company at center, Primary connector hubs around it, contact dots fanned out; warmth-coded edges (green/amber/grey, fixed independent of the founder accent), animated flow dots, a boxed legend with a Map/List toggle, a summary strip with clickable stats, a connector detail card on hub-click (title/org/location/LinkedIn + "Show all connections →"), a contact detail card on dot-click (why-this-score + relationship-history timeline), a connector-centric view, and a ranked list below with a filter/sort toolbar.
+- **Contacts** — every warm path flattened into a filterable rows table (search + warmth/seniority/connector/account/activity dropdowns), tier-grouped, row-expand to why+history, multiselect → bulk bar → saved lists (`fdi_lists_<slug>` in localStorage) + CSV export.
 
-### When to drop
-- Pre-revenue founder where outbound isn't running yet.
-- Self-serve / PLG product where the buyer journey doesn't involve human intros.
-- Network mapping is sparse, fewer than 5 mapped contacts across all companies makes the view feel empty.
+### Data source (IMPORTANT)
+Both are driven **solely** by `window.NETWORK_DATA` (from `network-data.js`), which the **FDI engine generates from real Affinity data** as a workflow step AFTER the build (`fetch-affinity-network.mjs`). The skill never writes it. They are NOT built from `CONTACT_MAP`/`PRIMARY_TEAM` and never synthesize/invent warm intros.
 
-### What data it requires
-- `CONTACT_MAP[]` populated with at least some contacts having `connections[].strength === "warm"`.
-- `PRIMARY_TEAM[]` list current.
+### The only skill-side inputs that affect these tabs
+- `data.js` `SEGMENTS[].companies[].name` — joined EXACTLY (character-for-character) to attach display metadata (subtitle/category/favicon).
+- `data.js` `SEGMENTS[].companies[].domain` — the **Affinity join key** (canonical registrable domain, no `www`/path/subdomain). A wrong domain silently drops that account from both tabs.
+- `{{PRODUCT_SLUG}}` — namespaces the Contacts saved-lists localStorage key.
+
+### Local behavior
+Absent `network-data.js` (every skill phase, and local preview), both tabs render a designed empty state — never an error. Do not "fix" the empty state, remove `<script src="network-data.js">`, or copy the dev fixture into the build root.
 
 ---
 
@@ -666,15 +667,20 @@ These are technically configurable but the defaults are tuned. Don't touch unles
 
 ## 15. v2 dashboard defaults, the landing page, and silent-render gotchas
 
-### v2 dashboard defaults (don't regress)
+### v3 dashboard defaults (baked into the template — don't regress)
 
-The dashboard (`index.html`) now ships these as defaults:
+The dashboard (`index.html`) ships these; the build job is to not regress them (fixes go upstream to `fdi-template`, never per build):
 
 - **Dark default + light toggle.** Dark `data-theme` tokens load by default; the `toggleTheme()` button flips to light and persists the choice to the `{{PRODUCT_SLUG}}-theme` localStorage key.
 - **Green / amber score color-coding, NO red.** Tier is two-tone: `co.tier = co._signal>=75?'high':'med'`, rendered with `--q-high` (green) and `--q-med` (amber). Do not add a red tier in the tier coloring.
 - **"All" tab is the default view.** `state.tab` defaults to `'all'`; the `data-tab="all"` button is `active` on load.
-- **Typography (Ember system):** Space Grotesk for display, Inter for UI/body, JetBrains Mono for data only (scores, counts, tabular nums), never prose.
-- **Ember color system:** cool ink canvas (`240`-hue near-black) + one ember accent ramp (`26 96% 58%` / soft `33 100% 68%` / deep `20 88% 46%`). Neutrals stay cool - never tint the greys with the accent hue; the canvas/accent temperature contrast is the look.
+- **Typography — DASHBOARD:** **Space Grotesk** `--font-display` (product name + `.context-h1`), **Inter** UI/body (`--font-mono` repointed to Inter), **Newsreader** `--font-num` for prominent figures only. **NO actual monospace** — never re-add JetBrains Mono to the dashboard. The Ember mono-for-data rule below applies ONLY to `build.html` (walkthrough) + `landing.html`.
+- **Ember color system:** cool ink canvas (`240`-hue near-black) + one accent ramp. Neutrals stay cool - never tint the greys with the accent hue.
+- **Network + Contacts tabs:** standing, `window.NETWORK_DATA`-driven (§4) — engine-generated data, empty-state graceful, never edited per founder.
+- **Balanced headers** (`text-wrap:balance` on `.context-h1`/`.context-sub`), **uniform card heights** (`.card-grid` stretch + `grid-auto-rows:1fr`), **17px tab bar w/ hidden count pills**, **inline-SVG partner mark** (no lockup `<img>` in dashboard topbar), **scrollable dropdowns / centered summary stats / capped trackpad zoom**.
+- **Deploy:** `middleware.js` Basic-Auth gate + `vercel.json` ship with the build; the engine deploys ONLY the dashboard files (allowlist) and sets `FDI_DASHBOARD_PASSWORD`.
+
+For the walkthrough/landing Ember typography (unchanged): **Space Grotesk display, Inter UI/body, JetBrains Mono for data only, never prose.**
 
 ### The landing page (`landing.html`) — OPTIONAL (off by default)
 

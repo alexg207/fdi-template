@@ -27,21 +27,30 @@ Pointers from the template repo back to the canonical sources of truth.
 - `landing.html` — OPTIONAL extra cover page, off by default (the walkthrough is the entry page).
 - `build.html` — the scroll walkthrough, shipped as the build's `index.html` (the entry page). 100% generic; driven entirely by `build-data.js`. Copy VERBATIM — never edit its HTML/CSS/JS per founder.
 - `build-data-template.js` — schema-commented shell for `build-data.js`, the cinematic's only founder-specific input. SKILL.md Phase 8c generates it.
-- `assets/` — copy the WHOLE tree into the build repo (`cp -R template/assets/. assets/`): `logos/` (tool logos for the process act) AND `primary-lockup.svg` (topbar, intro, network hub — three broken images if missed; it has been missed on real builds).
+- `assets/` — copy the WHOLE tree into the build repo (`cp -R template/assets/. assets/`): `logos/` (tool logos for the process act) AND `primary-lockup.svg` (used by the **walkthrough** `build.html` topbar/intro/network act — broken images there if missed; it has been missed on real builds). NOTE: the dashboard topbar no longer uses `primary-lockup.svg` — its partner mark is an inline Primary icon SVG + "Primary" text.
+- `middleware.js` — edge Basic-Auth gate (fail-closed) so the deployed dashboard isn't public; the engine sets `FDI_DASHBOARD_PASSWORD` at deploy. Ships with every build; do not remove.
+- `vercel.json` — `{"framework": null}` (static serving).
+- `network-data.js` — FICTIONAL dev fixture ONLY. The engine OVERWRITES it per-build with real Affinity data (`fetch-affinity-network.mjs`, a workflow step after Phase 10). The skill never creates/copies/edits it; the Network + Contacts tabs degrade to designed empty states when it's absent.
 - `TEMPLATE_GUIDE.md` — craft patterns extracted from the V1 Valar build. Section 9 is the field-by-field reference.
 - `CONTEXT_TEMPLATE.md` — fillable shell for Phase 4 CONTEXT.md.
 - `BUILD_NOTES_TEMPLATE.md` — fillable shell for Phase 9 BUILD_NOTES.md.
 - `CLAUDE_DESIGN_PLAN_TEMPLATE.md` — older artifact; SKILL.md Phase 9 superseded its role.
 
-## v2 defaults (required)
+## v3 defaults (required — baked into the template, do NOT regress)
 
-The dashboard (`index.html`) ships these v2 defaults. Do NOT regress them:
+The dashboard (`index.html`) ships these defaults. They already live in the template — the Phase-8 job is to NOT regress them, and fixes go upstream to `fdi-template`, never per build:
 
 - **Dark default + light toggle.** `data-theme` dark tokens are the default; light is opt-in via the `toggleTheme()` button, persisted to the `{{PRODUCT_SLUG}}-theme` localStorage key.
 - **Green / amber score color-coding — NO red.** Tier is two-tone: `co.tier = co._signal>=75?'high':'med'` (`--q-high` green / `--q-med` amber). Do not introduce a red/low tier in tier coloring.
 - **"All" tab is the default view.** `state.tab` defaults to `'all'`; the `data-tab="all"` button is `active` on load.
-- **Typography (Ember system).** Space Grotesk for display/headings, Inter for UI/body, JetBrains Mono for data only (scores, counts, tabular numbers). Do not use mono for prose.
-- **Ember color system.** Cool ink canvas (`hsl(240 14% 5%)` family) + single ember accent (`26 96% 58%` ramp). Do not tint neutrals with the accent hue - canvas/accent temperature contrast is the point. Per-founder accent overrides go through `BUILD_DATA.founder.themeAccent` in the cinematic and the token block in the dashboard; never fork the palette ad hoc.
+- **Typography — DASHBOARD (index.html/dashboard.html):** **Space Grotesk** `--font-display` (product name + `.context-h1` headings), **Inter** for UI/body (`--font-mono` is intentionally repointed to Inter), **Newsreader** serif `--font-num` for prominent figures only (signal numbers, warmth scores, summary stats). **NO actual monospace anywhere** — never re-add JetBrains Mono to the dashboard font `<link>` or any `font-family`. (Lyric Network Map match, 2026-07-16.) The old Ember mono-for-data rule now applies ONLY to `build.html` (walkthrough) + `landing.html`.
+- **Ember color system.** Cool ink canvas + single accent ramp. Per-founder accent overrides go through `BUILD_DATA.founder.themeAccent` (cinematic) and the token block in the dashboard; never fork the palette ad hoc.
+- **Network + Contacts tabs (data-driven, engine-owned).** Two extra tabs beyond the 3 segment tabs + All, driven solely by `window.NETWORK_DATA` (`network-data.js`, engine-generated post-build). Never edit their markup/JS per founder; never remove `<script src="network-data.js">`. They show designed empty states when the data file is absent.
+- **Balanced headers.** `text-wrap:balance` on `.context-h1`/`.context-sub` (no orphaned single-word last line).
+- **Uniform card heights.** `.card-grid` `align-items:stretch` + `grid-auto-rows:1fr`, `.card{height:100%}`.
+- **Tab bar.** 17px/600 near-white; count pills are hidden by CSS (`display:none`) — do not "fix" them back on.
+- **Partner mark.** Inline Primary icon SVG + "Primary" text sized to the product name — no `<img src="assets/primary-lockup.svg">` in the dashboard topbar.
+- **Deploy gate.** `middleware.js` Basic-Auth + `{"framework":null}` `vercel.json` ship with the build; the engine deploys only the dashboard files (allowlist) and sets `FDI_DASHBOARD_PASSWORD`.
 
 ## The two standard pages
 

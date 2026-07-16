@@ -1,3 +1,5 @@
+> **OBSOLETE / SHIPPED (2026-07-16).** This ticket is done — the visual Network tab (+ a Contacts tab, connector cards, history detail, list filters) is live in `index.html` and driven by `window.NETWORK_DATA`. Kept for history only. Current behavior is documented in TEMPLATE_GUIDE §4 and AI_INSTRUCTIONS "v3 defaults". Do not re-implement from this ticket.
+
 # Devin ticket — FDI dashboard: visual Network Map tab
 
 ## What you're building

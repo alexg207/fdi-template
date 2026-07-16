@@ -542,7 +542,10 @@ const RESIDENCY_MAP = {
    CONTACT_MAP[].connections stays empty — no relationships are invented.
    Warm paths in the Network tab come solely from window.NETWORK_DATA.
    ──────────────────────────────────────────────────────────────────────── */
-const PRIMARY_TEAM = ['Alex Giles', 'Charles Holley', 'Gaby Lorenzi', 'Jason Gelman', 'Tobias', 'Ross', 'Cassie', 'Tanmaye', 'Ben', 'Hannah', 'Doug', 'Emily', 'Bridget', 'Shuman'];
+// Fictional sample roster. The dashboard UI does not consume PRIMARY_TEAM (warm
+// paths come solely from window.NETWORK_DATA); keep this fictional — never ship
+// a real internal roster to a public build.
+const PRIMARY_TEAM = ['Alex Partner', 'Robin Vega', 'Dana Cole', 'Sky Morgan'];
 
 
 /* ────────────────────────────────────────────────────────────────────────
