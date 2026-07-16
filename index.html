@@ -1649,14 +1649,16 @@ function getAllCompaniesFlat(){
         '<div class="nm-stat-lbl">Coverage</div>' +
         '<div class="nm-cov-bar"><span style="width:'+Math.max(0,Math.min(100,cov))+'%"></span></div>' +
       '</div>' +
-      '<div class="nm-stat">' +
+      '<button type="button" class="nm-stat nm-stat-btn" data-ct="all" title="See every warm contact">' +
         '<div class="nm-stat-val">'+withPath+' <span class="nm-stat-sub">of '+total+'</span></div>' +
         '<div class="nm-stat-lbl">Accounts with warm paths</div>' +
-      '</div>' +
-      (rel!==null ? '<div class="nm-stat">' +
+        '<span class="nm-stat-go">View →</span>' +
+      '</button>' +
+      (rel!==null ? '<button type="button" class="nm-stat nm-stat-btn" data-ct="all" title="See every warm contact">' +
         '<div class="nm-stat-val">'+rel.toLocaleString()+'</div>' +
         '<div class="nm-stat-lbl">Total relationships</div>' +
-      '</div>' : '') +
+        '<span class="nm-stat-go">View →</span>' +
+      '</button>' : '') +
       '<button type="button" class="nm-stat nm-stat-btn" data-ct="active30" title="See these contacts">' +
         '<div class="nm-stat-val">'+active30+'</div>' +
         '<div class="nm-stat-lbl">Active in last 30d</div>' +
@@ -2449,6 +2451,9 @@ function getAllCompaniesFlat(){
   }
   function renderContacts(){
     var data=nd();
+    // defensive: if the tab is entered before any ct* state is set (e.g. a build
+    // whose state object predates these fields), initialize to "show everything".
+    if(state.ctWarm===undefined){ state.ctQ=''; state.ctWarm='all'; state.ctSen='all'; state.ctConn='all'; state.ctAcct='all'; state.ctAct='all'; if(state.ctList===undefined) state.ctList=null; }
     var un=document.getElementById('ct-unavailable'), body=document.getElementById('ct-body');
     if(!data || data.build_status==='unavailable' || !Array.isArray(data.companies)){
       if(body) body.style.display='none';
