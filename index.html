@@ -530,6 +530,15 @@ a{color:inherit;}
 .nm-d-row b{color:var(--text);font-weight:600;text-align:right;}
 .nm-d-btn{display:block;text-align:center;margin-top:12px;padding:8px;border:1px solid var(--border-mid);border-radius:8px;font-size:12px;font-weight:600;color:var(--text);text-decoration:none;}
 .nm-d-btn:hover{border-color:var(--green);color:var(--green-dark);}
+.nm-d-sec-lbl{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-faint);margin:12px 0 7px;}
+.nm-d-evt{padding:7px 9px;border:1px solid var(--border-soft);border-radius:8px;margin-bottom:6px;background:var(--bg);}
+.nm-d-evt.nm-d-next{border-color:var(--nm-w-hi);background:color-mix(in srgb, var(--nm-w-hi) 8%, var(--bg));}
+.nm-d-evt-top{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--text-muted);flex-wrap:wrap;}
+.nm-d-evt-top b{color:var(--text);font-weight:600;}
+.nm-d-evt-lbl{font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint);min-width:74px;}
+.nm-d-evt-sub{font-size:10.5px;color:var(--text-muted);margin-top:3px;line-height:1.4;}
+.nm-d-tag{font-size:8.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--green-tint);color:var(--green-deep);border:1px solid var(--green-ring);border-radius:9999px;padding:1px 7px;margin-left:auto;}
+.nm-d-foot-note{font-size:9.5px;color:var(--text-faint);line-height:1.45;margin-top:7px;}
 /* connectors dropdown (summary) */
 .nm-conn-dd{position:relative;margin-top:6px;}
 .nm-conn-btn{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 11px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font-sans);}
@@ -1717,17 +1726,66 @@ function getAllCompaniesFlat(){
   }
 
   // click a dot -> full detail card (who they are, warmth score, and why)
+  function fmtD(s){ // "2026-07-09" -> "Jul 9, 2026"
+    if(!s) return null; var d=new Date(s+'T00:00:00'); if(isNaN(d)) return s;
+    return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+  }
+  function spanSince(s){ // "2023-05-25" -> "3y 2mo"
+    if(!s) return null; var d=new Date(s+'T00:00:00'); if(isNaN(d)) return null;
+    var m=Math.max(0, Math.round((Date.now()-d.getTime())/2629800000));
+    return m>=12 ? Math.floor(m/12)+'y'+(m%12? ' '+(m%12)+'mo':'') : m+'mo';
+  }
+  // one history event -> a timeline row: label, date (+relative), sub-line
+  // (subject/title or "private"), and a "with <connector>" tag when this
+  // path's connector was directly on the thread/meeting.
+  function evtRow(label, e, conn, opts){
+    if(!e || !e.date) return '';
+    opts=opts||{};
+    var who='';
+    if(e.from_internal===true)  who = e.from_name ? esc(e.from_name)+' reached out' : 'Primary reached out';
+    if(e.from_internal===false) who = 'they wrote to us';
+    var sub = e.label ? esc(e.label) : (e.label===null && opts.mayMask ? '<i>subject private</i>' : '');
+    var bits=[fmtD(e.date)]; var rel=relDate(e.date);
+    if(rel && opts.rel) bits.push(rel);
+    return '<div class="nm-d-evt'+(opts.next?' nm-d-next':'')+'">' +
+      '<div class="nm-d-evt-top"><span class="nm-d-evt-lbl">'+label+'</span><b>'+bits.join(' · ')+'</b>' +
+        (e.with_connector?'<span class="nm-d-tag">with '+esc(fname(conn))+'</span>':'') +
+      '</div>' +
+      ((who||sub)?'<div class="nm-d-evt-sub">'+[who,sub].filter(Boolean).join(' — ')+'</div>':'') +
+    '</div>';
+  }
   function showPathDetail(pk){
     var d=_nmNodes[pk]; var box=document.getElementById('nm-detail'); if(!d||!box) return;
     var isLi=(d.type==='linkedin'||d.score==null), t=tier(d.score);
     var scoreHtml = isLi ? '<span class="nm-d-score lo">—</span>'
       : '<span class="nm-d-score '+t.key+'">'+d.score+'<span class="nm-d-pct">%</span></span>';
     var liHref=safeUrl(d.linkedin_url);
+    var h=d.history||null;
+
+    // concrete score drivers pulled from the real history
+    var sig=[];
+    if(h&&h.first_contact){ var sp=spanSince(h.first_contact); if(sp) sig.push('in contact '+sp); }
+    if(h&&h.last_email&&h.last_email.date){ sig.push('last email '+(relDate(h.last_email.date)||fmtD(h.last_email.date))+(h.last_email.from_internal===false?' (they wrote to us)':'')); }
+    if(h&&h.last_meeting&&h.last_meeting.date) sig.push('met '+(relDate(h.last_meeting.date)||fmtD(h.last_meeting.date)));
+    if(h&&h.next_meeting&&h.next_meeting.date) sig.push('next meeting already scheduled');
     var why = isLi
-      ? 'LinkedIn connection only — no recorded email or meeting history between '+esc(d.connector)+' and '+esc(fname(d.contact_name))+' yet, so no warmth score. A colder path in.'
-      : 'Affinity scores warmth 0–100 from real interaction history — emails, meetings, and calendar activity — between '+esc(d.connector)+' and '+esc(fname(d.contact_name))+'. This path scored '+d.score+'/100.';
+      ? 'LinkedIn connection only — Affinity has no email or meeting history between Primary and '+esc(fname(d.contact_name))+', so there is no warmth score. A colder path in.'
+      : 'Affinity scored this path '+d.score+'/100 from real interaction history (emails, meetings, calendar).'+(sig.length? ' Signals: '+esc(sig.join(' · '))+'.':'');
     var aff = d.at_target_company ? ('Works at '+esc(d.company))
       : ('At '+esc(d.contact_affiliation||'another company')+' — not a current '+esc(d.company)+' employee');
+
+    var hist='';
+    if(h){
+      hist = '<div class="nm-d-sec-lbl">History with Primary</div>' +
+        evtRow('First email', h.first_email, d.connector, {mayMask:true}) +
+        evtRow('First meeting', h.first_meeting, d.connector, {}) +
+        evtRow('Last email', h.last_email, d.connector, {rel:true, mayMask:true}) +
+        evtRow('Last meeting', h.last_meeting, d.connector, {rel:true}) +
+        (h.last_chat&&h.last_chat.date? evtRow('Last chat message', h.last_chat, d.connector, {rel:true}) : '') +
+        evtRow('Next meeting', h.next_meeting, d.connector, {next:true}) +
+        '<div class="nm-d-foot-note">Affinity history between '+esc(fname(d.contact_name))+' and anyone at Primary; “with '+esc(fname(d.connector))+'” marks '+esc(fname(d.connector))+'’s own threads. Per-relationship email counts aren’t exposed by Affinity’s API.</div>';
+    }
+
     box.innerHTML =
       '<button class="nm-d-close" type="button" aria-label="Close">×</button>' +
       '<div class="nm-d-head"><div class="nm-d-av">'+esc(initials(d.contact_name))+'</div>' +
@@ -1740,10 +1798,11 @@ function getAllCompaniesFlat(){
         (isLi?'<span class="nm-badge li">LinkedIn only</span>':'') +
       '</div>' +
       '<div class="nm-d-why"><span class="nm-d-why-lbl">Why this score</span>'+why+'</div>' +
-      '<div class="nm-d-rows">' +
+      hist +
+      '<div class="nm-d-rows" style="margin-top:'+(hist?'11px':'0')+';">' +
         '<div class="nm-d-row"><span>Reached via</span><b>'+esc(d.connector)+'</b></div>' +
         (d.last_contact?'<div class="nm-d-row"><span>Last contact</span><b>'+esc(relDate(d.last_contact)||d.last_contact)+'</b></div>':'') +
-        '<div class="nm-d-row"><span>LinkedIn</span><b>'+(d.linkedin_connected?'connected':'—')+'</b></div>' +
+        '<div class="nm-d-row"><span>LinkedIn</span><b>'+(d.linkedin_connected?('connected'+(d.linkedin_connected_on?' '+esc(fmtD(d.linkedin_connected_on)||''):'')):'—')+'</b></div>' +
       '</div>' +
       (liHref?'<a class="nm-d-btn" href="'+esc(liHref)+'" target="_blank" rel="noopener">Open LinkedIn ↗</a>':'');
     box.style.display='block';
