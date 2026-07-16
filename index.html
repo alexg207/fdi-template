@@ -445,7 +445,7 @@ a{color:inherit;}
   --nm-w-lo: hsl(220 12% 55%);
   --nm-w-null: hsl(220 10% 62%);
 }
-.nm-summary{display:flex;align-items:stretch;gap:0;border:1px solid var(--border);border-radius:8px;background:var(--surface);margin-bottom:16px;overflow:hidden;flex-wrap:wrap;}
+.nm-summary{display:flex;align-items:stretch;gap:0;border:1px solid var(--border);border-radius:8px;background:var(--surface);margin-bottom:16px;overflow:visible;flex-wrap:wrap;}
 .nm-stat{padding:12px 18px;border-right:1px solid var(--border-soft);display:flex;flex-direction:column;gap:3px;min-width:120px;}
 .nm-stat:last-child{border-right:none;flex:1;min-width:200px;}
 .nm-stat-val{font-family:var(--font-mono);font-size:19px;font-weight:600;color:var(--text);letter-spacing:-.01em;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:6px;}
@@ -1516,10 +1516,10 @@ function getAllCompaniesFlat(){
         '<div class="nm-stat-lbl">Total relationships</div>' +
       '</div>' : '') +
       '<div class="nm-stat">' +
-        '<div class="nm-stat-lbl" style="margin-bottom:2px;">Primary connectors ('+conns.length+')</div>' +
+        '<div class="nm-stat-lbl" style="margin-bottom:2px;">Connectors at Primary ('+conns.length+')</div>' +
         (conns.length ?
           '<div class="nm-conn-dd" id="nm-conn-dd">' +
-            '<button type="button" class="nm-conn-btn" id="nm-conn-btn"><span class="nm-conn-dot"></span>See a connector’s network <span class="caret">▾</span></button>' +
+            '<button type="button" class="nm-conn-btn" id="nm-conn-btn"><span class="nm-conn-dot"></span>Choose a connector <span class="caret">▾</span></button>' +
             '<div class="nm-conn-menu">' +
               conns.map(function(n){return '<div class="nm-conn-opt" data-conn="'+esc(n)+'"><span class="nm-conn-dot"></span>'+esc(n)+'</div>';}).join('') +
             '</div>' +
@@ -1690,7 +1690,9 @@ function getAllCompaniesFlat(){
     }
     svg.addEventListener('wheel', function(e){ e.preventDefault(); zoomAt(e.clientX,e.clientY, e.deltaY<0?1.12:1/1.12); }, {passive:false});
     var drag=false, lx=0, ly=0;
-    svg.addEventListener('pointerdown', function(e){ drag=true; lx=e.clientX; ly=e.clientY; svg.classList.add('nm-grabbing'); svg.setPointerCapture&&svg.setPointerCapture(e.pointerId); });
+    // NOTE: do NOT setPointerCapture here — it retargets the subsequent click to
+    // the <svg>, so contact-node clicks never fire. Pan still works via pointermove.
+    svg.addEventListener('pointerdown', function(e){ drag=true; lx=e.clientX; ly=e.clientY; svg.classList.add('nm-grabbing'); });
     svg.addEventListener('pointermove', function(e){ if(!drag) return; t.x+=e.clientX-lx; t.y+=e.clientY-ly; lx=e.clientX; ly=e.clientY; apply(); });
     function end(){ drag=false; svg.classList.remove('nm-grabbing'); }
     svg.addEventListener('pointerup', end); svg.addEventListener('pointerleave', end);
