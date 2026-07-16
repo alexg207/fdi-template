@@ -432,10 +432,12 @@ a{color:inherit;}
 
 /* === NETWORK MAP v2 (visual, driven by window.NETWORK_DATA) === */
 #view-network{
-  --nm-w-hi: var(--q-high);
-  --nm-w-hi-d: var(--q-high-d);
-  --nm-w-mid: var(--green);
-  --nm-w-mid-d: var(--green-dark);
+  /* Fixed warmth ramp (green->amber->gray), independent of the per-build accent.
+     All literal hsl so SVG fill/stroke resolve (nested var -> accent renders black). */
+  --nm-w-hi: hsl(150 58% 46%);
+  --nm-w-hi-d: hsl(150 55% 36%);
+  --nm-w-mid: hsl(38 92% 52%);
+  --nm-w-mid-d: hsl(38 82% 42%);
   --nm-w-lo: hsl(220 12% 55%);
   --nm-w-null: hsl(220 10% 62%);
 }
@@ -447,8 +449,11 @@ a{color:inherit;}
 .nm-stat-lbl{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);}
 .nm-cov-bar{height:4px;border-radius:9999px;background:var(--surface3);margin-top:6px;overflow:hidden;}
 .nm-cov-bar>span{display:block;height:100%;background:var(--green);border-radius:9999px;}
-.nm-conn-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
-.nm-conn-chip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-family:var(--font-mono);font-weight:500;color:var(--green-deep);background:var(--green-tint);border:1px solid var(--green-ring);padding:2px 8px;border-radius:9999px;}
+.nm-conn-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;}
+.nm-conn-chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:var(--green-deep);background:var(--green-tint);border:1px solid var(--green-ring);padding:4px 11px;border-radius:9999px;cursor:pointer;transition:background 120ms,border-color 120ms,transform 80ms;}
+.nm-conn-chip:hover{background:var(--green-tint2);border-color:var(--green);transform:translateY(-1px);}
+.nm-conn-chip.active{background:var(--green);color:#fff;border-color:var(--green);}
+.nm-conn-chip.active .nm-conn-dot{background:#fff;}
 .nm-conn-chip .nm-conn-dot{width:6px;height:6px;border-radius:9999px;background:var(--green);}
 .nm-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
 .nm-tool-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-left:4px;}
@@ -468,6 +473,12 @@ a{color:inherit;}
 
 .nm-graph-wrap{position:relative;border:1px solid var(--border);border-radius:8px;background:var(--bg);height:560px;overflow:hidden;margin-bottom:18px;}
 .nm-cnode{cursor:default;}
+.nm-hub-click{cursor:pointer;}
+/* warmth colors applied via CSS classes, not SVG fill/stroke attributes:
+   a presentation attribute like fill="var(--nm-w-mid)" fails to resolve a
+   NESTED var (mid -> var(--green)) and renders black; the CSS property does. */
+.nm-wf-hi{fill:var(--nm-w-hi);}.nm-wf-mid{fill:var(--nm-w-mid);}.nm-wf-lo{fill:var(--nm-w-lo);}.nm-wf-li{fill:var(--nm-w-null);}
+.nm-ws-hi{stroke:var(--nm-w-hi);}.nm-ws-mid{stroke:var(--nm-w-mid);}.nm-ws-lo{stroke:var(--nm-w-lo);}.nm-ws-li{stroke:var(--nm-w-null);}
 .nm-graph-wrap svg{width:100%;height:100%;display:block;cursor:grab;touch-action:none;}
 .nm-graph-wrap svg.nm-grabbing{cursor:grabbing;}
 .nm-node-label{font-family:var(--font-sans);font-size:11px;font-weight:600;fill:var(--text);}
@@ -479,13 +490,20 @@ a{color:inherit;}
 .nm-zoom-btns button{width:26px;height:26px;border:1px solid var(--border);background:var(--surface);color:var(--text-mid);border-radius:6px;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);}
 .nm-zoom-btns button:hover{border-color:var(--green);color:var(--green-dark);}
 
-.nm-legend{position:absolute;left:10px;top:10px;display:flex;flex-direction:column;gap:4px;background:hsl(0 0% 100% / .0);pointer-events:none;}
-.nm-legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text-muted);font-family:var(--font-mono);}
-.nm-legend-swatch{width:16px;height:0;border-top:3px solid var(--nm-w-mid);}
+/* Network tab uses the sans family throughout — no monospace anywhere (matches
+   the Lyric Network Map). Scoped to #view-network so other tabs are untouched. */
+#view-network, #view-network *{font-family:var(--font-sans);}
+.nm-legend{position:absolute;left:12px;top:12px;display:flex;flex-direction:column;gap:5px;background:color-mix(in srgb, var(--surface) 94%, transparent);border:1px solid var(--border);border-radius:9px;padding:10px 12px;pointer-events:none;box-shadow:0 3px 12px rgba(0,0,0,.10);}
+.nm-legend-title{font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);}
+.nm-legend-item{display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--text-mid);}
+.nm-legend-swatch{width:18px;flex-shrink:0;height:0;border-top:3px solid var(--nm-w-mid);}
 .nm-legend-swatch.hi{border-top-color:var(--nm-w-hi);}
 .nm-legend-swatch.mid{border-top-color:var(--nm-w-mid);}
 .nm-legend-swatch.lo{border-top-color:var(--nm-w-lo);}
 .nm-legend-swatch.li{border-top:2px dashed var(--nm-w-null);}
+.nm-legend-swatch.conn{border-top:3px solid var(--text-muted);}
+.nm-legend-sep{height:1px;background:var(--border-soft);margin:3px 0;}
+.nm-legend-note{font-size:10px;color:var(--text-faint);line-height:1.4;}
 
 /* ranked path list */
 .nm-paths-head{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-faint);margin:4px 0 10px;}
@@ -515,6 +533,16 @@ a{color:inherit;}
 .nm-badge.err{background:color-mix(in srgb, var(--q-high) 14%, var(--surface));color:var(--q-high-d);border:1px solid color-mix(in srgb, var(--q-high) 40%, transparent);}
 .network-row.nm-err{border-left:2px solid var(--q-high);}
 
+/* connector-centric view + people search */
+.nm-person-av{width:38px;height:38px;border-radius:9999px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.nm-person-av.sm{width:26px;height:26px;font-size:10px;}
+.nm-list-section{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);padding:12px 14px 5px;}
+.nm-person-row{cursor:pointer;}
+.nm-cgroup{margin-bottom:14px;}
+.nm-cgroup-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border-soft);}
+.nm-cgroup-head .nm-cgroup-name{font-size:13px;font-weight:600;color:var(--text);cursor:pointer;}
+.nm-cgroup-head .nm-cgroup-name:hover{color:var(--green-dark);text-decoration:underline;}
+.nm-cgroup-count{margin-left:auto;font-size:11px;font-weight:600;color:var(--text-faint);background:var(--surface2);border:1px solid var(--border);border-radius:9999px;padding:1px 8px;}
 .nm-empty-state{border:1px dashed var(--border-mid);border-radius:10px;background:var(--surface);padding:40px 28px;text-align:center;}
 .nm-empty-state .nm-es-icon{width:40px;height:40px;margin:0 auto 14px;color:var(--text-faint);}
 .nm-empty-state .nm-es-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px;}
@@ -637,7 +665,7 @@ a{color:inherit;}
       <div class="nm-toolbar">
         <div class="search-wrap" style="max-width:240px;margin-left:0;">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/></svg>
-          <input class="search-input" type="text" id="nm-search" placeholder="search companies..." oninput="renderNetworkMap()">
+          <input class="search-input" type="text" id="nm-search" placeholder="search companies or people..." oninput="renderNetworkMap()">
         </div>
         <span class="nm-tool-label">Filter</span>
         <button class="filter-pill active" data-nm="all" onclick="setNmFilter('all')"><span class="pill-dot"></span>All</button>
@@ -705,7 +733,9 @@ var state = {
   starred: {},
   nmFilter: 'all',
   nmSort: 'warmth',
-  nmSelected: null
+  nmSelected: null,
+  nmMode: 'company',
+  nmConnector: null
 };
 function expansionKey(c){return (c._segId||state.tab)+'|'+c.name;}
 function isCardExpanded(c){return !!state.expanded[expansionKey(c)];}
@@ -1447,110 +1477,131 @@ function getAllCompaniesFlat(){
       '<div class="nm-stat">' +
         '<div class="nm-stat-lbl" style="margin-bottom:2px;">Primary connectors ('+conns.length+')</div>' +
         '<div class="nm-conn-chips">' +
-          (conns.length ? conns.map(function(n){return '<span class="nm-conn-chip"><span class="nm-conn-dot"></span>'+esc(n)+'</span>';}).join('') : '<span style="font-size:11px;color:var(--text-faint);">none</span>') +
+          (conns.length ? conns.map(function(n){return '<span class="nm-conn-chip" data-conn="'+esc(n)+'" title="See everyone '+esc(n)+' reaches"><span class="nm-conn-dot"></span>'+esc(n)+'</span>';}).join('') : '<span style="font-size:11px;color:var(--text-faint);">none</span>') +
         '</div>' +
       '</div>';
   }
 
-  // ---- SVG graph ------------------------------------------------------------
-  function buildGraph(c){
-    var paths=c.paths||[];
-    // unique connectors, in first-seen order
-    var connectors=[]; var connIdx={};
-    paths.forEach(function(p){ if(!(p.connector in connIdx)){ connIdx[p.connector]=connectors.length; connectors.push(p.connector); } });
+  // ---- shared graph helpers -------------------------------------------------
+  var NM_PALETTE=['#6366f1','#0ea5e9','#f59e0b','#10b981','#ec4899','#8b5cf6','#ef4444','#0891b2','#65a30d','#d946ef'];
+  function fname(n){ return (n||'').trim().split(/\s+/)[0] || n || ''; }
+  function flabel(n){ var p=(n||'').trim().split(/\s+/); return p.length>1 ? p[0]+' '+p[p.length-1][0]+'.' : (p[0]||''); }
+  function senSize(s){ s=(s||'').toLowerCase();
+    if(s.indexOf('c-level')>=0||s.indexOf('chief')>=0||s.indexOf('founder')>=0||s.indexOf('owner')>=0||s.indexOf('ceo')>=0||s.indexOf('cto')>=0) return 16;
+    if(s.indexOf('vp')>=0||s.indexOf('vice')>=0||s.indexOf('partner')>=0||s.indexOf('head')>=0||s.indexOf('svp')>=0) return 13;
+    if(s.indexOf('director')>=0) return 11;
+    if(s.indexOf('senior')>=0||s.indexOf('lead')>=0||s.indexOf('principal')>=0) return 9.5;
+    return 8; }
+  function warmthLegend(spokeNote, ringNote){
+    return '<div class="nm-legend">' +
+      '<div class="nm-legend-title">Path to contact = warmth</div>' +
+      '<div class="nm-legend-item"><span class="nm-legend-swatch hi"></span>Warm 75+</div>' +
+      '<div class="nm-legend-item"><span class="nm-legend-swatch mid"></span>Mid 40–74</div>' +
+      '<div class="nm-legend-item"><span class="nm-legend-swatch lo"></span>Low</div>' +
+      '<div class="nm-legend-item"><span class="nm-legend-swatch li"></span>LinkedIn only</div>' +
+      '<div class="nm-legend-sep"></div>' +
+      '<div class="nm-legend-item"><span class="nm-legend-swatch conn"></span>'+spokeNote+'</div>' +
+      '<div class="nm-legend-note">Node color = warmth · size = seniority<br>ring = '+ringNote+'</div>' +
+      '</div>';
+  }
 
-    // ---- radial "solar-system" layout (target anchored bottom-center,
-    //      Primary connectors fanned above it, each connector's contacts
-    //      fanned in an arc/orbit around that connector). Reads far cleaner
-    //      than a vertical column and stays legible up to the 25-path cap.
-    var W=900, H=760, cx=W/2, cy=H-140;
-    var R1=150, TIERS=[248,312,374];              // connector ring + 3 contact tiers
-    var total=paths.length||1;
-    var counts=connectors.map(function(n){ return paths.filter(function(p){return p.connector===n;}).length; });
-    var FAN=Math.min(2.6, 2.0+connectors.length*0.16), minShare=0.34;
-    var extra=Math.max(0.2, FAN-connectors.length*minShare);
-    var shares=counts.map(function(k){ return minShare+extra*(k/total); });
+  // ---- generalized radial graph (used by both company + connector views) ----
+  // center: {label, domain|null, initials}
+  // groups: [{label, hubText, initials, color, domain|null, clickKind, clickId,
+  //           items:[{label, score, type, seniority, ring, tooltip}]}]
+  function radialGraph(center, groups, legendHtml, hintText){
+    var W=1040, H=820, cx=W/2, cy=H-118, R1=172, TIERS=[250,330,410,490];
+    var total=groups.reduce(function(s,g){return s+g.items.length;},0)||1;
+    var FAN=Math.min(3.05, 2.3+groups.length*0.15), minShare=0.40;
+    var extra=Math.max(0.2, FAN-groups.length*minShare);
+    var shares=groups.map(function(g){ return minShare+extra*(g.items.length/total); });
     var fanTot=shares.reduce(function(s,v){ return s+v; },0);
-
-    var PALETTE=['#6366f1','#0ea5e9','#f59e0b','#10b981','#ec4899','#8b5cf6','#ef4444','#0891b2','#65a30d','#d946ef'];
-    function connColor(i){ return PALETTE[i%PALETTE.length]; }
-    function fname(n){ return (n||'').trim().split(/\s+/)[0] || n || ''; }
-    function senSize(s){ s=(s||'').toLowerCase();
-      if(s.indexOf('c-level')>=0||s.indexOf('chief')>=0||s.indexOf('founder')>=0||s.indexOf('owner')>=0||s.indexOf('ceo')>=0||s.indexOf('cto')>=0) return 16;
-      if(s.indexOf('vp')>=0||s.indexOf('vice')>=0||s.indexOf('partner')>=0||s.indexOf('head')>=0||s.indexOf('svp')>=0) return 13;
-      if(s.indexOf('director')>=0) return 11;
-      if(s.indexOf('senior')>=0||s.indexOf('lead')>=0||s.indexOf('principal')>=0) return 9.5;
-      return 8; }
     function pol(r,a){ return {x:cx+r*Math.cos(a), y:cy+r*Math.sin(a)}; }
     function arc(r,a0,a1){ var p0=pol(r,a0),p1=pol(r,a1);
       return 'M'+p0.x.toFixed(1)+' '+p0.y.toFixed(1)+' A'+r+' '+r+' 0 '+((a1-a0)>Math.PI?1:0)+' 1 '+p1.x.toFixed(1)+' '+p1.y.toFixed(1); }
 
     var edges='', nodes='', hubs='', arcs='';
-    // faint orbit arcs behind the contact tiers (signature)
     TIERS.forEach(function(r){ arcs += '<path d="'+arc(r,-Math.PI/2-fanTot/2-0.06,-Math.PI/2+fanTot/2+0.06)+'" fill="none" stroke="var(--border-mid)" stroke-width="1" stroke-opacity="0.4"/>'; });
 
     var cursor=-fanTot/2;
-    connectors.forEach(function(name,ci){
+    groups.forEach(function(g,ci){
       var wStart=cursor, wEnd=cursor+shares[ci]; cursor=wEnd;
       var centerA=-Math.PI/2+(wStart+wEnd)/2;
-      var hub=pol(R1,centerA), col=connColor(ci);
-      // connector -> target
+      var hub=pol(R1,centerA), col=g.color||NM_PALETTE[ci%NM_PALETTE.length];
       edges += '<line x1="'+cx+'" y1="'+cy+'" x2="'+hub.x.toFixed(1)+'" y2="'+hub.y.toFixed(1)+'" stroke="'+col+'" stroke-width="2.4" stroke-opacity="0.5" stroke-linecap="round"/>';
-      var mine=paths.filter(function(p){ return p.connector===name; });
       var pad=Math.min(0.16, shares[ci]*0.16);
-      mine.forEach(function(p,j){
-        var t=mine.length>1?j/(mine.length-1):0.5;
-        var ang=-Math.PI/2+wStart+pad+(shares[ci]-2*pad)*t, r=TIERS[j%3];
-        var pt=pol(r,ang), tr=tier(p.score);
-        var ew=(p.score===null||p.score===undefined)?1.4:(1.2+(p.score/100)*3.2);
-        var edash=(p.type==='linkedin'||p.score===null)?' stroke-dasharray="4 4"':'';
-        // contact -> connector (warmth-colored, thicker = warmer)
-        edges += '<line x1="'+pt.x.toFixed(1)+'" y1="'+pt.y.toFixed(1)+'" x2="'+hub.x.toFixed(1)+'" y2="'+hub.y.toFixed(1)+'" stroke="'+tr.color+'" stroke-width="'+ew.toFixed(1)+'" stroke-opacity="0.35" stroke-linecap="round"'+edash+'/>';
-        var rad=senSize(p.seniority);
-        // solid ring = actually at the target company; absent = investor/alum/other
-        var ring=p.at_target_company ? '<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+(rad+4)+'" fill="none" stroke="'+tr.color+'" stroke-width="1.4" stroke-opacity="0.55"/>' : '';
-        var ttl=esc(p.contact_name)+(p.contact_title?' — '+esc(p.contact_title):'')+' · '+(p.score===null?'LinkedIn only':'warmth '+p.score)+' · via '+esc(p.connector)+(p.at_target_company?'':' · '+esc(p.contact_affiliation||'external'));
-        nodes += '<g class="nm-cnode"><title>'+ttl+'</title>'+ring +
-          '<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+rad+'" fill="'+tr.color+'" fill-opacity="0.9"'+edash+'/>' +
-          '<text x="'+pt.x.toFixed(1)+'" y="'+(pt.y+rad+11).toFixed(1)+'" text-anchor="middle" class="nm-node-label">'+esc(trunc(fname(p.contact_name),14))+'</text>' +
+      g.items.forEach(function(it,j){
+        var t=g.items.length>1?j/(g.items.length-1):0.5;
+        var ang=-Math.PI/2+wStart+pad+(shares[ci]-2*pad)*t, r=TIERS[j%TIERS.length];
+        var pt=pol(r,ang), tr=tier(it.score);
+        var ew=(it.score===null||it.score===undefined)?1.4:(1.2+(it.score/100)*3.2);
+        var edash=(it.type==='linkedin'||it.score===null)?' stroke-dasharray="4 4"':'';
+        edges += '<line x1="'+pt.x.toFixed(1)+'" y1="'+pt.y.toFixed(1)+'" x2="'+hub.x.toFixed(1)+'" y2="'+hub.y.toFixed(1)+'" class="nm-ws-'+tr.key+'" stroke-width="'+ew.toFixed(1)+'" stroke-opacity="0.4" stroke-linecap="round"'+edash+'/>';
+        var rad=senSize(it.seniority);
+        var ring=it.ring ? '<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+(rad+4)+'" fill="none" class="nm-ws-'+tr.key+'" stroke-width="1.5" stroke-opacity="0.6"/>' : '';
+        nodes += '<g class="nm-cnode"><title>'+esc(it.tooltip||it.label)+'</title>'+ring +
+          '<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+rad+'" class="nm-wf-'+tr.key+'" fill-opacity="0.92"'+edash+'/>' +
+          '<text x="'+pt.x.toFixed(1)+'" y="'+(pt.y+rad+12).toFixed(1)+'" text-anchor="middle" class="nm-node-label">'+esc(trunc(fname(it.label),14))+'</text>' +
         '</g>';
       });
-      // connector hub (drawn above the contact edges)
-      hubs += '<g class="nm-cnode"><title>'+esc(name)+' · '+mine.length+' path'+(mine.length!==1?'s':'')+'</title>' +
-        '<circle cx="'+hub.x.toFixed(1)+'" cy="'+hub.y.toFixed(1)+'" r="20" fill="'+col+'"/>' +
-        '<text x="'+hub.x.toFixed(1)+'" y="'+(hub.y+4).toFixed(1)+'" text-anchor="middle" class="nm-node-init" fill="#fff" style="stroke:none">'+esc(initials(name))+'</text>' +
-        '<text x="'+hub.x.toFixed(1)+'" y="'+(hub.y+35).toFixed(1)+'" text-anchor="middle" class="nm-node-label" style="font-weight:600">'+esc(trunc(name,16))+'</text>' +
+      // hub: favicon-in-ring (company) or filled colored circle w/ initials (person)
+      var clk=g.clickKind?(' data-hk="'+esc(g.clickKind)+'" data-hid="'+esc(g.clickId||g.label)+'"'):'';
+      var hubInner, hc='nmh'+ci+Math.floor(hub.x);
+      if(g.domain){
+        hubInner='<clipPath id="'+hc+'"><circle cx="'+hub.x.toFixed(1)+'" cy="'+hub.y.toFixed(1)+'" r="18"/></clipPath>' +
+          '<circle cx="'+hub.x.toFixed(1)+'" cy="'+hub.y.toFixed(1)+'" r="20" fill="var(--surface)" stroke="'+col+'" stroke-width="2.5"/>' +
+          '<image href="'+esc(faviconUrl(g.domain))+'" x="'+(hub.x-18).toFixed(1)+'" y="'+(hub.y-18).toFixed(1)+'" width="36" height="36" clip-path="url(#'+hc+')" preserveAspectRatio="xMidYMid slice" onerror="this.remove()"/>';
+      } else {
+        hubInner='<circle cx="'+hub.x.toFixed(1)+'" cy="'+hub.y.toFixed(1)+'" r="20" fill="'+col+'"/>' +
+          '<text x="'+hub.x.toFixed(1)+'" y="'+(hub.y+4).toFixed(1)+'" text-anchor="middle" class="nm-node-init" fill="#fff" style="stroke:none">'+esc(g.initials||initials(g.label))+'</text>';
+      }
+      hubs += '<g class="nm-cnode'+(g.clickKind?' nm-hub-click':'')+'"'+clk+'><title>'+esc(g.label)+' · '+g.items.length+'</title>'+hubInner +
+        '<text x="'+hub.x.toFixed(1)+'" y="'+(hub.y+34).toFixed(1)+'" text-anchor="middle" class="nm-node-label" style="font-weight:700">'+esc(g.hubText||g.label)+'</text>' +
       '</g>';
     });
 
-    // target company node at the center
-    var dom=domainFor(c);
-    var clip='nmco'+Math.random().toString(36).slice(2,7);
-    var tgt='<g>' +
-      '<clipPath id="'+clip+'"><circle cx="'+cx+'" cy="'+cy+'" r="27"/></clipPath>' +
+    // center node
+    var cc='nmc'+Math.floor(cx);
+    var centerNode='<g>' +
+      '<clipPath id="'+cc+'"><circle cx="'+cx+'" cy="'+cy+'" r="27"/></clipPath>' +
       '<circle cx="'+cx+'" cy="'+cy+'" r="29" fill="var(--surface)" stroke="var(--green)" stroke-width="2.4"/>' +
-      '<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" class="nm-node-init" fill="var(--text-muted)">'+esc(initials(c.company))+'</text>' +
-      (dom ? '<image href="'+esc(faviconUrl(dom))+'" x="'+(cx-27)+'" y="'+(cy-27)+'" width="54" height="54" clip-path="url(#'+clip+')" preserveAspectRatio="xMidYMid slice" onerror="this.remove()"/>' : '') +
-      '<text x="'+cx+'" y="'+(cy+48)+'" text-anchor="middle" class="nm-node-label" style="font-weight:700">'+esc(trunc(c.company,20))+'</text>' +
+      '<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" class="nm-node-init" fill="var(--text-muted)">'+esc(center.initials||initials(center.label))+'</text>' +
+      (center.domain ? '<image href="'+esc(faviconUrl(center.domain))+'" x="'+(cx-27)+'" y="'+(cy-27)+'" width="54" height="54" clip-path="url(#'+cc+')" preserveAspectRatio="xMidYMid slice" onerror="this.remove()"/>' : '') +
+      '<text x="'+cx+'" y="'+(cy+48)+'" text-anchor="middle" class="nm-node-label" style="font-weight:700">'+esc(trunc(center.label,22))+'</text>' +
     '</g>';
 
-    // crop the viewBox to the region the fan actually occupies (top tier down to
-    // the target label) so the graph fills the frame instead of floating small
-    // in a tall canvas. content spans ~ (cy - maxTier - 22) .. (cy + 55).
-    var vy0=Math.max(0, cy-TIERS[TIERS.length-1]-40), vy1=cy+60, vbh=vy1-vy0;
+    var vy0=Math.max(0, cy-TIERS[TIERS.length-1]-40), vbh=(cy+60)-vy0;
     var svg='<svg viewBox="0 '+vy0.toFixed(0)+' '+W+' '+vbh.toFixed(0)+'" preserveAspectRatio="xMidYMid meet">' +
-      '<g class="nm-zoom">'+arcs+edges+tgt+nodes+hubs+'</g></svg>';
-
-    var legend='<div class="nm-legend">' +
-      '<div class="nm-legend-item"><span class="nm-legend-swatch hi"></span>Warm 75+</div>' +
-      '<div class="nm-legend-item"><span class="nm-legend-swatch mid"></span>Mid 40–74</div>' +
-      '<div class="nm-legend-item"><span class="nm-legend-swatch lo"></span>Low</div>' +
-      '<div class="nm-legend-item"><span class="nm-legend-swatch li"></span>LinkedIn only</div>' +
-      '<div class="nm-legend-item" style="opacity:.7;">size = seniority · ring = at company</div>' +
-      '</div>';
+      '<g class="nm-zoom">'+arcs+edges+centerNode+nodes+hubs+'</g></svg>';
     var zoom='<div class="nm-zoom-btns"><button type="button" data-nmz="in" title="Zoom in">+</button><button type="button" data-nmz="out" title="Zoom out">−</button><button type="button" data-nmz="reset" title="Reset" style="font-size:11px;">⤢</button></div>';
-    var hint = paths.length+' path'+(paths.length!==1?'s':'')+' · drag to pan · scroll to zoom';
-    return '<div class="nm-graph-wrap">'+svg+legend+zoom+'<div class="nm-controls-hint">'+hint+'</div></div>';
+    return '<div class="nm-graph-wrap">'+svg+legendHtml+zoom+'<div class="nm-controls-hint">'+esc(hintText||'')+'</div></div>';
+  }
+
+  // company-centric: target company at center, Primary connectors as hubs
+  function buildGraph(c){
+    var paths=c.paths||[], connectors=[], seen={};
+    paths.forEach(function(p){ if(!(p.connector in seen)){ seen[p.connector]=1; connectors.push(p.connector); } });
+    var groups=connectors.map(function(name){
+      var mine=paths.filter(function(p){ return p.connector===name; });
+      return { label:name, hubText:flabel(name), initials:initials(name), domain:null, clickKind:'connector', clickId:name,
+        items:mine.map(function(p){ return { label:p.contact_name, score:p.score, type:p.type, seniority:p.seniority, ring:!!p.at_target_company,
+          tooltip:p.contact_name+(p.contact_title?' — '+p.contact_title:'')+' · '+(p.score===null?'LinkedIn only':'warmth '+p.score)+' · via '+name+(p.at_target_company?'':' · '+(p.contact_affiliation||'external')) }; }) };
+    });
+    return radialGraph({label:c.company, domain:domainFor(c), initials:initials(c.company)}, groups,
+      warmthLegend('Spoke to target = connector','works at the target company'),
+      paths.length+' path'+(paths.length!==1?'s':'')+' · click a connector to see all their contacts · drag to pan');
+  }
+
+  // connector-centric: one Primary person at center, target companies as hubs
+  function buildConnectorGraph(conn){
+    var groups=conn.companies.map(function(co){
+      return { label:co.company, hubText:trunc(co.company,15), initials:initials(co.company), domain:co.domain, clickKind:'company', clickId:co.company,
+        items:co.paths.map(function(p){ return { label:p.contact_name, score:p.score, type:p.type, seniority:p.seniority, ring:!!p.at_target_company,
+          tooltip:p.contact_name+(p.contact_title?' — '+p.contact_title:'')+' · '+(p.score===null?'LinkedIn only':'warmth '+p.score)+' · at '+co.company }; }) };
+    });
+    return radialGraph({label:conn.name, domain:null, initials:initials(conn.name)}, groups,
+      warmthLegend('Spoke = target company','contact works at that company'),
+      conn.total+' contact'+(conn.total!==1?'s':'')+' across '+conn.companies.length+' compan'+(conn.companies.length!==1?'ies':'y')+' · click a company · drag to pan');
   }
 
   function wireGraph(){
@@ -1643,6 +1694,10 @@ function getAllCompaniesFlat(){
     }
     hideUnavailable();
     renderSummary(data);
+    // connector chips in the summary are clickable -> connector-centric view
+    document.querySelectorAll('.nm-conn-chip').forEach(function(el){
+      el.addEventListener('click', function(){ selectConnector(el.dataset.conn); });
+    });
 
     var note=document.getElementById('nm-status-note');
     if(note){
@@ -1679,13 +1734,33 @@ function getAllCompaniesFlat(){
     var withPath=rows.filter(hasWarm).length;
     if(cnt) cnt.textContent = rows.length+' account'+(rows.length!==1?'s':'')+' · '+withPath+' with paths';
 
+    // people search — match Primary connectors by name (search companies OR people)
+    var cidx=connectorIndex();
+    var peopleHits = search ? Object.keys(cidx).filter(function(k){return k.toLowerCase().includes(search);}).sort(function(a,b){return cidx[b].total-cidx[a].total;}) : [];
+    var peopleHtml = peopleHits.length ? (
+      '<div class="nm-list-section">People at Primary</div>' +
+      peopleHits.map(function(k){ var conn=cidx[k];
+        return '<div class="network-row nm-person-row" data-nm-conn="'+esc(k)+'">' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<div class="nm-person-av sm">'+esc(initials(k))+'</div>' +
+            '<div style="flex:1;min-width:0;">' +
+              '<span style="font-size:12.5px;font-weight:600;color:var(--text);">'+esc(k)+'</span>' +
+              '<div style="font-size:10px;color:var(--text-muted);margin-top:2px;">'+conn.total+' contact'+(conn.total!==1?'s':'')+' · '+conn.companies.length+' compan'+(conn.companies.length!==1?'ies':'y')+'</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="network-conn-info" style="color:var(--green-dark);">view network →</div>' +
+        '</div>';
+      }).join('') +
+      (rows.length?'<div class="nm-list-section">Accounts</div>':'')
+    ) : '';
+
     var list=document.getElementById('network-list');
-    if(rows.length===0){
-      list.innerHTML='<div class="nc-empty">No accounts match this filter.</div>';
+    if(rows.length===0 && peopleHits.length===0){
+      list.innerHTML='<div class="nc-empty">No accounts or people match.</div>';
       document.getElementById('network-panel').innerHTML='<div class="nc-empty">No accounts to show</div>';
       return;
     }
-    list.innerHTML=rows.map(function(c){
+    list.innerHTML=peopleHtml+rows.map(function(c){
       var hw=hasWarm(c);            // warm-path company: at least one scored interaction path
       var hp=hasPaths(c);           // has any resolved paths at all (may be LinkedIn-only)
       var err=isError(c);
@@ -1725,21 +1800,29 @@ function getAllCompaniesFlat(){
         '<div class="network-conn-info" style="color:'+infoColor+';">'+esc(info)+'</div>' +
       '</div>';
     }).join('');
-    // attach listeners instead of inline onclick with interpolated names (company names may contain quotes)
-    list.querySelectorAll('.network-row').forEach(function(el){
+    // attach listeners instead of inline onclick with interpolated names (names may contain quotes)
+    list.querySelectorAll('.network-row[data-nm-name]').forEach(function(el){
       el.addEventListener('click', function(){ selectNetworkCompany(el.dataset.nmName); });
     });
+    list.querySelectorAll('.nm-person-row').forEach(function(el){
+      el.addEventListener('click', function(){ selectConnector(el.dataset.nmConn); });
+    });
 
-    if(state.nmSelected && rows.find(function(c){return c.company===state.nmSelected;})){
-      selectNetworkCompany(state.nmSelected);
+    // keep the panel in sync; don't clobber a connector view the user is in
+    if(state.nmMode==='connector' && state.nmConnector){
+      selectConnector(state.nmConnector);
+    } else if(rows.length){
+      var keep = state.nmSelected && rows.find(function(c){return c.company===state.nmSelected;});
+      selectNetworkCompany(keep ? state.nmSelected : rows[0].company);
     } else {
-      selectNetworkCompany(rows[0].company);
+      document.getElementById('network-panel').innerHTML='<div class="nc-empty">Select a person above to see their network.</div>';
     }
   }
 
   function selectNetworkCompany(name){
     if(state.tab!=='network') switchTab('network');
-    state.nmSelected=name;
+    state.nmMode='company'; state.nmConnector=null; state.nmSelected=name;
+    document.querySelectorAll('.nm-conn-chip').forEach(function(el){ el.classList.remove('active'); });
     document.querySelectorAll('.network-row').forEach(function(el){ el.classList.toggle('active', el.dataset.nmName===name); });
     var panel=document.getElementById('network-panel'); if(!panel) return;
     var data=nd();
@@ -1782,6 +1865,90 @@ function getAllCompaniesFlat(){
     panel.innerHTML = head + buildGraph(c) + rankedList(c);
     wireOpen();
     wireGraph();
+    wireHubClicks();
+  }
+
+  // click a hub node in either graph: connector hub -> connector view, company hub -> company view
+  function wireHubClicks(){
+    var panel=document.getElementById('network-panel'); if(!panel) return;
+    panel.querySelectorAll('.nm-hub-click').forEach(function(el){
+      el.addEventListener('click', function(){
+        var k=el.getAttribute('data-hk'), id=el.getAttribute('data-hid');
+        if(k==='connector') selectConnector(id); else if(k==='company') selectNetworkCompany(id);
+      });
+    });
+  }
+
+  // ---- connector-centric view (all a Primary person's contacts, by company)--
+  function connectorIndex(){
+    var data=nd(), idx={};
+    if(!data || !Array.isArray(data.companies)) return idx;
+    data.companies.forEach(function(c){
+      if(!hasPaths(c)) return;
+      (c.paths||[]).forEach(function(p){
+        var k=p.connector; if(!k) return;
+        if(!idx[k]){ idx[k]={name:k, companies:[], total:0, _by:{}}; }
+        var e=idx[k]._by[c.company];
+        if(!e){ e={company:c.company, domain:domainFor(c), paths:[], best:0}; idx[k]._by[c.company]=e; idx[k].companies.push(e); }
+        e.paths.push(p); idx[k].total++;
+      });
+    });
+    Object.keys(idx).forEach(function(k){
+      idx[k].companies.forEach(function(co){
+        co.paths.sort(function(a,b){ var as=!isWarmPath(a),bs=!isWarmPath(b); if(as!==bs)return as?1:-1; if(as&&bs)return 0; return b.score-a.score; });
+        co.best=co.paths.reduce(function(m,p){ return (isWarmPath(p)&&p.score>m)?p.score:m; },0);
+      });
+      idx[k].companies.sort(function(a,b){ return b.best-a.best; });
+    });
+    return idx;
+  }
+
+  function connectorList(conn){
+    return '<div class="nm-paths-head">'+conn.total+' contact'+(conn.total!==1?'s':'')+' · '+conn.companies.length+' compan'+(conn.companies.length!==1?'ies':'y')+'</div>' +
+      conn.companies.map(function(co){
+        return '<div class="nm-cgroup">' +
+          '<div class="nm-cgroup-head">' +
+            (co.domain?'<img src="'+esc(faviconUrl(co.domain))+'" style="width:18px;height:18px;border-radius:4px;border:1px solid var(--border);flex-shrink:0;" onerror="this.style.opacity=0">':'') +
+            '<span class="nm-cgroup-name" data-nm-name="'+esc(co.company)+'">'+esc(co.company)+'</span>' +
+            '<span class="nm-cgroup-count">'+co.paths.length+'</span>' +
+          '</div>' +
+          co.paths.map(function(p){
+            var isLi=(p.type==='linkedin'||p.score===null), t=tier(p.score);
+            var liHref=safeUrl(p.linkedin_url);
+            var li=liHref?'<a class="nm-li-link" href="'+esc(liHref)+'" target="_blank" rel="noopener">in ↗</a>':'';
+            return '<div class="nm-path-row'+(isLi?' nm-li':'')+'" style="margin-bottom:6px;">' +
+              '<div class="nm-path-av">'+esc(initials(p.contact_name))+'</div>' +
+              '<div class="nm-path-main"><div class="nm-path-name">'+esc(p.contact_name)+' '+li+'</div>' +
+              '<div class="nm-path-title">'+esc(p.contact_title||'')+(p.at_target_company?'':' · '+esc(p.contact_affiliation||'external'))+'</div></div>' +
+              '<div class="nm-score-wrap"><span class="nm-score '+(isLi?'lo':t.key)+'">'+(isLi?'—':p.score+'%')+'</span><span class="nm-score-lbl">'+(isLi?'no score':'warmth')+'</span></div>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+      }).join('');
+  }
+
+  function selectConnector(name){
+    if(state.tab!=='network') switchTab('network');
+    state.nmMode='connector'; state.nmConnector=name; state.nmSelected=null;
+    document.querySelectorAll('.network-row').forEach(function(el){ el.classList.remove('active'); });
+    document.querySelectorAll('.nm-conn-chip').forEach(function(el){ el.classList.toggle('active', el.dataset.conn===name); });
+    var panel=document.getElementById('network-panel'); if(!panel) return;
+    var conn=connectorIndex()[name];
+    if(!conn){ panel.innerHTML='<div class="nc-empty">No mapped connections for '+esc(name)+'.</div>'; return; }
+    var head =
+      '<div class="nm-panel-head">' +
+        '<div class="nm-person-av">'+esc(initials(name))+'</div>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div class="nm-panel-title">'+esc(name)+'</div>' +
+          '<div class="nm-panel-sub">Primary · reaches '+conn.total+' contact'+(conn.total!==1?'s':'')+' across '+conn.companies.length+' ICP compan'+(conn.companies.length!==1?'ies':'y')+'</div>' +
+        '</div>' +
+        '<button class="btn btn-ghost" id="nm-back" style="height:30px;padding:0 12px;font-size:11.5px;">← Accounts</button>' +
+      '</div>';
+    panel.innerHTML = head + buildConnectorGraph(conn) + connectorList(conn);
+    var bk=panel.querySelector('#nm-back'); if(bk) bk.addEventListener('click', function(){ state.nmMode='company'; state.nmConnector=null; renderNetworkMap(); });
+    panel.querySelectorAll('.nm-cgroup-name').forEach(function(el){ el.addEventListener('click', function(){ selectNetworkCompany(el.dataset.nmName); }); });
+    wireGraph();
+    wireHubClicks();
   }
 
   function setNmFilter(f){
@@ -1797,6 +1964,7 @@ function getAllCompaniesFlat(){
 
   window.renderNetworkMap=renderNetworkMap;
   window.selectNetworkCompany=selectNetworkCompany;
+  window.selectConnector=selectConnector;
   window.setNmFilter=setNmFilter;
   window.setNmSort=setNmSort;
 })();
