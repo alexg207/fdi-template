@@ -8,7 +8,7 @@
 function toggleTheme(){var h=document.documentElement;if(h.getAttribute("data-theme")==="light"){h.removeAttribute("data-theme");try{localStorage.setItem("{{PRODUCT_SLUG}}-theme","dark")}catch(e){}}else{h.setAttribute("data-theme","light");try{localStorage.setItem("{{PRODUCT_SLUG}}-theme","light")}catch(e){}}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg:           hsl(240 14% 5%);
@@ -62,7 +62,11 @@ function toggleTheme(){var h=document.documentElement;if(h.getAttribute("data-th
 
   --font-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-sans:    'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, monospace;
+  /* Lyric Network Map match (dashboard only): text = Inter, figures = Newsreader
+     serif, NO monospace. --font-mono is repointed to Inter so every old mono
+     usage becomes sans; the prominent number figures are then set to --font-num. */
+  --font-mono:    'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-num:     'Newsreader', Georgia, 'Times New Roman', serif;
 }
 :root[data-theme="light"]{
   --bg:hsl(0 0% 98%);--surface:hsl(0 0% 100%);--surface2:hsl(0 0% 96%);--surface3:hsl(0 0% 92%);--border:hsl(0 0% 88%);--border-soft:hsl(0 0% 94%);--border-mid:hsl(0 0% 80%);
@@ -502,6 +506,11 @@ a{color:inherit;}
 .nm-legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text-mid);}
 .nm-legend-note{font-size:9.5px;color:var(--text-faint);line-height:1.35;}
 .nm-legend-hint{font-size:9.5px;color:var(--text-faint);margin-top:5px;padding-top:5px;border-top:1px solid var(--border-soft);}
+/* Lyric match: prominent number figures render in Newsreader serif (placed late
+   so it wins over the class definitions above; #view-network rules beat the
+   scoped sans override). Small meta (dates/domains/tab counts) stay Inter. */
+.card-signal-num,.meta-val,.cx-signal-num-cell,.cx-signal-strip .cx-signal-foot .val,.pc-conf-val,.pc-signal-num,
+#view-network .nm-score,#view-network .nm-stat-val,#view-network .nm-pm-val{font-family:var(--font-num);font-variant-numeric:normal;letter-spacing:0;}
 .nm-legend-swatch{width:16px;flex-shrink:0;height:0;border-top:3px solid var(--nm-w-mid);}
 .nm-legend-swatch.hi{border-top-color:var(--nm-w-hi);}
 .nm-legend-swatch.mid{border-top-color:var(--nm-w-mid);}
