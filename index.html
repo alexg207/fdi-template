@@ -542,6 +542,8 @@ a{color:inherit;}
 .nm-d-row b{color:var(--text);font-weight:600;text-align:right;}
 .nm-d-btn{display:block;text-align:center;margin-top:12px;padding:8px;border:1px solid var(--border-mid);border-radius:8px;font-size:12px;font-weight:600;color:var(--text);text-decoration:none;}
 .nm-d-btn:hover{border-color:var(--green);color:var(--green-dark);}
+.nm-d-btn-primary{background:var(--green);border-color:var(--green);color:#fff;}
+.nm-d-btn-primary:hover{background:var(--green-dark);border-color:var(--green-dark);color:#fff;}
 .nm-d-sec-lbl{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-faint);margin:12px 0 7px;}
 .nm-d-evt{padding:7px 9px;border:1px solid var(--border-soft);border-radius:8px;margin-bottom:6px;background:var(--bg);}
 .nm-d-evt.nm-d-next{border-color:var(--nm-w-hi);background:color-mix(in srgb, var(--nm-w-hi) 8%, var(--bg));}
@@ -2023,6 +2025,35 @@ function getAllCompaniesFlat(){
     box.querySelector('.nm-d-close').addEventListener('click', function(){ box.style.display='none'; });
   }
 
+  // click a Primary connector hub -> pop a card on that Primary person (title/org/
+  // location/LinkedIn from Affinity) + a button into their full connector network.
+  function showConnectorDetail(name){
+    var box=document.getElementById('nm-detail'); if(!box) return;
+    var meta=(nd()&&nd().connectors&&nd().connectors[name])||{};
+    var idx=connectorIndex()[name];
+    var total=idx?idx.total:0, ncos=idx?idx.companies.length:0;
+    var liHref=safeUrl(meta.linkedin);
+    var sub = meta.title ? esc(meta.title)+(meta.org?' · '+esc(meta.org):'') : (meta.org?esc(meta.org):'Primary');
+    box.innerHTML =
+      '<button class="nm-d-close" type="button" aria-label="Close">×</button>' +
+      '<div class="nm-d-head"><div class="nm-d-av">'+esc(initials(name))+'</div>' +
+        '<div style="flex:1;min-width:0;"><div class="nm-d-name">'+esc(name)+'</div>' +
+        '<div class="nm-d-title">'+sub+'</div></div></div>' +
+      '<div class="nm-d-badges">' +
+        '<span class="nm-badge sen">Primary connector</span>' +
+        (meta.location?'<span class="nm-badge">'+esc(meta.location)+'</span>':'') +
+      '</div>' +
+      '<div class="nm-d-rows" style="margin-top:11px;">' +
+        '<div class="nm-d-row"><span>Warm contacts</span><b>'+total+'</b></div>' +
+        '<div class="nm-d-row"><span>ICP companies reached</span><b>'+ncos+'</b></div>' +
+      '</div>' +
+      (liHref?'<a class="nm-d-btn" href="'+esc(liHref)+'" target="_blank" rel="noopener">Open LinkedIn ↗</a>':'') +
+      '<button class="nm-d-btn nm-d-btn-primary" type="button" data-show-conns>Show all connections →</button>';
+    box.style.display='block';
+    box.querySelector('.nm-d-close').addEventListener('click', function(){ box.style.display='none'; });
+    var sc=box.querySelector('[data-show-conns]'); if(sc) sc.addEventListener('click', function(){ box.style.display='none'; selectConnector(name); });
+  }
+
   // ---- ranked path list -----------------------------------------------------
   // Map / List wayfinding toggle: shown above the graph so people discover the
   // ranked list below it. Map = center the graph; List = jump to the list.
@@ -2353,7 +2384,7 @@ function getAllCompaniesFlat(){
     panel.querySelectorAll('.nm-hub-click').forEach(function(el){
       el.addEventListener('click', function(){
         var k=el.getAttribute('data-hk'), id=el.getAttribute('data-hid');
-        if(k==='connector') selectConnector(id); else if(k==='company') selectNetworkCompany(id);
+        if(k==='connector') showConnectorDetail(id); else if(k==='company') selectNetworkCompany(id);
       });
     });
   }
