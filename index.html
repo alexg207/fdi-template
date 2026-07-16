@@ -562,6 +562,61 @@ a{color:inherit;}
 .nm-sen-opt{padding:7px 9px;border-radius:6px;font-size:12.5px;color:var(--text);cursor:pointer;}
 .nm-sen-opt:hover{background:var(--surface2);}
 .nm-sen-opt.active{color:var(--green-dark);font-weight:600;}
+/* summary: clickable stat buttons + aligned dropdown row */
+.nm-stat-btn{position:relative;text-align:left;background:none;border:none;border-right:1px solid var(--border-soft);cursor:pointer;font-family:var(--font-sans);color:inherit;transition:background 120ms;}
+.nm-stat-btn:hover{background:var(--surface2);}
+.nm-stat-go{position:absolute;right:14px;bottom:12px;font-size:10px;font-weight:600;color:var(--green-dark);opacity:0;transition:opacity 120ms;}
+.nm-stat-btn:hover .nm-stat-go{opacity:1;}
+.nm-stat-controls{flex:1;min-width:230px;}
+.nm-ctl-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.nm-sen-dd .nm-sen-btn,.nm-conn-btn{height:32px;}
+/* === CONTACTS TAB === */
+.ct-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.ct-filters{display:flex;gap:8px;flex-wrap:wrap;}
+.ct-dd{position:relative;}
+.ct-lists{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.ct-list-chip{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--text-mid);background:var(--surface2);border:1px solid var(--border);border-radius:9999px;padding:5px 12px;cursor:pointer;transition:border-color 120ms;}
+.ct-list-chip:hover{border-color:var(--green);}
+.ct-list-chip.active{background:var(--green-tint);color:var(--green-deep);border-color:var(--green-ring);}
+.ct-list-n{font-size:10.5px;color:var(--text-faint);font-weight:600;}
+.ct-list-chip.active .ct-list-n{color:var(--green-deep);}
+.ct-list-x{color:var(--text-faint);font-size:10px;margin-left:1px;}
+.ct-list-x:hover{color:var(--q-low);}
+.ct-count{font-size:11px;color:var(--text-faint);margin-bottom:8px;letter-spacing:.02em;}
+.ct-table-wrap{border:1px solid var(--border);border-radius:9px;overflow:hidden;background:var(--surface);}
+.ct-table{width:100%;border-collapse:collapse;font-size:13px;}
+.ct-table thead th{text-align:left;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg);}
+.ct-table th.ct-num,.ct-table td.ct-num{text-align:right;}
+.ct-cbcol{width:38px;}
+.ct-tier td{padding:8px 14px 5px;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);background:var(--bg);border-top:1px solid var(--border-soft);}
+.ct-row{border-top:1px solid var(--border-soft);cursor:pointer;transition:background 100ms;}
+.ct-row:hover{background:var(--surface2);}
+.ct-row.ct-open{background:var(--surface2);}
+.ct-row td{padding:10px 14px;vertical-align:middle;}
+.ct-name{font-weight:600;color:var(--text);}
+.ct-sub{font-size:11px;color:var(--text-muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px;}
+.ct-acct{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-mid);}
+.ct-acct img{width:18px;height:18px;border-radius:4px;border:1px solid var(--border);}
+.ct-conn{font-size:12.5px;color:var(--text-mid);}
+.ct-last{font-size:12px;color:var(--text-muted);white-space:nowrap;}
+.ct-num .nm-score{font-size:16px;}
+.ct-exp-row td{padding:0 14px 12px 14px;background:var(--surface2);}
+.ct-exp{padding-top:4px;}
+.ct-empty{padding:34px;text-align:center;color:var(--text-faint);font-size:13px;}
+.ct-bulk{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(14px);display:none;align-items:center;gap:13px;background:var(--surface);border:1px solid var(--border-mid);border-radius:13px;padding:9px 16px;box-shadow:0 14px 40px rgba(0,0,0,.45);z-index:90;opacity:0;transition:opacity .15s,transform .15s;}
+.ct-bulk.show{display:flex;opacity:1;transform:translateX(-50%) translateY(0);}
+.ctb-n{font-size:12.5px;font-weight:600;color:var(--text);}
+.ctb-sep{width:1px;height:18px;background:var(--border);}
+.ctb-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font-sans);}
+.ctb-btn:hover{border-color:var(--green);color:var(--green-dark);}
+.ctb-clear{font-size:12px;color:var(--text-muted);cursor:pointer;}
+.ctb-clear:hover{color:var(--q-low);}
+.ct-addlist{position:relative;}
+.ct-addlist-menu{display:none;position:absolute;bottom:calc(100% + 6px);left:0;width:200px;max-height:240px;overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:9px;box-shadow:0 10px 28px rgba(0,0,0,.3);padding:5px;}
+.ct-addlist.open .ct-addlist-menu{display:block;}
+.ct-addlist-opt{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;border-radius:6px;font-size:12.5px;color:var(--text);cursor:pointer;}
+.ct-addlist-opt:hover{background:var(--surface2);}
+.ct-addlist-new{color:var(--green-dark);font-weight:600;border-top:1px solid var(--border-soft);margin-top:4px;}
 /* connectors dropdown (summary) */
 .nm-conn-dd{position:relative;margin-top:6px;}
 .nm-conn-btn{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 11px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font-sans);}
@@ -671,6 +726,7 @@ a{color:inherit;}
     <button class="page-tab tab-link" data-tab="midmarket" onclick="switchTab('midmarket')">Mid-Market <span class="tab-count" id="tab-count-midmarket">0</span></button>
     <button class="page-tab tab-link" data-tab="enterprise" onclick="switchTab('enterprise')">Enterprise <span class="tab-count" id="tab-count-enterprise">0</span></button>
     <button class="page-tab tab-link" data-tab="network" onclick="switchTab('network')">Network</button>
+    <button class="page-tab tab-link" data-tab="contacts" onclick="switchTab('contacts')">Contacts</button>
   </nav>
 
   <!-- HOME (queue) VIEW -->
@@ -759,6 +815,39 @@ a{color:inherit;}
     </div>
   </div>
 
+  <!-- CONTACTS VIEW (rows worklist + lists) -->
+  <div id="view-contacts" style="display:none;">
+    <div class="context-strip">
+      <div>
+        <div class="context-eyebrow">Contacts · warm paths from Affinity</div>
+        <h1 class="context-h1">Every warm contact · build a list</h1>
+        <p class="context-sub">Filter across every target account, then select contacts and save them to a list or export.</p>
+      </div>
+    </div>
+    <div id="ct-unavailable" style="display:none;"></div>
+    <div id="ct-body">
+      <div class="ct-toolbar">
+        <div class="search-wrap" style="max-width:280px;margin-left:0;">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/></svg>
+          <input class="search-input" type="text" id="ct-search" placeholder="search name, title, company, connector...">
+        </div>
+        <div class="ct-filters" id="ct-filters"></div>
+      </div>
+      <div class="ct-lists" id="ct-lists"></div>
+      <div class="ct-count" id="ct-count"></div>
+      <div class="ct-table-wrap">
+        <table class="ct-table">
+          <thead><tr>
+            <th class="ct-cbcol"><input type="checkbox" id="ct-all"></th>
+            <th>Contact</th><th>Account</th><th>Connector</th><th class="ct-num">Warmth</th><th>Last contact</th>
+          </tr></thead>
+          <tbody id="ct-body-rows"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="ct-bulk" id="ct-bulk"></div>
+  </div>
+
   <!-- COMPANY DETAIL VIEW -->
   <div id="view-detail" style="display:none;">
     <div class="breadcrumb" id="detail-breadcrumb"></div>
@@ -809,7 +898,8 @@ var state = {
   nmSelected: null,
   nmMode: 'company',
   nmConnector: null,
-  nmSen: 'all'
+  nmSen: 'all',
+  ctQ: '', ctWarm: 'all', ctSen: 'all', ctConn: 'all', ctAcct: 'all', ctAct: 'all', ctList: null
 };
 function expansionKey(c){return (c._segId||state.tab)+'|'+c.name;}
 function isCardExpanded(c){return !!state.expanded[expansionKey(c)];}
@@ -1426,13 +1516,18 @@ function switchTab(tab){
   });
   var vh = document.getElementById('view-home');
   var vn = document.getElementById('view-network');
+  var vc = document.getElementById('view-contacts');
   var vd = document.getElementById('view-detail');
-  vh.setAttribute('style', (tab==='network'||tab==='detail') ? 'display:none;' : 'display:block;');
+  var special = (tab==='network'||tab==='detail'||tab==='contacts');
+  vh.setAttribute('style', special ? 'display:none;' : 'display:block;');
   vn.setAttribute('style', tab==='network' ? 'display:block;' : 'display:none;');
+  if (vc) vc.setAttribute('style', tab==='contacts' ? 'display:block;' : 'display:none;');
   vd.setAttribute('style', 'display:none;');
   document.getElementById('tab-nav').setAttribute('style','display:flex;');
   if (tab === 'network') {
     renderNetworkMap();
+  } else if (tab === 'contacts') {
+    renderContacts();
   } else {
     state.selected = null;
     renderQueue();
@@ -1534,6 +1629,11 @@ function getAllCompaniesFlat(){
     var cov = (typeof s.coverage_pct==='number') ? s.coverage_pct : (total? Math.round(withPath/total*100):0);
     var rel = (typeof s.total_relationships==='number') ? s.total_relationships : null;
     var conns = Array.isArray(s.primary_connectors) ? s.primary_connectors : [];
+    var paths=[]; (data.companies||[]).forEach(function(c){ if(hasPaths(c)) paths.push.apply(paths, c.paths); });
+    var now=Date.now(), THIRTY=30*86400000;
+    var active30=paths.filter(function(p){ if(!p.last_contact) return false; var d=new Date(p.last_contact+'T00:00:00'); return !isNaN(d) && (now-d.getTime())<=THIRTY; }).length;
+    var upcoming=paths.filter(function(p){ return p.history && p.history.next_meeting && p.history.next_meeting.date; }).length;
+    var senLbl=(SEN_OPTS.find(function(o){return o[0]===state.nmSen;})||SEN_OPTS[0])[1];
     el.innerHTML =
       '<div class="nm-stat">' +
         '<div class="nm-stat-val">'+cov+'<span class="nm-stat-sub">%</span></div>' +
@@ -1548,46 +1648,39 @@ function getAllCompaniesFlat(){
         '<div class="nm-stat-val">'+rel.toLocaleString()+'</div>' +
         '<div class="nm-stat-lbl">Total relationships</div>' +
       '</div>' : '') +
-      '<div class="nm-stat">' +
-        '<div class="nm-stat-lbl" style="margin-bottom:2px;">Connectors at Primary ('+conns.length+')</div>' +
-        (conns.length ?
-          '<div class="nm-conn-dd" id="nm-conn-dd">' +
-            '<button type="button" class="nm-conn-btn" id="nm-conn-btn"><span class="nm-conn-dot"></span>Choose a connector <span class="caret">▾</span></button>' +
-            '<div class="nm-conn-menu">' +
-              conns.map(function(n){return '<div class="nm-conn-opt" data-conn="'+esc(n)+'"><span class="nm-conn-dot"></span>'+esc(n)+'</div>';}).join('') +
-            '</div>' +
-          '</div>'
-          : '<span style="font-size:11px;color:var(--text-faint);">none</span>') +
-      '</div>' +
-      summaryExtras(data);
-  }
-
-  // fills the space right of the connectors dropdown: live activity stats
-  // derived from the shown paths + a seniority filter for the graph/list.
-  var SEN_OPTS=[['all','All seniority'],['dir','Director +'],['vp','VP +'],['c','C-level only']];
-  function summaryExtras(data){
-    var paths=[]; (data.companies||[]).forEach(function(c){ if(hasPaths(c)) paths.push.apply(paths, c.paths); });
-    var now=Date.now(), THIRTY=30*86400000;
-    var active30=paths.filter(function(p){ if(!p.last_contact) return false; var d=new Date(p.last_contact+'T00:00:00'); return !isNaN(d) && (now-d.getTime())<=THIRTY; }).length;
-    var upcoming=paths.filter(function(p){ return p.history && p.history.next_meeting && p.history.next_meeting.date; }).length;
-    var senLbl=(SEN_OPTS.find(function(o){return o[0]===state.nmSen;})||SEN_OPTS[0])[1];
-    return '<div class="nm-sum-extra">' +
-      '<div class="nm-stat" style="border-right:none;padding:0;">' +
+      '<button type="button" class="nm-stat nm-stat-btn" data-ct="active30" title="See these contacts">' +
         '<div class="nm-stat-val">'+active30+'</div>' +
         '<div class="nm-stat-lbl">Active in last 30d</div>' +
-      '</div>' +
-      '<div class="nm-stat" style="border-right:none;padding:0;">' +
+        '<span class="nm-stat-go">View →</span>' +
+      '</button>' +
+      '<button type="button" class="nm-stat nm-stat-btn" data-ct="meeting" title="See these contacts">' +
         '<div class="nm-stat-val">'+upcoming+'</div>' +
         '<div class="nm-stat-lbl">Meetings on the calendar</div>' +
-      '</div>' +
-      '<div class="nm-sen-dd" id="nm-sen-dd">' +
-        '<button type="button" class="nm-sen-btn" id="nm-sen-btn">'+esc(senLbl)+' <span class="caret">▾</span></button>' +
-        '<div class="nm-sen-menu">' +
-          SEN_OPTS.map(function(o){return '<div class="nm-sen-opt'+(state.nmSen===o[0]?' active':'')+'" data-sen="'+o[0]+'">'+o[1]+'</div>';}).join('') +
+        '<span class="nm-stat-go">View →</span>' +
+      '</button>' +
+      '<div class="nm-stat nm-stat-controls">' +
+        '<div class="nm-stat-lbl" style="margin-bottom:6px;">Connectors at Primary ('+conns.length+')</div>' +
+        '<div class="nm-ctl-row">' +
+          (conns.length ?
+            '<div class="nm-conn-dd" id="nm-conn-dd">' +
+              '<button type="button" class="nm-conn-btn" id="nm-conn-btn"><span class="nm-conn-dot"></span>Choose a connector <span class="caret">▾</span></button>' +
+              '<div class="nm-conn-menu">' +
+                conns.map(function(n){return '<div class="nm-conn-opt" data-conn="'+esc(n)+'"><span class="nm-conn-dot"></span>'+esc(n)+'</div>';}).join('') +
+              '</div>' +
+            '</div>'
+            : '<span style="font-size:11px;color:var(--text-faint);">no connectors</span>') +
+          '<div class="nm-sen-dd" id="nm-sen-dd">' +
+            '<button type="button" class="nm-sen-btn" id="nm-sen-btn">'+esc(senLbl)+' <span class="caret">▾</span></button>' +
+            '<div class="nm-sen-menu">' +
+              SEN_OPTS.map(function(o){return '<div class="nm-sen-opt'+(state.nmSen===o[0]?' active':'')+'" data-sen="'+o[0]+'">'+o[1]+'</div>';}).join('') +
+            '</div>' +
+          '</div>' +
         '</div>' +
-      '</div>' +
-    '</div>';
+      '</div>';
   }
+
+  // seniority options shared by the summary filter + the Contacts tab
+  var SEN_OPTS=[['all','All seniority'],['dir','Director +'],['vp','VP +'],['c','C-level only']];
 
   // seniority floor filter (applies to graph nodes + list rows in both views)
   function senRank(s){ s=(s||'').toLowerCase();
@@ -1972,6 +2065,10 @@ function getAllCompaniesFlat(){
       });
       document.addEventListener('click', function(){ sd.classList.remove('open'); });
     }
+    // clickable activity stats -> Contacts tab, pre-filtered
+    document.querySelectorAll('.nm-stat-btn').forEach(function(b){
+      b.addEventListener('click', function(){ openContacts(b.getAttribute('data-ct')); });
+    });
 
     var note=document.getElementById('nm-status-note');
     if(note){
@@ -2247,6 +2344,221 @@ function getAllCompaniesFlat(){
   window.selectConnector=selectConnector;
   window.setNmFilter=setNmFilter;
   window.setNmSort=setNmSort;
+
+  // ══════════════════════════════════════════════════════════════════════
+  // CONTACTS TAB — rows worklist + localStorage lists + CSV
+  // ══════════════════════════════════════════════════════════════════════
+  var LIST_KEY='fdi_lists_{{PRODUCT_SLUG}}';
+  var ctSel=new Set();
+  function rowKey(p){ return (p.contact_id||p.contact_name)+'|'+p.company+'|'+p.connector; }
+  function getLists(){ try{ return JSON.parse(localStorage.getItem(LIST_KEY)||'{}'); }catch(e){ return {}; } }
+  function saveLists(o){ try{ localStorage.setItem(LIST_KEY, JSON.stringify(o)); }catch(e){} }
+
+  // flatten every resolved path into a row-record (contact may recur per company/connector)
+  function allContactRows(){
+    var data=nd(), rows=[];
+    if(!data || !Array.isArray(data.companies)) return rows;
+    data.companies.forEach(function(c){ if(!hasPaths(c)) return;
+      (c.paths||[]).forEach(function(p){ var d=withCo(p, c.company); d._key=rowKey(d); rows.push(d); });
+    });
+    return rows;
+  }
+  var CT_WARM=[['all','All warmth'],['hi','Warm 75+'],['mid','Mid 40–74'],['li','LinkedIn only']];
+  var CT_ACT=[['all','Any activity'],['active30','Active in last 30d'],['meeting','Meeting scheduled'],['inbound','They wrote last'],['never','Never met']];
+  function ctActivePass(p){
+    var h=p.history||null, now=Date.now();
+    if(state.ctAct==='active30'){ if(!p.last_contact) return false; var d=new Date(p.last_contact+'T00:00:00'); return !isNaN(d)&&(now-d.getTime())<=30*86400000; }
+    if(state.ctAct==='meeting') return !!(h&&h.next_meeting&&h.next_meeting.date);
+    if(state.ctAct==='inbound') return !!(h&&h.last_email&&h.last_email.from_internal===false);
+    if(state.ctAct==='never') return !(h&&(h.first_meeting||h.last_meeting));
+    return true;
+  }
+  function ctMatch(p){
+    if(state.ctList){ var L=getLists()[state.ctList]||[]; if(L.indexOf(p._key)<0) return false; }
+    var q=state.ctQ;
+    if(q && !([p.contact_name,p.contact_title,p.company,p.connector,p.contact_affiliation].join(' ').toLowerCase().indexOf(q)>=0)) return false;
+    if(state.ctWarm==='hi' && !(p.score!=null&&p.score>=75)) return false;
+    if(state.ctWarm==='mid' && !(p.score!=null&&p.score>=40&&p.score<75)) return false;
+    if(state.ctWarm==='li' && !(p.type==='linkedin'||p.score==null)) return false;
+    if(state.ctSen!=='all' && senRank(p.seniority) < ({all:0,dir:2,vp:3,c:4}[state.ctSen]||0)) return false;
+    if(state.ctConn!=='all' && p.connector!==state.ctConn) return false;
+    if(state.ctAcct!=='all' && p.company!==state.ctAcct) return false;
+    if(!ctActivePass(p)) return false;
+    return true;
+  }
+  function ctDD(id, label, opts, cur, attr){
+    return '<div class="nm-sen-dd ct-dd" id="'+id+'">' +
+      '<button type="button" class="nm-sen-btn" data-dd="'+id+'">'+esc(label)+' <span class="caret">▾</span></button>' +
+      '<div class="nm-sen-menu">' +
+        opts.map(function(o){return '<div class="nm-sen-opt'+(cur===o[0]?' active':'')+'" data-'+attr+'="'+esc(o[0])+'">'+esc(o[1])+'</div>';}).join('') +
+      '</div></div>';
+  }
+  function renderContacts(){
+    var data=nd();
+    var un=document.getElementById('ct-unavailable'), body=document.getElementById('ct-body');
+    if(!data || data.build_status==='unavailable' || !Array.isArray(data.companies)){
+      if(body) body.style.display='none';
+      if(un){ un.style.display='block'; un.innerHTML=emptyStateHtml('No contacts yet','Once Affinity relationship data is connected, every warm contact across the target accounts will appear here.'); }
+      return;
+    }
+    if(un){ un.style.display='none'; } if(body) body.style.display='block';
+    var rows=allContactRows();
+    // filter controls
+    var conns=[]; rows.forEach(function(p){ if(conns.indexOf(p.connector)<0) conns.push(p.connector); }); conns.sort();
+    var accts=[]; rows.forEach(function(p){ if(accts.indexOf(p.company)<0) accts.push(p.company); }); accts.sort();
+    var connOpts=[['all','All connectors']].concat(conns.map(function(n){return [n,n];}));
+    var acctOpts=[['all','All accounts']].concat(accts.map(function(n){return [n,n];}));
+    var warmLbl=(CT_WARM.find(function(o){return o[0]===state.ctWarm;})||CT_WARM[0])[1];
+    var senLbl=(SEN_OPTS.find(function(o){return o[0]===state.ctSen;})||SEN_OPTS[0])[1];
+    var connLbl=(connOpts.find(function(o){return o[0]===state.ctConn;})||connOpts[0])[1];
+    var acctLbl=(acctOpts.find(function(o){return o[0]===state.ctAcct;})||acctOpts[0])[1];
+    var actLbl=(CT_ACT.find(function(o){return o[0]===state.ctAct;})||CT_ACT[0])[1];
+    var fEl=document.getElementById('ct-filters');
+    if(fEl) fEl.innerHTML =
+      ctDD('ctf-warm', warmLbl, CT_WARM, state.ctWarm, 'warm') +
+      ctDD('ctf-sen', senLbl, SEN_OPTS, state.ctSen, 'sen') +
+      ctDD('ctf-conn', connLbl, connOpts, state.ctConn, 'conn') +
+      ctDD('ctf-acct', acctLbl, acctOpts, state.ctAcct, 'acct') +
+      ctDD('ctf-act', actLbl, CT_ACT, state.ctAct, 'act');
+
+    // saved-list chips
+    var lists=getLists(), lEl=document.getElementById('ct-lists');
+    if(lEl){
+      var chips='<span class="ct-list-chip'+(state.ctList?'':' active')+'" data-list="">All contacts</span>';
+      Object.keys(lists).forEach(function(nm){
+        chips += '<span class="ct-list-chip'+(state.ctList===nm?' active':'')+'" data-list="'+esc(nm)+'">'+esc(nm)+' <span class="ct-list-n">'+lists[nm].length+'</span><span class="ct-list-x" data-del="'+esc(nm)+'">✕</span></span>';
+      });
+      lEl.innerHTML=chips;
+    }
+
+    var matched=rows.filter(ctMatch).sort(function(a,b){ var as=(a.score==null?-1:a.score), bs=(b.score==null?-1:b.score); return bs-as; });
+    var shown=matched.slice(0,200);
+    var cnt=document.getElementById('ct-count');
+    if(cnt) cnt.textContent = (matched.length>200? 'showing top 200 of '+matched.length : matched.length+' contact'+(matched.length!==1?'s':''));
+
+    // tier grouping
+    function tg(p){ if(p.score==null||p.type==='linkedin') return 2; return p.score>=75?0:p.score>=40?1:2; }
+    var TLAB=['Warm · 75+','Mid · 40–74','Cooler · under 40 / LinkedIn'];
+    var tb=document.getElementById('ct-body-rows'); if(!tb) return;
+    if(shown.length===0){ tb.innerHTML='<tr><td colspan="6" class="ct-empty">No contacts match these filters.</td></tr>'; }
+    else {
+      _nmList=[]; var cur=-1, html='';
+      shown.forEach(function(p){
+        var g=tg(p);
+        if(g!==cur){ cur=g; html += '<tr class="ct-tier"><td colspan="6">'+TLAB[g]+'</td></tr>'; }
+        var isLi=(p.type==='linkedin'||p.score==null), t=tier(p.score);
+        var lk=_nmList.length; _nmList.push(p);
+        var liHref=safeUrl(p.linkedin_url);
+        var acc = isLi?'var(--nm-w-null)':t.color;
+        html += '<tr class="ct-row" data-lk="'+lk+'">' +
+          '<td class="ct-cbcol" data-cb style="box-shadow:inset 3px 0 0 '+acc+';"><input type="checkbox" data-k="'+esc(p._key)+'"'+(ctSel.has(p._key)?' checked':'')+'></td>' +
+          '<td class="ct-contact"><div class="ct-name">'+esc(p.contact_name)+(liHref?' <a class="nm-li-link" href="'+esc(liHref)+'" target="_blank" rel="noopener">in ↗</a>':'')+'</div><div class="ct-sub">'+esc(p.contact_title||'—')+(p.at_target_company?'':' · '+esc(p.contact_affiliation||'external'))+'</div></td>' +
+          '<td><span class="ct-acct"><img src="'+esc(faviconUrl(domainForRow(p)))+'" onerror="this.style.opacity=0">'+esc(p.company)+'</span></td>' +
+          '<td class="ct-conn">'+esc(p.connector)+'</td>' +
+          '<td class="ct-num"><span class="nm-score '+(isLi?'lo':t.key)+'">'+(isLi?'—':p.score)+'</span></td>' +
+          '<td class="ct-last">'+esc(p.last_contact?(relDate(p.last_contact)||p.last_contact):'—')+'</td>' +
+        '</tr>' +
+        '<tr class="ct-exp-row" data-for="'+lk+'" style="display:none;"><td colspan="6"><div class="ct-exp"></div></td></tr>';
+      });
+      tb.innerHTML=html;
+    }
+    // bind rows
+    tb.querySelectorAll('.ct-row').forEach(function(row){
+      row.addEventListener('click', function(e){
+        if(e.target.closest('a') || e.target.closest('[data-cb]')) return;
+        var lk=row.getAttribute('data-lk'), d=_nmList[+lk];
+        var exr=tb.querySelector('.ct-exp-row[data-for="'+lk+'"]'); if(!exr||!d) return;
+        var ex=exr.querySelector('.ct-exp'), open=exr.style.display!=='none';
+        if(open){ exr.style.display='none'; ex.innerHTML=''; row.classList.remove('ct-open'); }
+        else { ex.innerHTML=whyHtml(d)+historyHtml(d); exr.style.display='table-row'; row.classList.add('ct-open'); }
+      });
+    });
+    tb.querySelectorAll('.ct-row input[type=checkbox]').forEach(function(cb){
+      cb.addEventListener('change', function(){ cb.checked?ctSel.add(cb.dataset.k):ctSel.delete(cb.dataset.k); renderCtBulk(); });
+    });
+    var all=document.getElementById('ct-all');
+    if(all){ all.checked=false; all.onchange=function(){ shown.forEach(function(p){ if(all.checked) ctSel.add(p._key); else ctSel.delete(p._key); }); renderContacts(); }; }
+
+    // wire filter dropdowns + list chips
+    document.querySelectorAll('#ct-filters .ct-dd').forEach(function(dd){
+      var btn=dd.querySelector('[data-dd]');
+      btn.addEventListener('click', function(e){ e.stopPropagation(); var wasOpen=dd.classList.contains('open'); document.querySelectorAll('#ct-filters .ct-dd').forEach(function(x){x.classList.remove('open');}); if(!wasOpen) dd.classList.add('open'); });
+      dd.querySelectorAll('[data-warm]').forEach(function(o){ o.addEventListener('click',function(){ state.ctWarm=o.dataset.warm; renderContacts(); }); });
+      dd.querySelectorAll('[data-sen]').forEach(function(o){ o.addEventListener('click',function(){ state.ctSen=o.dataset.sen; renderContacts(); }); });
+      dd.querySelectorAll('[data-conn]').forEach(function(o){ o.addEventListener('click',function(){ state.ctConn=o.dataset.conn; renderContacts(); }); });
+      dd.querySelectorAll('[data-acct]').forEach(function(o){ o.addEventListener('click',function(){ state.ctAcct=o.dataset.acct; renderContacts(); }); });
+      dd.querySelectorAll('[data-act]').forEach(function(o){ o.addEventListener('click',function(){ state.ctAct=o.dataset.act; renderContacts(); }); });
+    });
+    document.addEventListener('click', function(){ document.querySelectorAll('#ct-filters .ct-dd').forEach(function(x){x.classList.remove('open');}); });
+    if(lEl){
+      lEl.querySelectorAll('.ct-list-chip').forEach(function(ch){
+        ch.addEventListener('click', function(e){
+          if(e.target.closest('[data-del]')){ var nm=e.target.getAttribute('data-del'); if(confirm('Delete list “'+nm+'”?')){ var o=getLists(); delete o[nm]; saveLists(o); if(state.ctList===nm) state.ctList=null; renderContacts(); } return; }
+          state.ctList = ch.getAttribute('data-list')||null; renderContacts();
+        });
+      });
+    }
+    renderCtBulk();
+  }
+  function domainForRow(p){ var m=meta(p.company); return (m&&m.domain)||p.domain||''; }
+
+  function renderCtBulk(){
+    var bar=document.getElementById('ct-bulk'); if(!bar) return;
+    var n=ctSel.size;
+    if(!n){ bar.classList.remove('show'); bar.innerHTML=''; return; }
+    var lists=getLists(), names=Object.keys(lists);
+    bar.innerHTML =
+      '<span class="ctb-n">'+n+' selected</span>' +
+      '<span class="ctb-sep"></span>' +
+      '<div class="ct-addlist" id="ct-addlist">' +
+        '<button type="button" class="ctb-btn" id="ct-addlist-btn">Add to list <span class="caret">▾</span></button>' +
+        '<div class="ct-addlist-menu">' +
+          names.map(function(nm){return '<div class="ct-addlist-opt" data-add="'+esc(nm)+'">'+esc(nm)+' <span class="ct-list-n">'+lists[nm].length+'</span></div>';}).join('') +
+          '<div class="ct-addlist-opt ct-addlist-new" data-add-new="1">＋ New list…</div>' +
+        '</div>' +
+      '</div>' +
+      '<button type="button" class="ctb-btn" id="ct-export">Export CSV ↓</button>' +
+      '<span class="ctb-sep"></span>' +
+      '<span class="ctb-clear" id="ct-clear">✕ Clear</span>';
+    bar.classList.add('show');
+    var dd=document.getElementById('ct-addlist'), ab=document.getElementById('ct-addlist-btn');
+    ab.addEventListener('click', function(e){ e.stopPropagation(); dd.classList.toggle('open'); });
+    document.addEventListener('click', function(){ dd.classList.remove('open'); });
+    dd.querySelectorAll('[data-add]').forEach(function(o){ o.addEventListener('click', function(){ addSelToList(o.dataset.add); }); });
+    var nw=dd.querySelector('[data-add-new]'); if(nw) nw.addEventListener('click', function(){ var nm=prompt('Name the new list:'); if(nm) addSelToList(nm.trim()); });
+    document.getElementById('ct-export').addEventListener('click', function(){ exportCsv([...ctSel]); });
+    document.getElementById('ct-clear').addEventListener('click', function(){ ctSel=new Set(); renderContacts(); });
+  }
+  function addSelToList(nm){
+    if(!nm) return; var o=getLists(); var set=new Set(o[nm]||[]);
+    ctSel.forEach(function(k){ set.add(k); }); o[nm]=[...set]; saveLists(o);
+    ctSel=new Set(); renderContacts();
+  }
+  function csvCell(v){ return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'; }
+  function exportCsv(keys){
+    if(!keys.length) return;
+    var byKey={}; allContactRows().forEach(function(p){ byKey[p._key]=p; });
+    var head=['Name','Title','Company','Connector','Warmth','Last contact','Works at target','LinkedIn'];
+    var lines=[head.map(csvCell).join(',')];
+    keys.forEach(function(k){ var p=byKey[k]; if(!p) return;
+      lines.push([p.contact_name,p.contact_title||'',p.company,p.connector,(p.score==null?'LinkedIn only':p.score),p.last_contact||'',(p.at_target_company?'yes':'no'),safeUrl(p.linkedin_url)||''].map(csvCell).join(','));
+    });
+    var blob=new Blob([lines.join('\n')],{type:'text/csv'});
+    var url=URL.createObjectURL(blob), a=document.createElement('a');
+    a.href=url; a.download='contacts-'+(state.ctList||'selection')+'.csv'; a.click(); URL.revokeObjectURL(url);
+  }
+  // enter the Contacts tab pre-filtered (from the clickable summary stats)
+  function openContacts(preset){
+    state.ctQ=''; state.ctWarm='all'; state.ctSen='all'; state.ctConn='all'; state.ctAcct='all'; state.ctList=null;
+    state.ctAct = preset || 'all';
+    var s=document.getElementById('ct-search'); if(s) s.value='';
+    switchTab('contacts');
+  }
+  var ctSearch=document.getElementById('ct-search');
+  if(ctSearch) ctSearch.addEventListener('input', function(){ state.ctQ=ctSearch.value.trim().toLowerCase(); renderContacts(); });
+
+  window.renderContacts=renderContacts;
+  window.openContacts=openContacts;
 })();
 
 // === DETAIL VIEW ===
@@ -2263,6 +2575,7 @@ function openDetail(name){
   state.selected = null;
   document.getElementById('view-home').setAttribute('style','display:none !important;');
   document.getElementById('view-network').setAttribute('style','display:none !important;');
+  var _vc=document.getElementById('view-contacts'); if(_vc) _vc.setAttribute('style','display:none !important;');
   document.getElementById('view-detail').setAttribute('style','display:block;');
   document.getElementById('tab-nav').setAttribute('style','display:none !important;');
   // Force-clear the queue grid to drop any sticky elements
