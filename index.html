@@ -157,7 +157,8 @@ a{color:inherit;}
 .page-tab.active .tab-count{background:var(--purple-tint);color:var(--purple-dark);}
 
 /* === CARD GRID === */
-.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;align-items:start;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;align-items:stretch;grid-auto-rows:1fr;}
+.card-grid .card{height:100%;}
 .card-cell{display:flex;flex-direction:column;gap:8px;min-width:0;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0;cursor:pointer;transition:all 150ms cubic-bezier(.2,.8,.2,1);position:relative;display:flex;flex-direction:column;overflow:hidden;}
 .card:hover{border-color:var(--border-mid);transform:translateY(-1px);box-shadow:var(--shadow-md);}
