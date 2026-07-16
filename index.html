@@ -584,6 +584,7 @@ a{color:inherit;}
 .nm-ctl-row .nm-conn-btn,.nm-ctl-row .nm-sen-btn{box-sizing:border-box;height:34px;line-height:1;padding:0 12px;}
 /* === CONTACTS TAB === */
 .ct-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.nm-list-toolbar{scroll-margin-top:84px;}
 .ct-filters{display:flex;gap:8px;flex-wrap:wrap;}
 .ct-dd{position:relative;}
 .ct-lists{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
@@ -1746,6 +1747,8 @@ function getAllCompaniesFlat(){
   //           items:[{label, score, type, seniority, ring, tooltip}]}]
   var _nmNodes=[];  // per-render: full path data for each contact node (click -> detail)
   var _nmList=[];   // per-render: full path data for each expandable list row
+  var _nmListCo=null; // company currently backing the ranked list (for in-place re-render)
+  var NML_SORT=[['warmth','Sort · warmth'],['name','Sort · A–Z'],['recent','Sort · recent contact']];
   function radialGraph(center, groups, legendHtml, hintText){
     _nmNodes=[];
     var cx=520, cy=760;                              // center anchored; canvas auto-fits around it
@@ -2039,21 +2042,53 @@ function getAllCompaniesFlat(){
     }); });
   }
 
-  function rankedList(c){
-    _nmList=[];
-    var paths=(c.paths||[]).filter(senPass);
-    // strongest first; null-score (LinkedIn-only) always after scored paths
-    paths.sort(function(a,b){
-      var as=!isWarmPath(a), bs=!isWarmPath(b);
-      if(as!==bs) return as?1:-1;
-      if(as&&bs) return 0;
-      return b.score-a.score;
+  function rankedList(c){ _nmListCo=c; return '<div class="nm-list" id="nm-list">'+listInner(c)+'</div>'; }
+  // re-render just the list (toolbar + rows) in place on a filter/sort change — keeps
+  // scroll position (re-selecting the company would jump back up to the map).
+  function rerenderList(){ var el=document.getElementById('nm-list'); if(el&&_nmListCo){ el.innerHTML=listInner(_nmListCo); wirePathRows(el); wireListFilters(el); } }
+  function wireListFilters(scope){
+    var wrap=scope.querySelector('.nm-list-toolbar'); if(!wrap) return;
+    wrap.querySelectorAll('.ct-dd').forEach(function(dd){
+      var btn=dd.querySelector('[data-dd]');
+      btn.addEventListener('click', function(e){ e.stopPropagation(); var was=dd.classList.contains('open'); wrap.querySelectorAll('.ct-dd').forEach(function(x){x.classList.remove('open');}); if(!was) dd.classList.add('open'); });
+      dd.querySelectorAll('[data-nmlwarm]').forEach(function(o){ o.addEventListener('click',function(){ state.nmlWarm=o.dataset.nmlwarm; rerenderList(); }); });
+      dd.querySelectorAll('[data-nmlconn]').forEach(function(o){ o.addEventListener('click',function(){ state.nmlConn=o.dataset.nmlconn; rerenderList(); }); });
+      dd.querySelectorAll('[data-nmlsort]').forEach(function(o){ o.addEventListener('click',function(){ state.nmlSort=o.dataset.nmlsort; rerenderList(); }); });
     });
+    document.addEventListener('click', function(){ wrap.querySelectorAll('.ct-dd').forEach(function(x){x.classList.remove('open');}); });
+  }
+  function listInner(c){
+    _nmList=[];
+    // defensive defaults (state object may predate these fields — avoids undefined filters)
+    state.nmlWarm=state.nmlWarm||'all'; state.nmlConn=state.nmlConn||'all'; state.nmlSort=state.nmlSort||'warmth';
+    var base=(c.paths||[]).filter(senPass);
+    var conns=[]; base.forEach(function(p){ if(conns.indexOf(p.connector)<0) conns.push(p.connector); }); conns.sort();
+    var paths=base.filter(function(p){
+      if(state.nmlWarm==='hi' && !(p.score!=null&&p.score>=75)) return false;
+      if(state.nmlWarm==='mid' && !(p.score!=null&&p.score>=40&&p.score<75)) return false;
+      if(state.nmlWarm==='li' && !(p.type==='linkedin'||p.score==null)) return false;
+      if(state.nmlConn!=='all' && p.connector!==state.nmlConn) return false;
+      return true;
+    });
+    if(state.nmlSort==='name') paths.sort(function(a,b){ return (a.contact_name||'').localeCompare(b.contact_name||''); });
+    else if(state.nmlSort==='recent') paths.sort(function(a,b){ return (b.last_contact||'').localeCompare(a.last_contact||''); });
+    else paths.sort(function(a,b){ var as=!isWarmPath(a), bs=!isWarmPath(b); if(as!==bs) return as?1:-1; if(as&&bs) return 0; return b.score-a.score; });
+    // filter/sort toolbar (Contacts-style dropdowns)
+    var connOpts=[['all','All connectors']].concat(conns.map(function(n){return [n,n];}));
+    var warmLbl=(CT_WARM.find(function(o){return o[0]===state.nmlWarm;})||CT_WARM[0])[1];
+    var connLbl=(connOpts.find(function(o){return o[0]===state.nmlConn;})||connOpts[0])[1];
+    var sortLbl=(NML_SORT.find(function(o){return o[0]===state.nmlSort;})||NML_SORT[0])[1];
+    var toolbar='<div class="ct-toolbar nm-list-toolbar" id="nm-list-anchor"><div class="ct-filters">' +
+      ctDD('nml-warm', warmLbl, CT_WARM, state.nmlWarm, 'nmlwarm') +
+      ctDD('nml-conn', connLbl, connOpts, state.nmlConn, 'nmlconn') +
+      ctDD('nml-sort', sortLbl, NML_SORT, state.nmlSort, 'nmlsort') +
+    '</div></div>';
     var warm=paths.filter(isWarmPath).length, liOnly=paths.length-warm;
     var head=warm+' warm path'+(warm!==1?'s':'');
     if(liOnly>0) head+=' · '+liOnly+' LinkedIn-only';
-    if(typeof c.total_paths==='number' && c.total_paths>paths.length) head+=' · '+c.total_paths+' in Affinity';
-    return '<div class="nm-paths-head" id="nm-list-anchor">'+head+'</div>' +
+    if(typeof c.total_paths==='number' && c.total_paths>base.length) head+=' · '+c.total_paths+' in Affinity';
+    if(!paths.length) head='No contacts match these filters';
+    return toolbar + '<div class="nm-paths-head">'+head+'</div>' +
       paths.map(function(p){
         var t=tier(p.score);
         var isLi=(p.type==='linkedin'||p.score===null);
@@ -2309,6 +2344,7 @@ function getAllCompaniesFlat(){
     wireGraph();
     wireHubClicks();
     wirePathRows(panel);
+    wireListFilters(panel);
   }
 
   // click a hub node in either graph: connector hub -> connector view, company hub -> company view
