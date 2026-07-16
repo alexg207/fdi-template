@@ -497,21 +497,49 @@ a{color:inherit;}
 /* Network tab uses the sans family throughout — no monospace anywhere (matches
    the Lyric Network Map). Scoped to #view-network so other tabs are untouched. */
 #view-network, #view-network *{font-family:var(--font-sans);}
-/* compact boxed legend, top-left. Kept short + translucent, and the graph gets
-   extra top headroom (see radialGraph vy0), so it sits over empty canvas — the
-   left-reaching nodes fan out at mid-height, below this box. */
-.nm-legend{position:absolute;left:12px;top:12px;display:flex;flex-direction:column;gap:4px;max-width:212px;background:color-mix(in srgb, var(--surface) 88%, transparent);border:1px solid var(--border);border-radius:9px;padding:9px 11px;pointer-events:none;box-shadow:0 3px 12px rgba(0,0,0,.12);backdrop-filter:blur(3px);z-index:2;}
-.nm-lg-title{font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);}
-.nm-legend-row{display:flex;flex-wrap:wrap;gap:3px 11px;}
-.nm-legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text-mid);}
-.nm-legend-note{font-size:9.5px;color:var(--text-faint);line-height:1.35;}
-.nm-legend-hint{font-size:9.5px;color:var(--text-faint);margin-top:5px;padding-top:5px;border-top:1px solid var(--border-soft);}
+/* boxed legend as a horizontal bar ABOVE the graph — boxed look, never overlaps
+   nodes at any density. */
+.nm-legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:9px 13px;margin-bottom:12px;border:1px solid var(--border);border-radius:9px;background:var(--surface);}
+.nm-lg-title{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);}
+.nm-lg-div{width:1px;height:15px;background:var(--border);}
+.nm-legend-item{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text-mid);}
+.nm-legend-note{font-size:10.5px;color:var(--text-faint);}
+.nm-legend-hint{font-size:10.5px;color:var(--text-faint);margin-left:auto;}
 /* Lyric match: prominent number figures render in Newsreader serif (placed late
    so it wins over the class definitions above; #view-network rules beat the
    scoped sans override). Small meta (dates/domains/tab counts) stay Inter. */
 .card-signal-num,.meta-val,.cx-signal-num-cell,.cx-signal-strip .cx-signal-foot .val,.pc-conf-val,.pc-signal-num,
 #view-network .nm-score,#view-network .nm-stat-val,#view-network .nm-pm-val{font-family:var(--font-num);font-variant-numeric:normal;letter-spacing:0;}
-.nm-legend-swatch{width:16px;flex-shrink:0;height:0;border-top:3px solid var(--nm-w-mid);}
+.nm-legend-swatch{width:17px;flex-shrink:0;height:0;border-top:3px solid var(--nm-w-mid);}
+/* node-click detail card (overlay inside the graph) */
+.nm-detail{position:absolute;top:12px;right:12px;width:274px;max-height:calc(100% - 24px);overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 16px;box-shadow:0 10px 30px rgba(0,0,0,.30);z-index:6;}
+.nm-d-close{position:absolute;top:7px;right:11px;background:none;border:none;color:var(--text-muted);font-size:19px;line-height:1;cursor:pointer;padding:2px;}
+.nm-d-close:hover{color:var(--text);}
+.nm-d-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px;padding-right:16px;}
+.nm-d-av{width:34px;height:34px;border-radius:9999px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.nm-d-name{font-size:14.5px;font-weight:700;color:var(--text);line-height:1.2;}
+.nm-d-title{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+.nm-d-score{margin-left:auto;font-family:var(--font-num);font-size:26px;font-weight:600;line-height:1;flex-shrink:0;}
+.nm-d-score.hi{color:var(--nm-w-hi);}.nm-d-score.mid{color:var(--nm-w-mid);}.nm-d-score.lo{color:var(--nm-w-lo);}
+.nm-d-pct{font-size:12px;margin-left:1px;}
+.nm-d-badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px;}
+.nm-d-why{font-size:11.5px;color:var(--text-mid);line-height:1.5;background:var(--surface2);border:1px solid var(--border-soft);border-radius:8px;padding:9px 11px;margin-bottom:11px;}
+.nm-d-why-lbl{display:block;font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-faint);margin-bottom:4px;}
+.nm-d-rows{display:flex;flex-direction:column;gap:7px;}
+.nm-d-row{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--text-muted);}
+.nm-d-row b{color:var(--text);font-weight:600;text-align:right;}
+.nm-d-btn{display:block;text-align:center;margin-top:12px;padding:8px;border:1px solid var(--border-mid);border-radius:8px;font-size:12px;font-weight:600;color:var(--text);text-decoration:none;}
+.nm-d-btn:hover{border-color:var(--green);color:var(--green-dark);}
+/* connectors dropdown (summary) */
+.nm-conn-dd{position:relative;margin-top:6px;}
+.nm-conn-btn{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 11px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font-sans);}
+.nm-conn-btn:hover{border-color:var(--green);}
+.nm-conn-btn .caret{color:var(--text-muted);font-size:10px;}
+.nm-conn-menu{display:none;position:absolute;top:calc(100% + 5px);left:0;z-index:20;width:250px;max-height:280px;overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:9px;box-shadow:0 10px 28px rgba(0,0,0,.28);padding:5px;}
+.nm-conn-dd.open .nm-conn-menu{display:block;}
+.nm-conn-opt{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:6px;font-size:12.5px;color:var(--text);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nm-conn-opt:hover{background:var(--surface2);}
+.nm-conn-opt .nm-conn-dot{width:6px;height:6px;border-radius:9999px;background:var(--green);flex-shrink:0;}
 .nm-legend-swatch.hi{border-top-color:var(--nm-w-hi);}
 .nm-legend-swatch.mid{border-top-color:var(--nm-w-mid);}
 .nm-legend-swatch.lo{border-top-color:var(--nm-w-lo);}
@@ -1489,9 +1517,14 @@ function getAllCompaniesFlat(){
       '</div>' : '') +
       '<div class="nm-stat">' +
         '<div class="nm-stat-lbl" style="margin-bottom:2px;">Primary connectors ('+conns.length+')</div>' +
-        '<div class="nm-conn-chips">' +
-          (conns.length ? conns.map(function(n){return '<span class="nm-conn-chip" data-conn="'+esc(n)+'" title="See everyone '+esc(n)+' reaches"><span class="nm-conn-dot"></span>'+esc(n)+'</span>';}).join('') : '<span style="font-size:11px;color:var(--text-faint);">none</span>') +
-        '</div>' +
+        (conns.length ?
+          '<div class="nm-conn-dd" id="nm-conn-dd">' +
+            '<button type="button" class="nm-conn-btn" id="nm-conn-btn"><span class="nm-conn-dot"></span>See a connector’s network <span class="caret">▾</span></button>' +
+            '<div class="nm-conn-menu">' +
+              conns.map(function(n){return '<div class="nm-conn-opt" data-conn="'+esc(n)+'"><span class="nm-conn-dot"></span>'+esc(n)+'</div>';}).join('') +
+            '</div>' +
+          '</div>'
+          : '<span style="font-size:11px;color:var(--text-faint);">none</span>') +
       '</div>';
   }
 
@@ -1507,15 +1540,14 @@ function getAllCompaniesFlat(){
     return 8; }
   function warmthLegend(spokeNote, ringNote){
     return '<div class="nm-legend">' +
-      '<div class="nm-lg-title">Warmth</div>' +
-      '<div class="nm-legend-row">' +
-        '<span class="nm-legend-item"><span class="nm-legend-swatch hi"></span>75+</span>' +
-        '<span class="nm-legend-item"><span class="nm-legend-swatch mid"></span>40–74</span>' +
-        '<span class="nm-legend-item"><span class="nm-legend-swatch lo"></span>Low</span>' +
-        '<span class="nm-legend-item"><span class="nm-legend-swatch li"></span>LinkedIn</span>' +
-      '</div>' +
+      '<span class="nm-lg-title">Warmth</span>' +
+      '<span class="nm-legend-item"><span class="nm-legend-swatch hi"></span>75+</span>' +
+      '<span class="nm-legend-item"><span class="nm-legend-swatch mid"></span>40–74</span>' +
+      '<span class="nm-legend-item"><span class="nm-legend-swatch lo"></span>Low</span>' +
+      '<span class="nm-legend-item"><span class="nm-legend-swatch li"></span>LinkedIn only</span>' +
+      '<span class="nm-lg-div"></span>' +
       '<span class="nm-legend-item"><span class="nm-legend-swatch conn"></span>'+spokeNote+'</span>' +
-      '<div class="nm-legend-note">size = seniority · ring = '+ringNote+'</div>' +
+      '<span class="nm-legend-note">size = seniority · ring = '+ringNote+' · click a dot for details</span>' +
       '</div>';
   }
 
@@ -1523,40 +1555,56 @@ function getAllCompaniesFlat(){
   // center: {label, domain|null, initials}
   // groups: [{label, hubText, initials, color, domain|null, clickKind, clickId,
   //           items:[{label, score, type, seniority, ring, tooltip}]}]
+  var _nmNodes=[];  // per-render: full path data for each contact node (click -> detail)
   function radialGraph(center, groups, legendHtml, hintText){
-    var W=1040, H=820, cx=W/2, cy=H-118, R1=172, TIERS=[250,330,410,490];
+    _nmNodes=[];
+    var cx=520, cy=760;                              // center anchored; canvas auto-fits around it
+    var maxItems=groups.reduce(function(m,g){return Math.max(m,g.items.length);},1);
+    var nTiers=Math.max(3, Math.min(6, Math.ceil(maxItems/2)));   // more tiers when a hub is busy
+    var R1=150 + groups.length*7;                    // hub ring grows with connector count (spreads them out)
+    var gap=76, TIERS=[]; for(var ti=0;ti<nTiers;ti++) TIERS.push(R1+86+ti*gap);
     var total=groups.reduce(function(s,g){return s+g.items.length;},0)||1;
-    var FAN=Math.min(3.0, 1.9+groups.length*0.22), minShare=0.40;
+    var FAN=Math.min(3.05, 1.9+groups.length*0.2), minShare=0.42;
     var extra=Math.max(0.2, FAN-groups.length*minShare);
     var shares=groups.map(function(g){ return minShare+extra*(g.items.length/total); });
+    // clamp the total angular span so many connectors don't over-wrap past a full
+    // circle (which overlaps itself): arc for few, near-full circle for many.
+    var rawTotal=shares.reduce(function(s,v){ return s+v; },0);
+    var maxSpan=groups.length>9 ? Math.PI*1.9 : Math.min(3.05, rawTotal);
+    if(rawTotal>maxSpan){ var sf=maxSpan/rawTotal; shares=shares.map(function(v){ return v*sf; }); }
     var fanTot=shares.reduce(function(s,v){ return s+v; },0);
     function pol(r,a){ return {x:cx+r*Math.cos(a), y:cy+r*Math.sin(a)}; }
     function arc(r,a0,a1){ var p0=pol(r,a0),p1=pol(r,a1);
       return 'M'+p0.x.toFixed(1)+' '+p0.y.toFixed(1)+' A'+r+' '+r+' 0 '+((a1-a0)>Math.PI?1:0)+' 1 '+p1.x.toFixed(1)+' '+p1.y.toFixed(1); }
+    // track the drawn bounds so the viewBox fits + centers the whole graph
+    var bx0=cx-70, bx1=cx+70, by0=cy-40, by1=cy+58;
+    function track(x,y,r){ bx0=Math.min(bx0,x-r-46); bx1=Math.max(bx1,x+r+46); by0=Math.min(by0,y-r-8); by1=Math.max(by1,y+r+24); }
 
     var edges='', nodes='', hubs='', arcs='';
-    TIERS.forEach(function(r){ arcs += '<path d="'+arc(r,-Math.PI/2-fanTot/2-0.06,-Math.PI/2+fanTot/2+0.06)+'" fill="none" stroke="var(--border-mid)" stroke-width="1" stroke-opacity="0.4"/>'; });
+    TIERS.forEach(function(r){ arcs += '<path d="'+arc(r,-Math.PI/2-fanTot/2-0.06,-Math.PI/2+fanTot/2+0.06)+'" fill="none" stroke="var(--border-mid)" stroke-width="1" stroke-opacity="0.35"/>'; });
 
     var cursor=-fanTot/2;
     groups.forEach(function(g,ci){
       var wStart=cursor, wEnd=cursor+shares[ci]; cursor=wEnd;
       var centerA=-Math.PI/2+(wStart+wEnd)/2;
       var hub=pol(R1,centerA), col=g.color||NM_PALETTE[ci%NM_PALETTE.length];
-      edges += '<line x1="'+cx+'" y1="'+cy+'" x2="'+hub.x.toFixed(1)+'" y2="'+hub.y.toFixed(1)+'" stroke="'+col+'" stroke-width="2.4" stroke-opacity="0.5" stroke-linecap="round"/>';
+      edges += '<line x1="'+cx+'" y1="'+cy+'" x2="'+hub.x.toFixed(1)+'" y2="'+hub.y.toFixed(1)+'" stroke="'+col+'" stroke-width="2.2" stroke-opacity="0.5" stroke-linecap="round"/>';
       var pad=Math.min(0.16, shares[ci]*0.16);
       g.items.forEach(function(it,j){
         var t=g.items.length>1?j/(g.items.length-1):0.5;
         var ang=-Math.PI/2+wStart+pad+(shares[ci]-2*pad)*t, r=TIERS[j%TIERS.length];
         var pt=pol(r,ang), tr=tier(it.score);
-        var ew=(it.score===null||it.score===undefined)?1.4:(1.2+(it.score/100)*3.2);
+        var ew=(it.score===null||it.score===undefined)?1.4:(1.2+(it.score/100)*3.0);
         var edash=(it.type==='linkedin'||it.score===null)?' stroke-dasharray="4 4"':'';
-        edges += '<line x1="'+pt.x.toFixed(1)+'" y1="'+pt.y.toFixed(1)+'" x2="'+hub.x.toFixed(1)+'" y2="'+hub.y.toFixed(1)+'" class="nm-ws-'+tr.key+'" stroke-width="'+ew.toFixed(1)+'" stroke-opacity="0.4" stroke-linecap="round"'+edash+'/>';
+        edges += '<line x1="'+pt.x.toFixed(1)+'" y1="'+pt.y.toFixed(1)+'" x2="'+hub.x.toFixed(1)+'" y2="'+hub.y.toFixed(1)+'" class="nm-ws-'+tr.key+'" stroke-width="'+ew.toFixed(1)+'" stroke-opacity="0.38" stroke-linecap="round"'+edash+'/>';
         var rad=senSize(it.seniority);
+        var pk=_nmNodes.length; _nmNodes.push(it.data||null);
         var ring=it.ring ? '<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+(rad+4)+'" fill="none" class="nm-ws-'+tr.key+'" stroke-width="1.5" stroke-opacity="0.6"/>' : '';
-        nodes += '<g class="nm-cnode"><title>'+esc(it.tooltip||it.label)+'</title>'+ring +
+        nodes += '<g class="nm-cnode nm-node-click" data-pk="'+pk+'"><title>'+esc(it.tooltip||it.label)+'</title>'+ring +
           '<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+rad+'" class="nm-wf-'+tr.key+'" fill-opacity="0.92"'+edash+'/>' +
           '<text x="'+pt.x.toFixed(1)+'" y="'+(pt.y+rad+12).toFixed(1)+'" text-anchor="middle" class="nm-node-label">'+esc(trunc(fname(it.label),14))+'</text>' +
         '</g>';
+        track(pt.x,pt.y,rad);
       });
       // hub: favicon-in-ring (company) or filled colored circle w/ initials (person)
       var clk=g.clickKind?(' data-hk="'+esc(g.clickKind)+'" data-hid="'+esc(g.clickId||g.label)+'"'):'';
@@ -1572,6 +1620,7 @@ function getAllCompaniesFlat(){
       hubs += '<g class="nm-cnode'+(g.clickKind?' nm-hub-click':'')+'"'+clk+'><title>'+esc(g.label)+' · '+g.items.length+'</title>'+hubInner +
         '<text x="'+hub.x.toFixed(1)+'" y="'+(hub.y+34).toFixed(1)+'" text-anchor="middle" class="nm-node-label" style="font-weight:700">'+esc(g.hubText||g.label)+'</text>' +
       '</g>';
+      track(hub.x,hub.y,22);
     });
 
     // center node
@@ -1583,17 +1632,19 @@ function getAllCompaniesFlat(){
       (center.domain ? '<image href="'+esc(faviconUrl(center.domain))+'" x="'+(cx-27)+'" y="'+(cy-27)+'" width="54" height="54" clip-path="url(#'+cc+')" preserveAspectRatio="xMidYMid slice" onerror="this.remove()"/>' : '') +
       '<text x="'+cx+'" y="'+(cy+48)+'" text-anchor="middle" class="nm-node-label" style="font-weight:700">'+esc(trunc(center.label,22))+'</text>' +
     '</g>';
+    track(cx,cy,30);
 
-    // extra top headroom so the boxed legend (top-left) sits over empty canvas
-    var vy0=Math.max(0, cy-TIERS[TIERS.length-1]-104), vbh=(cy+60)-vy0;
-    var svg='<svg viewBox="0 '+vy0.toFixed(0)+' '+W+' '+vbh.toFixed(0)+'" preserveAspectRatio="xMidYMid meet">' +
+    // auto-fit viewBox to the actual content bounds → always centered + fully in view
+    var p=14, vx=(bx0-p), vy=(by0-p), vw=(bx1-bx0)+2*p, vh=(by1-by0)+2*p;
+    var svg='<svg viewBox="'+vx.toFixed(0)+' '+vy.toFixed(0)+' '+vw.toFixed(0)+' '+vh.toFixed(0)+'" preserveAspectRatio="xMidYMid meet">' +
       '<g class="nm-zoom">'+arcs+edges+centerNode+nodes+hubs+'</g></svg>';
     var zoom='<div class="nm-zoom-btns"><button type="button" data-nmz="in" title="Zoom in">+</button><button type="button" data-nmz="out" title="Zoom out">−</button><button type="button" data-nmz="reset" title="Reset" style="font-size:11px;">⤢</button></div>';
-    // fold the interaction hint into the legend box (its own line) so there is no
-    // separate floating text to collide with the legend or the graph.
-    var legendFull = hintText ? legendHtml.replace(/<\/div>\s*$/, '<div class="nm-legend-hint">'+esc(hintText)+'</div></div>') : legendHtml;
-    return '<div class="nm-graph-wrap">'+svg+legendFull+zoom+'</div>';
+    // legend is a boxed bar ABOVE the graph (never overlaps nodes, works at any density)
+    var legendFull = hintText ? legendHtml.replace(/<\/div>\s*$/, '<span class="nm-legend-hint">'+esc(hintText)+'</span></div>') : legendHtml;
+    return legendFull + '<div class="nm-graph-wrap">'+svg+zoom+'<div class="nm-detail" id="nm-detail" style="display:none;"></div></div>';
   }
+
+  function withCo(p,co){ var d={}; for(var k in p) d[k]=p[k]; d.company=co; return d; }
 
   // company-centric: target company at center, Primary connectors as hubs
   function buildGraph(c){
@@ -1602,7 +1653,7 @@ function getAllCompaniesFlat(){
     var groups=connectors.map(function(name){
       var mine=paths.filter(function(p){ return p.connector===name; });
       return { label:name, hubText:flabel(name), initials:initials(name), domain:null, clickKind:'connector', clickId:name,
-        items:mine.map(function(p){ return { label:p.contact_name, score:p.score, type:p.type, seniority:p.seniority, ring:!!p.at_target_company,
+        items:mine.map(function(p){ return { label:p.contact_name, score:p.score, type:p.type, seniority:p.seniority, ring:!!p.at_target_company, data:withCo(p,c.company),
           tooltip:p.contact_name+(p.contact_title?' — '+p.contact_title:'')+' · '+(p.score===null?'LinkedIn only':'warmth '+p.score)+' · via '+name+(p.at_target_company?'':' · '+(p.contact_affiliation||'external')) }; }) };
     });
     return radialGraph({label:c.company, domain:domainFor(c), initials:initials(c.company)}, groups,
@@ -1616,7 +1667,7 @@ function getAllCompaniesFlat(){
   function buildConnectorGraph(conn){
     var groups=conn.companies.map(function(co){
       return { label:co.company, hubText:trunc(co.company,15), initials:initials(co.company), domain:co.domain, clickKind:'company', clickId:co.company,
-        items:co.paths.map(function(p){ return { label:p.contact_name, score:p.score, type:p.type, seniority:p.seniority, ring:!!p.at_target_company,
+        items:co.paths.map(function(p){ return { label:p.contact_name, score:p.score, type:p.type, seniority:p.seniority, ring:!!p.at_target_company, data:withCo(p,co.company),
           tooltip:p.contact_name+(p.contact_title?' — '+p.contact_title:'')+' · '+(p.score===null?'LinkedIn only':'warmth '+p.score)+' · at '+co.company }; }) };
     });
     return radialGraph({label:conn.name, domain:null, initials:initials(conn.name)}, groups,
@@ -1652,6 +1703,49 @@ function getAllCompaniesFlat(){
         else { t={x:0,y:0,k:1}; apply(); }
       });
     });
+    // click a contact dot -> open its detail card (only on a click, not a drag)
+    var downX=0, downY=0;
+    svg.addEventListener('pointerdown', function(e){ downX=e.clientX; downY=e.clientY; });
+    wrap.querySelectorAll('.nm-node-click').forEach(function(el){
+      el.addEventListener('click', function(e){
+        if(Math.abs(e.clientX-downX)>4 || Math.abs(e.clientY-downY)>4) return; // was a drag
+        e.stopPropagation(); showPathDetail(+el.getAttribute('data-pk'));
+      });
+    });
+  }
+
+  // click a dot -> full detail card (who they are, warmth score, and why)
+  function showPathDetail(pk){
+    var d=_nmNodes[pk]; var box=document.getElementById('nm-detail'); if(!d||!box) return;
+    var isLi=(d.type==='linkedin'||d.score==null), t=tier(d.score);
+    var scoreHtml = isLi ? '<span class="nm-d-score lo">—</span>'
+      : '<span class="nm-d-score '+t.key+'">'+d.score+'<span class="nm-d-pct">%</span></span>';
+    var liHref=safeUrl(d.linkedin_url);
+    var why = isLi
+      ? 'LinkedIn connection only — no recorded email or meeting history between '+esc(d.connector)+' and '+esc(fname(d.contact_name))+' yet, so no warmth score. A colder path in.'
+      : 'Affinity scores warmth 0–100 from real interaction history — emails, meetings, and calendar activity — between '+esc(d.connector)+' and '+esc(fname(d.contact_name))+'. This path scored '+d.score+'/100.';
+    var aff = d.at_target_company ? ('Works at '+esc(d.company))
+      : ('At '+esc(d.contact_affiliation||'another company')+' — not a current '+esc(d.company)+' employee');
+    box.innerHTML =
+      '<button class="nm-d-close" type="button" aria-label="Close">×</button>' +
+      '<div class="nm-d-head"><div class="nm-d-av">'+esc(initials(d.contact_name))+'</div>' +
+        '<div style="flex:1;min-width:0;"><div class="nm-d-name">'+esc(d.contact_name)+'</div>' +
+        '<div class="nm-d-title">'+esc(d.contact_title||'—')+'</div></div>'+scoreHtml +
+      '</div>' +
+      '<div class="nm-d-badges">' +
+        '<span class="nm-badge '+(d.at_target_company?'sen':'aff')+'">'+aff+'</span>' +
+        (d.seniority?'<span class="nm-badge sen">'+esc(d.seniority)+'</span>':'') +
+        (isLi?'<span class="nm-badge li">LinkedIn only</span>':'') +
+      '</div>' +
+      '<div class="nm-d-why"><span class="nm-d-why-lbl">Why this score</span>'+why+'</div>' +
+      '<div class="nm-d-rows">' +
+        '<div class="nm-d-row"><span>Reached via</span><b>'+esc(d.connector)+'</b></div>' +
+        (d.last_contact?'<div class="nm-d-row"><span>Last contact</span><b>'+esc(relDate(d.last_contact)||d.last_contact)+'</b></div>':'') +
+        '<div class="nm-d-row"><span>LinkedIn</span><b>'+(d.linkedin_connected?'connected':'—')+'</b></div>' +
+      '</div>' +
+      (liHref?'<a class="nm-d-btn" href="'+esc(liHref)+'" target="_blank" rel="noopener">Open LinkedIn ↗</a>':'');
+    box.style.display='block';
+    box.querySelector('.nm-d-close').addEventListener('click', function(){ box.style.display='none'; });
   }
 
   // ---- ranked path list -----------------------------------------------------
@@ -1714,10 +1808,16 @@ function getAllCompaniesFlat(){
     }
     hideUnavailable();
     renderSummary(data);
-    // connector chips in the summary are clickable -> connector-centric view
-    document.querySelectorAll('.nm-conn-chip').forEach(function(el){
-      el.addEventListener('click', function(){ selectConnector(el.dataset.conn); });
-    });
+    // connectors dropdown in the summary -> connector-centric view
+    var dd=document.getElementById('nm-conn-dd');
+    if(dd){
+      var ddBtn=document.getElementById('nm-conn-btn');
+      if(ddBtn) ddBtn.addEventListener('click', function(e){ e.stopPropagation(); dd.classList.toggle('open'); });
+      dd.querySelectorAll('.nm-conn-opt').forEach(function(el){
+        el.addEventListener('click', function(){ dd.classList.remove('open'); selectConnector(el.dataset.conn); });
+      });
+      document.addEventListener('click', function(){ dd.classList.remove('open'); });
+    }
 
     var note=document.getElementById('nm-status-note');
     if(note){
