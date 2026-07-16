@@ -441,7 +441,7 @@ const SEGMENTS = [
    ──────────────────────────────────────────────────────────────────────── */
 const CONTACT_MAP = {
   "Acme Corp": [
-    { name: "Jane Doe", title: "VP of Engineering", type: "technical", linkedin: "https://linkedin.com/in/example", connections: [{ person: "Alex Giles", strength: "warm" }] }
+    { name: "Jane Doe", title: "VP of Engineering", type: "technical", linkedin: "https://linkedin.com/in/example", connections: [] }
   ],
   "Beta Industries": [],
   "Gamma Health": [
@@ -536,11 +536,11 @@ const RESIDENCY_MAP = {
 
 
 /* ────────────────────────────────────────────────────────────────────────
-   PRIMARY_TEAM — list used for warm-intro attribution
+   PRIMARY_TEAM — roster of the Primary team, for reference only.
    ────────────────────────────────────────────────────────────────────────
-   When CONTACT_MAP[].connections is empty, the UI synthesizes a possible
-   warm intro from this list (see initData() in index.html).
-   Keep this list current with the actual Primary team.
+   NOTE: the UI no longer synthesizes any warm intros from this list. Empty
+   CONTACT_MAP[].connections stays empty — no relationships are invented.
+   Warm paths in the Network tab come solely from window.NETWORK_DATA.
    ──────────────────────────────────────────────────────────────────────── */
 const PRIMARY_TEAM = ['Alex Giles', 'Charles Holley', 'Gaby Lorenzi', 'Jason Gelman', 'Tobias', 'Ross', 'Cassie', 'Tanmaye', 'Ben', 'Hannah', 'Doug', 'Emily', 'Bridget', 'Shuman'];
 
