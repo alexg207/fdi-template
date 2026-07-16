@@ -1879,7 +1879,14 @@ function getAllCompaniesFlat(){
       t.y = py - (py - t.y)*(nk/t.k);
       t.k = nk; apply();
     }
-    svg.addEventListener('wheel', function(e){ e.preventDefault(); zoomAt(e.clientX,e.clientY, e.deltaY<0?1.12:1/1.12); }, {passive:false});
+    // zoom proportional to scroll magnitude (a fixed factor per event runs away on
+    // trackpads, which fire many wheel events per gesture). Normalize delta modes +
+    // cap the per-event zoom so a fast swipe can't slam all the way in/out.
+    svg.addEventListener('wheel', function(e){ e.preventDefault();
+      var d=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?400:1);
+      var factor=Math.max(0.9, Math.min(1.1, Math.exp(-d*0.0018)));
+      zoomAt(e.clientX,e.clientY,factor);
+    }, {passive:false});
     var drag=false, lx=0, ly=0;
     // NOTE: do NOT setPointerCapture here — it retargets the subsequent click to
     // the <svg>, so contact-node clicks never fire. Pan still works via pointermove.
