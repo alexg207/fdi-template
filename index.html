@@ -466,7 +466,8 @@ a{color:inherit;}
 .nm-panel-metric .nm-pm-val{font-family:var(--font-mono);font-size:22px;font-weight:600;color:var(--green-dark);line-height:1;font-variant-numeric:tabular-nums;}
 .nm-panel-metric .nm-pm-lbl{font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-top:3px;}
 
-.nm-graph-wrap{position:relative;border:1px solid var(--border);border-radius:8px;background:var(--bg);height:400px;overflow:hidden;margin-bottom:18px;}
+.nm-graph-wrap{position:relative;border:1px solid var(--border);border-radius:8px;background:var(--bg);height:560px;overflow:hidden;margin-bottom:18px;}
+.nm-cnode{cursor:default;}
 .nm-graph-wrap svg{width:100%;height:100%;display:block;cursor:grab;touch-action:none;}
 .nm-graph-wrap svg.nm-grabbing{cursor:grabbing;}
 .nm-node-label{font-family:var(--font-sans);font-size:11px;font-weight:600;fill:var(--text);}
@@ -1458,89 +1459,97 @@ function getAllCompaniesFlat(){
     var connectors=[]; var connIdx={};
     paths.forEach(function(p){ if(!(p.connector in connIdx)){ connIdx[p.connector]=connectors.length; connectors.push(p.connector); } });
 
-    var W=880;
-    // fixed vertical rhythm so nodes stay a constant, readable size no matter how many paths (up to the 25 cap).
-    var GAP=76, padTop=58, padBot=38;
-    var rows=Math.max(paths.length, connectors.length, 1);
-    var H=padTop + padBot + (rows-1)*GAP;           // full graph height (can be tall)
-    var VBH=Math.min(H, 640);                        // stable initial viewport window; pan/zoom reveals the rest
-    function spread(n,i,top,bot){ if(n<=1) return (top+bot)/2; return top + i*((bot-top)/(n-1)); }
-    var xConn=96, xContact=W*0.5, xCo=W-118;
-    // connectors (few Primary hubs) anchored within the visible window; contacts spread across the full height
-    var yConn={}; connectors.forEach(function(n,i){ yConn[n]=spread(connectors.length,i,padTop,VBH-padBot); });
-    function yContact(i){ return spread(paths.length,i,padTop,H-padBot); }
-    var yCo=VBH/2;
-    var tall = H>VBH;
+    // ---- radial "solar-system" layout (target anchored bottom-center,
+    //      Primary connectors fanned above it, each connector's contacts
+    //      fanned in an arc/orbit around that connector). Reads far cleaner
+    //      than a vertical column and stays legible up to the 25-path cap.
+    var W=900, H=760, cx=W/2, cy=H-140;
+    var R1=150, TIERS=[248,312,374];              // connector ring + 3 contact tiers
+    var total=paths.length||1;
+    var counts=connectors.map(function(n){ return paths.filter(function(p){return p.connector===n;}).length; });
+    var FAN=Math.min(2.6, 2.0+connectors.length*0.16), minShare=0.34;
+    var extra=Math.max(0.2, FAN-connectors.length*minShare);
+    var shares=counts.map(function(k){ return minShare+extra*(k/total); });
+    var fanTot=shares.reduce(function(s,v){ return s+v; },0);
 
-    var edges='', nodes='';
+    var PALETTE=['#6366f1','#0ea5e9','#f59e0b','#10b981','#ec4899','#8b5cf6','#ef4444','#0891b2','#65a30d','#d946ef'];
+    function connColor(i){ return PALETTE[i%PALETTE.length]; }
+    function fname(n){ return (n||'').trim().split(/\s+/)[0] || n || ''; }
+    function senSize(s){ s=(s||'').toLowerCase();
+      if(s.indexOf('c-level')>=0||s.indexOf('chief')>=0||s.indexOf('founder')>=0||s.indexOf('owner')>=0||s.indexOf('ceo')>=0||s.indexOf('cto')>=0) return 16;
+      if(s.indexOf('vp')>=0||s.indexOf('vice')>=0||s.indexOf('partner')>=0||s.indexOf('head')>=0||s.indexOf('svp')>=0) return 13;
+      if(s.indexOf('director')>=0) return 11;
+      if(s.indexOf('senior')>=0||s.indexOf('lead')>=0||s.indexOf('principal')>=0) return 9.5;
+      return 8; }
+    function pol(r,a){ return {x:cx+r*Math.cos(a), y:cy+r*Math.sin(a)}; }
+    function arc(r,a0,a1){ var p0=pol(r,a0),p1=pol(r,a1);
+      return 'M'+p0.x.toFixed(1)+' '+p0.y.toFixed(1)+' A'+r+' '+r+' 0 '+((a1-a0)>Math.PI?1:0)+' 1 '+p1.x.toFixed(1)+' '+p1.y.toFixed(1); }
 
-    // edges: connector -> contact, and contact -> company
-    paths.forEach(function(p,i){
-      var yc=yContact(i);
-      var t=tier(p.score);
-      var w = (p.score===null||p.score===undefined) ? 1.8 : (1.6 + (p.score/100)*3.4);
-      var dash = (p.type==='linkedin' || p.score===null) ? ' stroke-dasharray="4 4"' : '';
-      var op = (p.type==='linkedin' || p.score===null) ? '0.7' : '0.9';
-      // connector -> contact
-      var y1=yConn[p.connector], x1=xConn, x2=xContact, y2=yc, mx=(x1+x2)/2;
-      edges += '<path d="M'+x1+' '+y1+' C'+mx+' '+y1+','+mx+' '+y2+','+x2+' '+y2+'" fill="none" stroke="'+t.color+'" stroke-width="'+w.toFixed(1)+'" stroke-linecap="round" opacity="'+op+'"'+dash+'/>';
-      // contact -> company (affiliation link; dashed if not actually at the company)
-      var affDash = p.at_target_company ? '' : ' stroke-dasharray="5 5"';
-      edges += '<path d="M'+x2+' '+y2+' C'+((x2+xCo)/2)+' '+y2+','+((x2+xCo)/2)+' '+yCo+','+xCo+' '+yCo+'" fill="none" stroke="var(--nm-w-lo)" stroke-width="1.4" opacity="0.45"'+affDash+'/>';
-    });
+    var edges='', nodes='', hubs='', arcs='';
+    // faint orbit arcs behind the contact tiers (signature)
+    TIERS.forEach(function(r){ arcs += '<path d="'+arc(r,-Math.PI/2-fanTot/2-0.06,-Math.PI/2+fanTot/2+0.06)+'" fill="none" stroke="var(--border-mid)" stroke-width="1" stroke-opacity="0.4"/>'; });
 
-    // connector nodes (Primary hubs)
-    connectors.forEach(function(n){
-      var y=yConn[n];
-      nodes += '<g>' +
-        '<circle cx="'+xConn+'" cy="'+y+'" r="21" fill="var(--green-tint)" stroke="var(--green)" stroke-width="1.6"/>' +
-        '<text x="'+xConn+'" y="'+(y+4)+'" text-anchor="middle" class="nm-node-init" fill="var(--green-deep)">'+esc(initials(n))+'</text>' +
-        '<text x="'+xConn+'" y="'+(y+38)+'" text-anchor="middle" class="nm-node-label">'+esc(trunc(n,16))+'</text>' +
+    var cursor=-fanTot/2;
+    connectors.forEach(function(name,ci){
+      var wStart=cursor, wEnd=cursor+shares[ci]; cursor=wEnd;
+      var centerA=-Math.PI/2+(wStart+wEnd)/2;
+      var hub=pol(R1,centerA), col=connColor(ci);
+      // connector -> target
+      edges += '<line x1="'+cx+'" y1="'+cy+'" x2="'+hub.x.toFixed(1)+'" y2="'+hub.y.toFixed(1)+'" stroke="'+col+'" stroke-width="2.4" stroke-opacity="0.5" stroke-linecap="round"/>';
+      var mine=paths.filter(function(p){ return p.connector===name; });
+      var pad=Math.min(0.16, shares[ci]*0.16);
+      mine.forEach(function(p,j){
+        var t=mine.length>1?j/(mine.length-1):0.5;
+        var ang=-Math.PI/2+wStart+pad+(shares[ci]-2*pad)*t, r=TIERS[j%3];
+        var pt=pol(r,ang), tr=tier(p.score);
+        var ew=(p.score===null||p.score===undefined)?1.4:(1.2+(p.score/100)*3.2);
+        var edash=(p.type==='linkedin'||p.score===null)?' stroke-dasharray="4 4"':'';
+        // contact -> connector (warmth-colored, thicker = warmer)
+        edges += '<line x1="'+pt.x.toFixed(1)+'" y1="'+pt.y.toFixed(1)+'" x2="'+hub.x.toFixed(1)+'" y2="'+hub.y.toFixed(1)+'" stroke="'+tr.color+'" stroke-width="'+ew.toFixed(1)+'" stroke-opacity="0.35" stroke-linecap="round"'+edash+'/>';
+        var rad=senSize(p.seniority);
+        // solid ring = actually at the target company; absent = investor/alum/other
+        var ring=p.at_target_company ? '<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+(rad+4)+'" fill="none" stroke="'+tr.color+'" stroke-width="1.4" stroke-opacity="0.55"/>' : '';
+        var ttl=esc(p.contact_name)+(p.contact_title?' — '+esc(p.contact_title):'')+' · '+(p.score===null?'LinkedIn only':'warmth '+p.score)+' · via '+esc(p.connector)+(p.at_target_company?'':' · '+esc(p.contact_affiliation||'external'));
+        nodes += '<g class="nm-cnode"><title>'+ttl+'</title>'+ring +
+          '<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+rad+'" fill="'+tr.color+'" fill-opacity="0.9"'+edash+'/>' +
+          '<text x="'+pt.x.toFixed(1)+'" y="'+(pt.y+rad+11).toFixed(1)+'" text-anchor="middle" class="nm-node-label">'+esc(trunc(fname(p.contact_name),14))+'</text>' +
+        '</g>';
+      });
+      // connector hub (drawn above the contact edges)
+      hubs += '<g class="nm-cnode"><title>'+esc(name)+' · '+mine.length+' path'+(mine.length!==1?'s':'')+'</title>' +
+        '<circle cx="'+hub.x.toFixed(1)+'" cy="'+hub.y.toFixed(1)+'" r="20" fill="'+col+'"/>' +
+        '<text x="'+hub.x.toFixed(1)+'" y="'+(hub.y+4).toFixed(1)+'" text-anchor="middle" class="nm-node-init" fill="#fff" style="stroke:none">'+esc(initials(name))+'</text>' +
+        '<text x="'+hub.x.toFixed(1)+'" y="'+(hub.y+35).toFixed(1)+'" text-anchor="middle" class="nm-node-label" style="font-weight:600">'+esc(trunc(name,16))+'</text>' +
       '</g>';
     });
 
-    // contact nodes
-    paths.forEach(function(p,i){
-      var y=yContact(i);
-      var t=tier(p.score);
-      var dash=(p.type==='linkedin'||p.score===null)?' stroke-dasharray="3 3"':'';
-      var scoreTxt=(p.score===null||p.score===undefined)?'LinkedIn':(p.score+'%');
-      nodes += '<g>' +
-        '<circle cx="'+xContact+'" cy="'+y+'" r="19" fill="var(--surface2)" stroke="'+t.color+'" stroke-width="2.4"'+dash+'/>' +
-        '<text x="'+xContact+'" y="'+(y+4)+'" text-anchor="middle" class="nm-node-init" fill="'+t.dark+'">'+esc(initials(p.contact_name))+'</text>' +
-        '<text x="'+xContact+'" y="'+(y+37)+'" text-anchor="middle" class="nm-node-label">'+esc(trunc(p.contact_name,18))+'</text>' +
-        '<text x="'+xContact+'" y="'+(y+50)+'" text-anchor="middle" class="nm-node-sub" fill="'+t.dark+'">'+esc(scoreTxt)+(p.at_target_company?'':' · '+esc(trunc(p.contact_affiliation||'ext',12)))+'</text>' +
-      '</g>';
-    });
-
-    // company node (target)
+    // target company node at the center
     var dom=domainFor(c);
     var clip='nmco'+Math.random().toString(36).slice(2,7);
-    nodes += '<g>' +
-      '<clipPath id="'+clip+'"><circle cx="'+xCo+'" cy="'+yCo+'" r="24"/></clipPath>' +
-      '<circle cx="'+xCo+'" cy="'+yCo+'" r="25" fill="var(--surface)" stroke="var(--border-mid)" stroke-width="1.6"/>' +
-      '<text x="'+xCo+'" y="'+(yCo+5)+'" text-anchor="middle" class="nm-node-init" fill="var(--text-muted)">'+esc(initials(c.company))+'</text>' +
-      (dom ? '<image href="'+esc(faviconUrl(dom))+'" x="'+(xCo-24)+'" y="'+(yCo-24)+'" width="48" height="48" clip-path="url(#'+clip+')" preserveAspectRatio="xMidYMid slice" onerror="this.remove()"/>' : '') +
-      '<text x="'+xCo+'" y="'+(yCo+42)+'" text-anchor="middle" class="nm-node-label">'+esc(trunc(c.company,16))+'</text>' +
+    var tgt='<g>' +
+      '<clipPath id="'+clip+'"><circle cx="'+cx+'" cy="'+cy+'" r="27"/></clipPath>' +
+      '<circle cx="'+cx+'" cy="'+cy+'" r="29" fill="var(--surface)" stroke="var(--green)" stroke-width="2.4"/>' +
+      '<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" class="nm-node-init" fill="var(--text-muted)">'+esc(initials(c.company))+'</text>' +
+      (dom ? '<image href="'+esc(faviconUrl(dom))+'" x="'+(cx-27)+'" y="'+(cy-27)+'" width="54" height="54" clip-path="url(#'+clip+')" preserveAspectRatio="xMidYMid slice" onerror="this.remove()"/>' : '') +
+      '<text x="'+cx+'" y="'+(cy+48)+'" text-anchor="middle" class="nm-node-label" style="font-weight:700">'+esc(trunc(c.company,20))+'</text>' +
     '</g>';
 
-    // column captions
-    var caps =
-      '<text x="'+xConn+'" y="26" text-anchor="middle" class="nm-col-cap">Primary</text>' +
-      '<text x="'+xContact+'" y="26" text-anchor="middle" class="nm-col-cap">Contact</text>' +
-      '<text x="'+xCo+'" y="26" text-anchor="middle" class="nm-col-cap">Target</text>';
-
-    var svg='<svg viewBox="0 0 '+W+' '+VBH+'" preserveAspectRatio="xMidYMid meet">' +
-      '<g class="nm-zoom">'+caps+edges+nodes+'</g></svg>';
+    // crop the viewBox to the region the fan actually occupies (top tier down to
+    // the target label) so the graph fills the frame instead of floating small
+    // in a tall canvas. content spans ~ (cy - maxTier - 22) .. (cy + 55).
+    var vy0=Math.max(0, cy-TIERS[TIERS.length-1]-40), vy1=cy+60, vbh=vy1-vy0;
+    var svg='<svg viewBox="0 '+vy0.toFixed(0)+' '+W+' '+vbh.toFixed(0)+'" preserveAspectRatio="xMidYMid meet">' +
+      '<g class="nm-zoom">'+arcs+edges+tgt+nodes+hubs+'</g></svg>';
 
     var legend='<div class="nm-legend">' +
-      '<div class="nm-legend-item"><span class="nm-legend-swatch hi"></span>High warmth</div>' +
-      '<div class="nm-legend-item"><span class="nm-legend-swatch mid"></span>Mid</div>' +
+      '<div class="nm-legend-item"><span class="nm-legend-swatch hi"></span>Warm 75+</div>' +
+      '<div class="nm-legend-item"><span class="nm-legend-swatch mid"></span>Mid 40–74</div>' +
       '<div class="nm-legend-item"><span class="nm-legend-swatch lo"></span>Low</div>' +
       '<div class="nm-legend-item"><span class="nm-legend-swatch li"></span>LinkedIn only</div>' +
+      '<div class="nm-legend-item" style="opacity:.7;">size = seniority · ring = at company</div>' +
       '</div>';
     var zoom='<div class="nm-zoom-btns"><button type="button" data-nmz="in" title="Zoom in">+</button><button type="button" data-nmz="out" title="Zoom out">−</button><button type="button" data-nmz="reset" title="Reset" style="font-size:11px;">⤢</button></div>';
-    var hint = tall ? ('showing top of '+paths.length+' paths · drag to pan · scroll to zoom') : 'drag to pan · scroll to zoom';
+    var hint = paths.length+' path'+(paths.length!==1?'s':'')+' · drag to pan · scroll to zoom';
     return '<div class="nm-graph-wrap">'+svg+legend+zoom+'<div class="nm-controls-hint">'+hint+'</div></div>';
   }
 
