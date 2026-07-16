@@ -503,18 +503,20 @@ a{color:inherit;}
 #view-network, #view-network *{font-family:var(--font-sans);}
 /* boxed legend as a horizontal bar ABOVE the graph — boxed look, never overlaps
    nodes at any density. */
-.nm-legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:9px 13px;margin-bottom:12px;border:1px solid var(--border);border-radius:9px;background:var(--surface);}
-.nm-lg-title{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);}
-.nm-lg-div{width:1px;height:15px;background:var(--border);}
-.nm-legend-item{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text-mid);}
-.nm-legend-note{font-size:10.5px;color:var(--text-faint);}
-.nm-legend-hint{font-size:10.5px;color:var(--text-faint);margin-left:auto;}
+.nm-legend{display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:12px 15px;margin-bottom:12px;border:1px solid var(--border);border-radius:9px;background:var(--surface);}
+.nm-legend-code{display:flex;flex-wrap:wrap;align-items:center;gap:9px 18px;width:100%;}
+.nm-legend-meta{width:100%;}
+.nm-lg-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);}
+.nm-lg-div{width:1px;height:16px;background:var(--border);}
+.nm-legend-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-mid);}
+.nm-legend-note{font-size:11.5px;color:var(--text-faint);line-height:1.5;}
+.nm-legend-hint{font-size:11.5px;color:var(--text-faint);}
 /* Lyric match: prominent number figures render in Newsreader serif (placed late
    so it wins over the class definitions above; #view-network rules beat the
    scoped sans override). Small meta (dates/domains/tab counts) stay Inter. */
 .card-signal-num,.meta-val,.cx-signal-num-cell,.cx-signal-strip .cx-signal-foot .val,.pc-conf-val,.pc-signal-num,
 #view-network .nm-score,#view-network .nm-stat-val,#view-network .nm-pm-val{font-family:var(--font-num);font-variant-numeric:normal;letter-spacing:0;}
-.nm-legend-swatch{width:17px;flex-shrink:0;height:0;border-top:3px solid var(--nm-w-mid);}
+.nm-legend-swatch{width:26px;flex-shrink:0;height:0;border-top:4px solid var(--nm-w-mid);}
 /* node-click detail card (overlay inside the graph) */
 .nm-detail{position:absolute;top:12px;right:12px;width:288px;max-height:calc(100% - 24px);overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 18px 15px 16px;box-shadow:0 10px 30px rgba(0,0,0,.30);z-index:6;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:var(--border-mid) transparent;}
 .nm-detail::-webkit-scrollbar{width:6px;}
@@ -1718,14 +1720,16 @@ function getAllCompaniesFlat(){
     return 8; }
   function warmthLegend(spokeNote, ringNote){
     return '<div class="nm-legend">' +
-      '<span class="nm-lg-title">Warmth</span>' +
-      '<span class="nm-legend-item"><span class="nm-legend-swatch hi"></span>75+</span>' +
-      '<span class="nm-legend-item"><span class="nm-legend-swatch mid"></span>40–74</span>' +
-      '<span class="nm-legend-item"><span class="nm-legend-swatch lo"></span>Low</span>' +
-      '<span class="nm-legend-item"><span class="nm-legend-swatch li"></span>LinkedIn only</span>' +
-      '<span class="nm-lg-div"></span>' +
-      '<span class="nm-legend-item"><span class="nm-legend-swatch conn"></span>'+spokeNote+'</span>' +
-      '<span class="nm-legend-note">size = seniority · ring = '+ringNote+' · click a dot for details</span>' +
+      '<div class="nm-legend-code">' +
+        '<span class="nm-lg-title">Warmth</span>' +
+        '<span class="nm-legend-item"><span class="nm-legend-swatch hi"></span>75+</span>' +
+        '<span class="nm-legend-item"><span class="nm-legend-swatch mid"></span>40–74</span>' +
+        '<span class="nm-legend-item"><span class="nm-legend-swatch lo"></span>Low</span>' +
+        '<span class="nm-legend-item"><span class="nm-legend-swatch li"></span>LinkedIn only</span>' +
+        '<span class="nm-lg-div"></span>' +
+        '<span class="nm-legend-item"><span class="nm-legend-swatch conn"></span>'+spokeNote+'</span>' +
+      '</div>' +
+      '<div class="nm-legend-meta"><span class="nm-legend-note">size = seniority · ring = '+ringNote+' · click a dot for details</span></div>' +
       '</div>';
   }
 
@@ -1837,7 +1841,8 @@ function getAllCompaniesFlat(){
       '<g class="nm-zoom">'+arcs+edges+flow+centerNode+nodes+hubs+'</g></svg>';
     var zoom='<div class="nm-zoom-btns"><button type="button" data-nmz="in" title="Zoom in">+</button><button type="button" data-nmz="out" title="Zoom out">−</button><button type="button" data-nmz="reset" title="Reset" style="font-size:11px;">⤢</button></div>';
     // legend is a boxed bar ABOVE the graph (never overlaps nodes, works at any density)
-    var legendFull = hintText ? legendHtml.replace(/<\/div>\s*$/, '<span class="nm-legend-hint">'+esc(hintText)+'</span></div>') : legendHtml;
+    // fold the hint into the muted meta line (second row) so the legend stays two clean rows
+    var legendFull = hintText ? legendHtml.replace('</span></div></div>', ' · '+esc(hintText)+'</span></div></div>') : legendHtml;
     return legendFull + '<div class="nm-graph-wrap">'+svg+zoom+'<div class="nm-detail" id="nm-detail" style="display:none;"></div></div>';
   }
 
