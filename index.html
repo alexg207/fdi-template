@@ -102,10 +102,10 @@ a{color:inherit;}
 .product-name{font-family:var(--font-display);font-size:16px;font-weight:600;letter-spacing:-.005em;color:var(--text);}
 .env-pill{font-size:11px;color:var(--text-muted);font-weight:500;background:var(--surface2);padding:3px 8px;border-radius:4px;letter-spacing:.02em;}
 .tab-nav{display:flex;gap:0;align-self:stretch;align-items:stretch;}
-.tab-link{display:flex;align-items:center;padding:0 18px;font-size:15px;font-weight:600;text-decoration:none;border-bottom:2px solid transparent;transition:all 150ms;cursor:pointer;color:var(--text-mid);background:transparent;border-top:none;border-left:none;border-right:none;font-family:inherit;letter-spacing:-.01em;gap:8px;}
+.tab-link{display:flex;align-items:center;padding:0 18px;font-size:17px;font-weight:600;text-decoration:none;border-bottom:2px solid transparent;transition:all 150ms;cursor:pointer;color:var(--text);background:transparent;border-top:none;border-left:none;border-right:none;font-family:inherit;letter-spacing:-.01em;gap:8px;}
 .tab-link:hover{color:var(--text);}
 .tab-link.active{color:var(--purple-dark);border-bottom-color:var(--purple);font-weight:700;}
-.tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 6px;border-radius:9999px;background:var(--surface2);color:var(--text-muted);font-size:11px;font-weight:600;font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+.tab-count{display:none;}
 .tab-link.active .tab-count{background:var(--purple-tint);color:var(--purple-dark);}
 .shell-right{display:flex;align-items:center;gap:14px;}
 .partner-mark{font-family:var(--font-sans);font-size:13px;font-weight:600;color:var(--text);letter-spacing:-.01em;display:flex;align-items:center;gap:6px;}
@@ -147,10 +147,10 @@ a{color:inherit;}
 
 /* === PAGE TABS (below header) === */
 .page-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:24px;gap:0;}
-.page-tab{padding:13px 22px;font-size:15px;font-weight:600;cursor:pointer;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--text-mid);font-family:inherit;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;transition:color 120ms;}
+.page-tab{padding:13px 22px;font-size:17px;font-weight:600;cursor:pointer;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--text);font-family:inherit;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;transition:color 120ms;}
 .page-tab:hover{color:var(--text);}
 .page-tab.active{color:var(--purple-dark);border-bottom-color:var(--purple);font-weight:700;}
-.page-tab .tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:16px;padding:0 5px;border-radius:9999px;background:var(--surface2);color:var(--text-muted);font-size:10px;font-weight:500;font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+.page-tab .tab-count{display:none;}
 .page-tab.active .tab-count{background:var(--purple-tint);color:var(--purple-dark);}
 
 /* === CARD GRID === */
