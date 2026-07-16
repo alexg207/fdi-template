@@ -1743,8 +1743,21 @@ function getAllCompaniesFlat(){
     // track the drawn bounds so the viewBox fits + centers the whole graph
     var bx0=cx-70, bx1=cx+70, by0=cy-40, by1=cy+58;
     function track(x,y,r){ bx0=Math.min(bx0,x-r-46); bx1=Math.max(bx1,x+r+46); by0=Math.min(by0,y-r-8); by1=Math.max(by1,y+r+24); }
+    // animated "data flowing" dots along an edge (adapted from the Lyric network map).
+    // muted on purpose: visible but not distracting. attr = fill="..." or class="nm-wf-*".
+    function flowSeg(x1,y1,x2,y2,attr,n,peak){
+      var dist=Math.hypot(x2-x1,y2-y1), dur=2.4*Math.max(1.5,Math.min(2.8,dist/120)), D=dur.toFixed(2), s='';
+      for(var i=0;i<n;i++){ var b=(-i*dur/n).toFixed(2);
+        s+='<circle r="2" '+attr+' fill-opacity="0">' +
+          '<animate attributeName="cx" values="'+x1.toFixed(1)+';'+x2.toFixed(1)+'" dur="'+D+'s" begin="'+b+'s" repeatCount="indefinite" calcMode="linear"/>' +
+          '<animate attributeName="cy" values="'+y1.toFixed(1)+';'+y2.toFixed(1)+'" dur="'+D+'s" begin="'+b+'s" repeatCount="indefinite" calcMode="linear"/>' +
+          '<animate attributeName="fill-opacity" values="0;'+peak+';'+peak+';0" dur="'+D+'s" begin="'+b+'s" repeatCount="indefinite" calcMode="linear"/>' +
+        '</circle>';
+      }
+      return s;
+    }
 
-    var edges='', nodes='', hubs='', arcs='';
+    var edges='', nodes='', hubs='', arcs='', flow='';
     TIERS.forEach(function(r){ arcs += '<path d="'+arc(r,-Math.PI/2-fanTot/2-0.06,-Math.PI/2+fanTot/2+0.06)+'" fill="none" stroke="var(--border-mid)" stroke-width="1" stroke-opacity="0.35"/>'; });
 
     var cursor=-fanTot/2;
@@ -1752,7 +1765,10 @@ function getAllCompaniesFlat(){
       var wStart=cursor, wEnd=cursor+shares[ci]; cursor=wEnd;
       var centerA=-Math.PI/2+(wStart+wEnd)/2;
       var hub=pol(R1,centerA), col=g.color||NM_PALETTE[ci%NM_PALETTE.length];
-      edges += '<line x1="'+cx+'" y1="'+cy+'" x2="'+hub.x.toFixed(1)+'" y2="'+hub.y.toFixed(1)+'" stroke="'+col+'" stroke-width="2.2" stroke-opacity="0.5" stroke-linecap="round"/>';
+      // backbone (center <-> hub): neutral/muted — the per-connector color carried no
+      // meaning and fought the warmth-coded contact edges. Node ring keeps the identity color.
+      edges += '<line x1="'+cx+'" y1="'+cy+'" x2="'+hub.x.toFixed(1)+'" y2="'+hub.y.toFixed(1)+'" stroke="hsl(220 12% 68%)" stroke-width="1.6" stroke-opacity="0.26" stroke-linecap="round"/>';
+      flow += flowSeg(hub.x,hub.y,cx,cy,'fill="hsl(220 16% 82%)"',1,0.45);
       var pad=Math.min(0.16, shares[ci]*0.16);
       g.items.forEach(function(it,j){
         var t=g.items.length>1?j/(g.items.length-1):0.5;
@@ -1761,6 +1777,8 @@ function getAllCompaniesFlat(){
         var ew=(it.score===null||it.score===undefined)?1.4:(1.2+(it.score/100)*3.0);
         var edash=(it.type==='linkedin'||it.score===null)?' stroke-dasharray="4 4"':'';
         edges += '<line x1="'+pt.x.toFixed(1)+'" y1="'+pt.y.toFixed(1)+'" x2="'+hub.x.toFixed(1)+'" y2="'+hub.y.toFixed(1)+'" class="nm-ws-'+tr.key+'" stroke-width="'+ew.toFixed(1)+'" stroke-opacity="0.38" stroke-linecap="round"'+edash+'/>';
+        // warmth-coded flow: contact -> connector hub (dot inherits the warmth color)
+        flow += flowSeg(pt.x,pt.y,hub.x,hub.y,'class="nm-wf-'+tr.key+'"',1,0.6);
         var rad=senSize(it.seniority);
         var pk=_nmNodes.length; _nmNodes.push(it.data||null);
         var ring=it.ring ? '<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+(rad+4)+'" fill="none" class="nm-ws-'+tr.key+'" stroke-width="1.5" stroke-opacity="0.6"/>' : '';
@@ -1801,7 +1819,7 @@ function getAllCompaniesFlat(){
     // auto-fit viewBox to the actual content bounds → always centered + fully in view
     var p=14, vx=(bx0-p), vy=(by0-p), vw=(bx1-bx0)+2*p, vh=(by1-by0)+2*p;
     var svg='<svg viewBox="'+vx.toFixed(0)+' '+vy.toFixed(0)+' '+vw.toFixed(0)+' '+vh.toFixed(0)+'" preserveAspectRatio="xMidYMid meet">' +
-      '<g class="nm-zoom">'+arcs+edges+centerNode+nodes+hubs+'</g></svg>';
+      '<g class="nm-zoom">'+arcs+edges+flow+centerNode+nodes+hubs+'</g></svg>';
     var zoom='<div class="nm-zoom-btns"><button type="button" data-nmz="in" title="Zoom in">+</button><button type="button" data-nmz="out" title="Zoom out">−</button><button type="button" data-nmz="reset" title="Reset" style="font-size:11px;">⤢</button></div>';
     // legend is a boxed bar ABOVE the graph (never overlaps nodes, works at any density)
     var legendFull = hintText ? legendHtml.replace(/<\/div>\s*$/, '<span class="nm-legend-hint">'+esc(hintText)+'</span></div>') : legendHtml;
