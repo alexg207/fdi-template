@@ -569,7 +569,9 @@ a{color:inherit;}
 .nm-stat-btn:hover .nm-stat-go{opacity:1;}
 .nm-stat-controls{flex:1;min-width:230px;}
 .nm-ctl-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.nm-sen-dd .nm-sen-btn,.nm-conn-btn{height:32px;}
+.nm-ctl-row{align-items:center;}
+.nm-ctl-row .nm-conn-dd,.nm-ctl-row .nm-sen-dd{margin:0;}
+.nm-ctl-row .nm-conn-btn,.nm-ctl-row .nm-sen-btn{box-sizing:border-box;height:34px;line-height:1;padding:0 12px;}
 /* === CONTACTS TAB === */
 .ct-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
 .ct-filters{display:flex;gap:8px;flex-wrap:wrap;}
@@ -618,7 +620,7 @@ a{color:inherit;}
 .ct-addlist-opt:hover{background:var(--surface2);}
 .ct-addlist-new{color:var(--green-dark);font-weight:600;border-top:1px solid var(--border-soft);margin-top:4px;}
 /* connectors dropdown (summary) */
-.nm-conn-dd{position:relative;margin-top:6px;}
+.nm-conn-dd{position:relative;}
 .nm-conn-btn{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 11px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font-sans);}
 .nm-conn-btn:hover{border-color:var(--green);}
 .nm-conn-btn .caret{color:var(--text-muted);font-size:10px;}
@@ -1659,7 +1661,7 @@ function getAllCompaniesFlat(){
         '<span class="nm-stat-go">View →</span>' +
       '</button>' +
       '<div class="nm-stat nm-stat-controls">' +
-        '<div class="nm-stat-lbl" style="margin-bottom:6px;">Connectors at Primary ('+conns.length+')</div>' +
+        '<div class="nm-stat-lbl" style="margin-bottom:7px;">Explore the map</div>' +
         '<div class="nm-ctl-row">' +
           (conns.length ?
             '<div class="nm-conn-dd" id="nm-conn-dd">' +
