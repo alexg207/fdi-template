@@ -31,7 +31,7 @@ window.NETWORK_DATA = {
       "affinity_name": "Acme Cloud",
       "status": "resolved",
       "total_paths": 134,
-      "shown_paths": 4,
+      "shown_paths": 5,
       "best_score": 97,
       "paths": [
         {
@@ -60,6 +60,32 @@ window.NETWORK_DATA = {
             "last_meeting": { "date": "2026-06-25", "label": "Advisory sync", "from_internal": false, "from_name": "Jamie Fielder", "with_connector": true },
             "next_meeting": { "date": "2026-08-27", "label": "Advisory sync", "from_internal": null, "from_name": null, "with_connector": true },
             "last_chat": null
+          },
+          "enrichment_status": "ok"
+        },
+        {
+          "connector": "Dana Cole",
+          "connector_id": 900002,
+          "connector_email": "dana@primary.example",
+          "contact_name": "Jamie Fielder",
+          "contact_id": 151000001,
+          "contact_email": "jamie.fielder@acmecloud.example",
+          "contact_title": "Chief Information Security Officer",
+          "contact_affiliation": "Acme Cloud",
+          "at_target_company": true,
+          "seniority": "C-Level",
+          "linkedin_url": "https://linkedin.com/in/example-jamie-fielder",
+          "type": "interaction",
+          "has_interaction_data": true,
+          "score": 71,
+          "linkedin_connected": false,
+          "linkedin_connected_on": null,
+          "last_contact": "2026-04-15",
+          "history": {
+            "first_contact": "2024-02-01",
+            "first_email": { "date": "2024-02-01", "label": "Intro", "from_internal": true, "from_name": "Dana Cole", "with_connector": true },
+            "last_email": { "date": "2026-04-15", "label": null, "from_internal": true, "from_name": "Dana Cole", "with_connector": true },
+            "first_meeting": null, "last_meeting": null, "next_meeting": null, "last_chat": null
           },
           "enrichment_status": "ok"
         },
@@ -96,14 +122,14 @@ window.NETWORK_DATA = {
           "contact_name": "Toni Delgado",
           "contact_id": 151000003,
           "contact_email": "toni.delgado@northstarcap.example",
-          "contact_title": "Partner",
+          "contact_title": null,
           "contact_affiliation": "Northstar Capital",
           "at_target_company": false,
           "seniority": "Partner",
           "linkedin_url": "https://linkedin.com/in/example-toni-delgado",
           "type": "interaction",
           "has_interaction_data": true,
-          "score": 58,
+          "score": 32,
           "linkedin_connected": false,
           "linkedin_connected_on": null,
           "last_contact": "2026-05-01",

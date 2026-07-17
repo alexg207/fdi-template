@@ -100,14 +100,17 @@ Axes grade in whole 0–5 points, so the /100 composite collides constantly — 
 
 ## 4. The Network + Contacts tabs (engine data, do not build per-founder)
 
-**Rewritten 2026-07-16.** These are now standing, fully data-driven tabs — NOT a keep/drop decision and NOT built from CONTACT_MAP.
+**Rewritten 2026-07-16. Network UX v3 2026-07-17.** These are now standing, fully data-driven tabs — NOT a keep/drop decision and NOT built from CONTACT_MAP.
 
 ### What they do
-- **Network** — a radial warm-path map per target account: the company at center, Primary connector hubs around it, contact dots fanned out; warmth-coded edges (green/amber/grey, fixed independent of the founder accent), animated flow dots, a boxed legend with a Map/List toggle, a summary strip with clickable stats, a connector detail card on hub-click (title/org/location/LinkedIn + "Show all connections →"), a contact detail card on dot-click (why-this-score + relationship-history timeline), a connector-centric view, and a ranked list below with a filter/sort toolbar.
-- **Contacts** — every warm path flattened into a filterable rows table (search + warmth/seniority/connector/account/activity dropdowns), tier-grouped, row-expand to why+history, multiselect → bulk bar → saved lists (`fdi_lists_<slug>` in localStorage) + CSV export.
+- **Network** — a radial warm-path map per target account: the company at center, Primary connector hubs around it, contact dots fanned out; warmth-coded edges (green/amber/**red** for faint <40, fixed independent of the founder accent), animated flow dots, a boxed legend with a Map/List toggle, an **in-map filter bar** (top-left: seniority / warmth / last-contacted / connector — filters the graph AND the ranked list together), a **visual dot key** (left of the zoom buttons: ringed dot = works at the company, plain = elsewhere, size = seniority), a summary strip with clickable stats (incl. Strong-75+ / C-level-reachable), unified detail cards (dot-click contact card + hub-click connector card share one layout: inline LinkedIn under the name, close on outside-click/Escape, contact card lists every connector who can intro), a connector-centric view, and a ranked list below with a **Sort-only** toolbar (the other filters moved to the map bar).
+- **Contact de-duplication:** each contact appears **once per company** (render-side `groupPaths`/`contactKey`), carrying all their connector paths; company view still shows a contact under each *distinct* connector who can intro them. Missing `contact_title` is **omitted** (no placeholder/em-dash).
+- **Contacts** — every warm path flattened into a filterable rows table (search + warmth/seniority/connector/account/activity dropdowns), tier-grouped, row-expand to why+history, multiselect → bulk bar → saved lists (`fdi_lists_<slug>` in localStorage) + CSV export (Connectors column lists all intro paths).
 
 ### Data source (IMPORTANT)
 Both are driven **solely** by `window.NETWORK_DATA` (from `network-data.js`), which the **FDI engine generates from real Affinity data** as a workflow step AFTER the build (`fetch-affinity-network.mjs`). The skill never writes it. They are NOT built from `CONTACT_MAP`/`PRIMARY_TEAM` and never synthesize/invent warm intros.
+
+**Former-employee filtering:** the engine strips warm paths whose connector is no longer on the live primary.vc/people roster when it generates the data (audit trail in `summary.roster_filter` + `summary.excluded_connectors`; fails open if the roster can't be fetched). The template also has an `EXCLUDED_CONNECTORS = []` array at the top of the network IIFE — a **manual per-build override knob** that ships empty and normally stays empty. Only populate it for a one-off correction; names must match `paths[].connector` exactly.
 
 ### The only skill-side inputs that affect these tabs
 - `data.js` `SEGMENTS[].companies[].name` — joined EXACTLY (character-for-character) to attach display metadata (subtitle/category/favicon).

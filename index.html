@@ -19,10 +19,10 @@ function toggleTheme(){var h=document.documentElement;if(h.getAttribute("data-th
   --border-soft:  hsl(240 9% 13%);
   --border-mid:   hsl(240 8% 28%);
 
-  --text:         hsl(0 0% 97%);
-  --text-mid:     hsl(225 8% 81%);
-  --text-muted:   hsl(225 7% 68%);
-  --text-faint:   hsl(225 6% 58%);
+  --text:         hsl(0 0% 98%);
+  --text-mid:     hsl(225 6% 91%);
+  --text-muted:   hsl(225 5% 83%);
+  --text-faint:   hsl(225 5% 73%);
 
   /* accent ramp (historically named --green*; VALUE is the founder accent, not green). Recolored per-build via {{THEME_ACCENT_DARK}}; secondary --purple/--teal/--q-high/--q-low stay fixed. */
   {{THEME_ACCENT_DARK}}
@@ -416,7 +416,8 @@ a{color:inherit;}
 .network-row{padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--border-soft);transition:background 120ms;border-left:2px solid transparent;}
 .network-row:hover{background:var(--surface2);}
 .network-row.active{background:var(--green-tint2);border-left-color:var(--green);}
-.network-conn-info{font-family:var(--font-mono);font-size:10px;margin-top:5px;font-weight:500;}
+.network-conn-info{font-family:var(--font-display);font-size:10.5px;margin-top:5px;font-weight:500;letter-spacing:-.005em;}
+.ct-back-btn{margin-bottom:11px;height:30px;padding:0 12px;font-size:11.5px;}
 .network-panel{padding:24px 28px;}
 .contact-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden;}
 .contact-card-top{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;}
@@ -446,7 +447,7 @@ a{color:inherit;}
   --nm-w-hi-d: hsl(150 55% 36%);
   --nm-w-mid: hsl(38 92% 52%);
   --nm-w-mid-d: hsl(38 82% 42%);
-  --nm-w-lo: hsl(220 12% 55%);
+  --nm-w-lo: hsl(3 80% 61%);   /* faint <40 warmth: red — distinct from the neutral structural lines + LinkedIn gray */
   --nm-w-null: hsl(220 10% 62%);
 }
 .nm-summary{display:flex;align-items:stretch;gap:0;border:1px solid var(--border);border-radius:8px;background:var(--surface);margin-bottom:16px;overflow:visible;flex-wrap:wrap;}
@@ -494,6 +495,17 @@ a{color:inherit;}
 .nm-node-init{font-family:var(--font-mono);font-size:12px;font-weight:600;}
 .nm-col-cap{font-family:var(--font-mono);font-size:9.5px;font-weight:600;letter-spacing:.1em;fill:var(--text-faint);text-transform:uppercase;}
 .nm-controls-hint{position:absolute;left:12px;top:12px;font-size:10px;color:var(--text-faint);pointer-events:none;}
+.nm-mapbar{position:absolute;left:10px;top:10px;z-index:5;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 82px);}
+.nm-mapbar .nm-sen-btn{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.22);}
+.nm-mapbar .nm-sen-menu{max-height:250px;overflow:auto;z-index:30;}
+/* sits directly left of the zoom stack (right:10, 26px wide), vertically centered
+   on the 3 buttons (stack top:10, height ~86px -> center ~53px) */
+.nm-vizkey{position:absolute;right:44px;top:53px;transform:translateY(-50%);z-index:5;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 11px;display:flex;flex-direction:column;gap:7px;font-size:11.5px;color:var(--text-mid);box-shadow:0 1px 4px rgba(0,0,0,.24);}
+.nm-vk-row{display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.nm-vk-dot{width:12px;height:12px;border-radius:50%;background:var(--text-muted);flex-shrink:0;}
+.nm-vk-dot.ring{box-shadow:0 0 0 2px var(--surface),0 0 0 3.5px var(--text-muted);}
+.nm-vk-dot.sm{width:8px;height:8px;}
+.nm-vk-dot.lg{width:15px;height:15px;}
 .nm-zoom-btns{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:4px;}
 .nm-zoom-btns button{width:26px;height:26px;border:1px solid var(--border);background:var(--surface);color:var(--text-mid);border-radius:6px;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);}
 .nm-zoom-btns button:hover{border-color:var(--green);color:var(--green-dark);}
@@ -510,7 +522,7 @@ a{color:inherit;}
 .nm-lg-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);}
 .nm-lg-div{width:1px;height:16px;background:var(--border);}
 .nm-legend-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-mid);}
-.nm-legend-note{font-size:11.5px;color:var(--text-faint);line-height:1.5;}
+.nm-legend-note{font-size:13px;color:var(--text-mid);font-weight:500;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .nm-legend-hint{font-size:11.5px;color:var(--text-faint);}
 /* Lyric match: prominent number figures render in Newsreader serif (placed late
    so it wins over the class definitions above; #view-network rules beat the
@@ -531,6 +543,9 @@ a{color:inherit;}
 .nm-d-av{width:34px;height:34px;border-radius:9999px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
 .nm-d-name{font-size:14.5px;font-weight:700;color:var(--text);line-height:1.2;}
 .nm-d-title{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+.nm-d-name{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.nm-d-li{color:var(--purple-dark);font-size:11px;text-decoration:none;font-family:var(--font-mono);font-weight:600;white-space:nowrap;}
+.nm-d-li:hover{text-decoration:underline;}
 .nm-d-score{margin-left:auto;font-family:var(--font-num);font-size:26px;font-weight:600;line-height:1;flex-shrink:0;}
 .nm-d-score.hi{color:var(--nm-w-hi);}.nm-d-score.mid{color:var(--nm-w-mid);}.nm-d-score.lo{color:var(--nm-w-lo);}
 .nm-d-pct{font-size:12px;margin-left:1px;}
@@ -613,6 +628,7 @@ a{color:inherit;}
 .ct-acct{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-mid);}
 .ct-acct img{width:18px;height:18px;border-radius:4px;border:1px solid var(--border);}
 .ct-conn{font-size:12.5px;color:var(--text-mid);}
+.ct-conn-more{display:inline-block;font-size:10px;font-weight:600;color:var(--text-faint);background:var(--surface2);border:1px solid var(--border);border-radius:9999px;padding:0 5px;margin-left:3px;font-family:var(--font-mono);cursor:default;}
 .ct-last{font-size:12px;color:var(--text-muted);white-space:nowrap;}
 .ct-num .nm-score{font-size:16px;}
 .ct-exp-row td{padding:0 14px 12px 14px;background:var(--surface2);}
@@ -657,15 +673,23 @@ a{color:inherit;}
 .nm-viewseg-btn:hover{color:var(--text);}
 .nm-viewseg-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.28);}
 .nm-viewseg-btn svg{width:13px;height:13px;}
-.nm-path-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);margin-bottom:9px;}
+.nm-path-row{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:1px solid var(--border);border-radius:8px;background:var(--surface);margin-bottom:9px;}
 .nm-path-row.nm-li{border-style:dashed;background:var(--surface2);}
 .nm-path-av{width:34px;height:34px;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;font-family:var(--font-mono);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);}
 .nm-path-main{flex:1;min-width:0;}
 .nm-path-name{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
-.nm-path-title{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
-.nm-path-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:7px;font-size:11px;color:var(--text-faint);font-family:var(--font-mono);}
+.nm-path-title{font-size:11.5px;color:var(--text-muted);margin-top:3px;}
+.nm-path-meta{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin-top:9px;font-size:11px;color:var(--text-faint);font-family:var(--font-mono);}
 .nm-path-conn{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-mid);}
 .nm-path-conn .nm-conn-av{width:19px;height:19px;border-radius:9999px;background:var(--green-tint);color:var(--green-deep);font-size:8px;font-weight:600;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);border:1px solid var(--green-ring);}
+.nm-path-conn .nm-conn-av.dim{background:var(--surface2);color:var(--text-faint);border-color:var(--border);}
+.nm-path-conn .nm-conn-av.on{outline:2px solid var(--green-ring);outline-offset:1px;}
+.nm-g-conns{margin-top:10px;}
+.nm-g-conn{border-top:1px solid var(--border);padding-top:11px;margin-top:11px;}
+.nm-g-conn:first-of-type{border-top:0;padding-top:0;margin-top:7px;}
+.nm-g-conn-head{display:flex;align-items:center;gap:7px;margin-bottom:6px;}
+.nm-g-conn-head b{font-size:12px;color:var(--text);font-weight:600;}
+.nm-g-conn-head .nm-score{font-size:13px;margin-left:auto;}
 .nm-li-link{color:var(--purple-dark);font-size:11px;text-decoration:none;font-family:var(--font-mono);}
 .nm-li-link:hover{text-decoration:underline;}
 
@@ -676,7 +700,7 @@ a{color:inherit;}
 .nm-score.lo{color:var(--nm-w-lo);}
 .nm-score-lbl{font-size:8.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint);}
 
-.nm-badge{font-size:8.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:9999px;white-space:nowrap;font-family:var(--font-mono);display:inline-flex;align-items:center;gap:4px;}
+.nm-badge{font-size:8.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:4px 9px;line-height:1.5;border-radius:9999px;white-space:nowrap;font-family:var(--font-mono);display:inline-flex;align-items:center;gap:4px;}
 .nm-badge.aff{background:var(--tag-bg);color:var(--tag-text);border:1px solid var(--tag-border);}
 .nm-badge.li{background:var(--surface3);color:var(--text-muted);border:1px solid var(--border-mid);}
 .nm-badge.sen{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);}
@@ -841,6 +865,7 @@ a{color:inherit;}
   <div id="view-contacts" style="display:none;">
     <div class="context-strip">
       <div>
+        <button id="ct-back" class="btn btn-ghost ct-back-btn" type="button" style="display:none;">← Back</button>
         <div class="context-eyebrow">Contacts · warm paths from Affinity</div>
         <h1 class="context-h1">Every warm contact · build a list</h1>
         <p class="context-sub">Filter across every target account, then select contacts and save them to a list or export.</p>
@@ -920,7 +945,8 @@ var state = {
   nmSelected: null,
   nmMode: 'company',
   nmConnector: null,
-  nmSen: 'all',
+  nmSen: 'all', nmWarm: 'all', nmFresh: 'all', nmConn: 'all', nmCompany: 'all',
+  nmlSort: 'warmth',
   ctQ: '', ctWarm: 'all', ctSen: 'all', ctConn: 'all', ctAcct: 'all', ctAct: 'all', ctList: null
 };
 function expansionKey(c){return (c._segId||state.tab)+'|'+c.name;}
@@ -1532,6 +1558,10 @@ function setSort(s){
 }
 
 function switchTab(tab){
+  // remember where a "drill-in" jump came from so Contacts can offer a Back button;
+  // a plain nav-bar click to Contacts (not via a stat) clears it.
+  if(tab==='contacts' && !state._viaStat) state.ctBackTo=null;
+  state._viaStat=false;
   state.tab = tab;
   document.querySelectorAll('.tab-link').forEach(function(el){
     el.classList.toggle('active', el.dataset.tab === tab);
@@ -1573,6 +1603,39 @@ function getAllCompaniesFlat(){
 
   function nd(){return window.NETWORK_DATA || null;}
 
+  // ---- load-time hygiene: drop warm paths via people no longer at Primary -----
+  // MANUAL PER-BUILD OVERRIDE KNOB — ships EMPTY and normally stays empty. The
+  // engine (fetch-affinity-network.mjs) already strips former Primary employees
+  // against the live primary.vc/people roster when it generates network-data.js
+  // (audit trail in summary.roster_filter / summary.excluded_connectors). Only
+  // populate this for a one-off correction the engine missed; names must match
+  // paths[].connector EXACTLY. `var` (not top-level const): a duplicate top-level
+  // declaration silently kills the whole inline script.
+  var EXCLUDED_CONNECTORS = [];
+  (function stripExcludedConnectors(){
+    var data=window.NETWORK_DATA;
+    if(!data || !Array.isArray(data.companies) || !EXCLUDED_CONNECTORS.length) return;
+    var ex={}; EXCLUDED_CONNECTORS.forEach(function(n){ ex[n]=1; });
+    data.companies.forEach(function(c){
+      if(!Array.isArray(c.paths) || !c.paths.length) return;
+      var before=c.paths.length;
+      c.paths=c.paths.filter(function(p){ return !ex[p.connector]; });
+      var removed=before-c.paths.length;
+      if(removed && typeof c.total_paths==='number') c.total_paths=Math.max(c.paths.length, c.total_paths-removed);
+      // a company reachable ONLY via former employees empties out -> show the
+      // correct "no mapped relationships" state, not a blank warm-paths panel
+      if(c.status==='resolved' && c.paths.length===0) c.status='no_relationships';
+    });
+    var s=data.summary||{};
+    if(Array.isArray(s.primary_connectors)) s.primary_connectors=s.primary_connectors.filter(function(n){ return !ex[n]; });
+    var withPath=data.companies.filter(function(c){ return c.status==='resolved' && Array.isArray(c.paths) && c.paths.length>0; }).length;
+    if(typeof s.companies_with_path==='number') s.companies_with_path=withPath;
+    if(typeof s.companies_total==='number' && s.companies_total) s.coverage_pct=Math.round(withPath/s.companies_total*100);
+    // total_relationships is an Affinity-wide aggregate (not recomputable from the
+    // truncated per-company paths) — left as-is; describes Primary's whole network.
+    if(data.connectors) EXCLUDED_CONNECTORS.forEach(function(n){ delete data.connectors[n]; });
+  })();
+
   // company display metadata from data.js SEGMENTS (join key = company name)
   function meta(name){
     var list = (typeof getAllCompaniesFlat==='function') ? getAllCompaniesFlat() : [];
@@ -1609,6 +1672,40 @@ function getAllCompaniesFlat(){
     wp.forEach(function(p){ if(b===null||p.score>b) b=p.score; });
     return b;
   }
+
+  // ---- contact de-duplication ----------------------------------------------
+  // A contact can be reachable through several Primary connectors, so the raw
+  // data holds one path PER connector. groupPaths collapses those into one entry
+  // per person: the "face" is a shallow copy of that contact's best path (so all
+  // the existing tier/score/title/badge code keeps working on it unchanged),
+  // plus `.connectors` (every path, warmest first) and `.last_contact` (freshest
+  // across all paths). Keyed by contact_id, falling back to name.
+  function _pathRank(a,b){ var as=!isWarmPath(a), bs=!isWarmPath(b); if(as!==bs) return as?1:-1; if(as&&bs) return 0; return b.score-a.score; }
+  // identity within a company. Affinity sometimes holds several records (distinct
+  // contact_ids) for the same person, so we key on the normalized name — groupPaths
+  // is always called within a single company, where a shared name is the same human.
+  function contactKey(p){ return String(p.contact_name||'').toLowerCase().replace(/\s+/g,' ').trim() || ('id:'+p.contact_id); }
+  function groupPaths(paths){
+    var by={}, order=[];
+    (paths||[]).forEach(function(p){
+      var k=contactKey(p);
+      if(!by[k]){ by[k]=[]; order.push(k); }
+      by[k].push(p);
+    });
+    return order.map(function(k){
+      var list=by[k].slice().sort(_pathRank);
+      // one entry per connector, best path each — duplicate contact records can give
+      // the same connector several paths to the same person (don't list them twice).
+      var seen={}, conns=[];
+      list.forEach(function(p){ var cn=p.connector||''; if(seen[cn]) return; seen[cn]=1; conns.push(p); });
+      var g={}; for(var f in conns[0]) g[f]=conns[0][f];   // face = best path
+      g.connectors=conns;
+      g.last_contact=list.reduce(function(m,p){ return (p.last_contact && (!m || p.last_contact>m)) ? p.last_contact : m; }, null);
+      return g;
+    });
+  }
+  // does ANY path in a group satisfy fn (falls back to the face for ungrouped rows)
+  function anyPath(g,fn){ return (g.connectors||[g]).some(fn); }
 
   function relDate(s){
     if(!s) return null;
@@ -1651,10 +1748,13 @@ function getAllCompaniesFlat(){
     var cov = (typeof s.coverage_pct==='number') ? s.coverage_pct : (total? Math.round(withPath/total*100):0);
     var rel = (typeof s.total_relationships==='number') ? s.total_relationships : null;
     var conns = Array.isArray(s.primary_connectors) ? s.primary_connectors : [];
-    var paths=[]; (data.companies||[]).forEach(function(c){ if(hasPaths(c)) paths.push.apply(paths, c.paths); });
+    // count UNIQUE contacts (grouped), so each stat equals its click-through result
+    var crows=allContactRows();
     var now=Date.now(), THIRTY=30*86400000;
-    var active30=paths.filter(function(p){ if(!p.last_contact) return false; var d=new Date(p.last_contact+'T00:00:00'); return !isNaN(d) && (now-d.getTime())<=THIRTY; }).length;
-    var upcoming=paths.filter(function(p){ return p.history && p.history.next_meeting && p.history.next_meeting.date; }).length;
+    var active30=crows.filter(function(p){ if(!p.last_contact) return false; var d=new Date(p.last_contact+'T00:00:00'); return !isNaN(d) && (now-d.getTime())<=THIRTY; }).length;
+    var upcoming=crows.filter(function(p){ return anyPath(p,function(q){ return q.history && q.history.next_meeting && q.history.next_meeting.date; }); }).length;
+    var strong=crows.filter(function(p){ return p.score!=null && p.score>=75; }).length;
+    var clevel=crows.filter(function(p){ return senRank(p.seniority)>=4; }).length;
     var senLbl=(SEN_OPTS.find(function(o){return o[0]===state.nmSen;})||SEN_OPTS[0])[1];
     el.innerHTML =
       '<div class="nm-stat">' +
@@ -1682,25 +1782,16 @@ function getAllCompaniesFlat(){
         '<div class="nm-stat-lbl">Meetings on the calendar</div>' +
         '<span class="nm-stat-go">View →</span>' +
       '</button>' +
-      '<div class="nm-stat nm-stat-controls">' +
-        '<div class="nm-stat-lbl" style="margin-bottom:7px;">Explore the map</div>' +
-        '<div class="nm-ctl-row">' +
-          (conns.length ?
-            '<div class="nm-conn-dd" id="nm-conn-dd">' +
-              '<button type="button" class="nm-conn-btn" id="nm-conn-btn"><span class="nm-conn-dot"></span>Choose a connector <span class="caret">▾</span></button>' +
-              '<div class="nm-conn-menu">' +
-                conns.map(function(n){return '<div class="nm-conn-opt" data-conn="'+esc(n)+'"><span class="nm-conn-dot"></span>'+esc(n)+'</div>';}).join('') +
-              '</div>' +
-            '</div>'
-            : '<span style="font-size:11px;color:var(--text-faint);">no connectors</span>') +
-          '<div class="nm-sen-dd" id="nm-sen-dd">' +
-            '<button type="button" class="nm-sen-btn" id="nm-sen-btn">'+esc(senLbl)+' <span class="caret">▾</span></button>' +
-            '<div class="nm-sen-menu">' +
-              SEN_OPTS.map(function(o){return '<div class="nm-sen-opt'+(state.nmSen===o[0]?' active':'')+'" data-sen="'+o[0]+'">'+o[1]+'</div>';}).join('') +
-            '</div>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
+      '<button type="button" class="nm-stat nm-stat-btn" data-ct="strong" title="See the strongest warm contacts">' +
+        '<div class="nm-stat-val">'+strong+'</div>' +
+        '<div class="nm-stat-lbl">Strong paths (75+)</div>' +
+        '<span class="nm-stat-go">View →</span>' +
+      '</button>' +
+      '<button type="button" class="nm-stat nm-stat-btn" data-ct="clevel" title="See C-level contacts">' +
+        '<div class="nm-stat-val">'+clevel+'</div>' +
+        '<div class="nm-stat-lbl">C-level reachable</div>' +
+        '<span class="nm-stat-go">View →</span>' +
+      '</button>';
   }
 
   // seniority options shared by the summary filter + the Contacts tab
@@ -1715,6 +1806,38 @@ function getAllCompaniesFlat(){
   function senFloor(){ return {all:0,dir:2,vp:3,c:4}[state.nmSen]||0; }
   function senPass(p){ return senRank(p.seniority)>=senFloor(); }
 
+  // ---- shared map filters (drive BOTH the graph and the ranked list) ---------
+  var NM_WARM=[['all','All warmth'],['hi','Strong 75+'],['mid','Warm 40–74'],['lo','Faint <40'],['li','LinkedIn only']];
+  var NM_FRESH=[['all','Any recency'],['1m','Active <1mo'],['6m','Active <6mo'],['1y','Active <1yr']];
+  function nmWarmPass(p){ var w=state.nmWarm||'all'; if(w==='all')return true; if(w==='li')return (p.type==='linkedin'||p.score==null); if(p.score==null)return false; if(w==='hi')return p.score>=75; if(w==='mid')return p.score>=40&&p.score<75; if(w==='lo')return p.score<40; return true; }
+  function nmFreshPass(p){ var fr=state.nmFresh||'all'; if(fr==='all')return true; if(!p.last_contact)return false; var d=new Date(p.last_contact+'T00:00:00'); if(isNaN(d))return false; var days=(Date.now()-d.getTime())/86400000; return fr==='1m'?days<=31:fr==='6m'?days<=183:fr==='1y'?days<=366:true; }
+  // seniority + warmth + freshness on a contact face/path (connector/company handled by caller)
+  function nmPass(p){ return senPass(p) && nmWarmPass(p) && nmFreshPass(p); }
+  // the overlaid filter bar rendered top-left in the map box (both views)
+  function mapFilterBar(kind, pickOpts){
+    function lbl(opts, cur){ return (opts.find(function(o){return o[0]===cur;})||opts[0])[1]; }
+    var pickCur = kind==='connector' ? (state.nmCompany||'all') : (state.nmConn||'all');
+    return '<div class="nm-mapbar">' +
+      ctDD('nmb-sen', lbl(SEN_OPTS, state.nmSen||'all'), SEN_OPTS, state.nmSen||'all', 'nmsen') +
+      ctDD('nmb-warm', lbl(NM_WARM, state.nmWarm||'all'), NM_WARM, state.nmWarm||'all', 'nmwarm') +
+      ctDD('nmb-fresh', lbl(NM_FRESH, state.nmFresh||'all'), NM_FRESH, state.nmFresh||'all', 'nmfresh') +
+      ctDD('nmb-pick', lbl(pickOpts, pickCur), pickOpts, pickCur, 'nmpick') +
+    '</div>';
+  }
+  function wireMapBar(scope){
+    var wrap=scope.querySelector('.nm-mapbar'); if(!wrap) return;
+    function reRender(){ if(state.nmMode==='connector' && state.nmConnector) selectConnector(state.nmConnector); else if(state.nmSelected) selectNetworkCompany(state.nmSelected); }
+    wrap.querySelectorAll('.ct-dd').forEach(function(dd){
+      var btn=dd.querySelector('[data-dd]');
+      btn.addEventListener('click', function(e){ e.stopPropagation(); var was=dd.classList.contains('open'); wrap.querySelectorAll('.ct-dd').forEach(function(x){x.classList.remove('open');}); if(!was) dd.classList.add('open'); });
+      dd.querySelectorAll('[data-nmsen]').forEach(function(o){ o.addEventListener('click',function(){ state.nmSen=o.dataset.nmsen; reRender(); }); });
+      dd.querySelectorAll('[data-nmwarm]').forEach(function(o){ o.addEventListener('click',function(){ state.nmWarm=o.dataset.nmwarm; reRender(); }); });
+      dd.querySelectorAll('[data-nmfresh]').forEach(function(o){ o.addEventListener('click',function(){ state.nmFresh=o.dataset.nmfresh; reRender(); }); });
+      dd.querySelectorAll('[data-nmpick]').forEach(function(o){ o.addEventListener('click',function(){ if(state.nmMode==='connector') state.nmCompany=o.dataset.nmpick; else state.nmConn=o.dataset.nmpick; reRender(); }); });
+    });
+    document.addEventListener('click', function(){ wrap.querySelectorAll('.ct-dd').forEach(function(x){x.classList.remove('open');}); });
+  }
+
   // ---- shared graph helpers -------------------------------------------------
   var NM_PALETTE=['#6366f1','#0ea5e9','#f59e0b','#10b981','#ec4899','#8b5cf6','#ef4444','#0891b2','#65a30d','#d946ef'];
   function fname(n){ return (n||'').trim().split(/\s+/)[0] || n || ''; }
@@ -1725,19 +1848,20 @@ function getAllCompaniesFlat(){
     if(s.indexOf('director')>=0) return 11;
     if(s.indexOf('senior')>=0||s.indexOf('lead')>=0||s.indexOf('principal')>=0) return 9.5;
     return 8; }
-  function warmthLegend(spokeNote, ringNote){
+  // spokeExplain: one plain-language sentence for what a connecting line means in
+  // this view. ringNote: what a ringed dot means. The warmth swatches (line color)
+  // are the only colored key — no gray "spoke" swatch that collides with "Low".
+  function warmthLegend(spokeExplain, ringNote){
     return '<div class="nm-legend">' +
       '<div class="nm-legend-text">' +
         '<div class="nm-legend-code">' +
-          '<span class="nm-lg-title">Warmth</span>' +
-          '<span class="nm-legend-item"><span class="nm-legend-swatch hi"></span>75+</span>' +
-          '<span class="nm-legend-item"><span class="nm-legend-swatch mid"></span>40–74</span>' +
-          '<span class="nm-legend-item"><span class="nm-legend-swatch lo"></span>Low</span>' +
+          '<span class="nm-lg-title">Line = warmth</span>' +
+          '<span class="nm-legend-item"><span class="nm-legend-swatch hi"></span>Strong 75+</span>' +
+          '<span class="nm-legend-item"><span class="nm-legend-swatch mid"></span>Warm 40–74</span>' +
+          '<span class="nm-legend-item"><span class="nm-legend-swatch lo"></span>Faint under 40</span>' +
           '<span class="nm-legend-item"><span class="nm-legend-swatch li"></span>LinkedIn only</span>' +
-          '<span class="nm-lg-div"></span>' +
-          '<span class="nm-legend-item"><span class="nm-legend-swatch conn"></span>'+spokeNote+'</span>' +
         '</div>' +
-        '<div class="nm-legend-meta"><span class="nm-legend-note">size = seniority · ring = '+ringNote+' · click a dot for details</span></div>' +
+        '<div class="nm-legend-meta"><span class="nm-legend-note">'+spokeExplain+'</span></div>' +
       '</div>' +
       '<div class="nm-legend-toggle">'+viewToggle()+'</div>' +
       '</div>';
@@ -1751,7 +1875,7 @@ function getAllCompaniesFlat(){
   var _nmList=[];   // per-render: full path data for each expandable list row
   var _nmListCo=null; // company currently backing the ranked list (for in-place re-render)
   var NML_SORT=[['warmth','Sort · warmth'],['name','Sort · A–Z'],['recent','Sort · recent contact']];
-  function radialGraph(center, groups, legendHtml, hintText){
+  function radialGraph(center, groups, legendHtml, hintText, controlsHtml){
     _nmNodes=[];
     var cx=520, cy=760;                              // center anchored; canvas auto-fits around it
     var maxItems=groups.reduce(function(m,g){return Math.max(m,g.items.length);},1);
@@ -1852,41 +1976,63 @@ function getAllCompaniesFlat(){
     var svg='<svg viewBox="'+vx.toFixed(0)+' '+vy.toFixed(0)+' '+vw.toFixed(0)+' '+vh.toFixed(0)+'" preserveAspectRatio="xMidYMid meet">' +
       '<g class="nm-zoom">'+arcs+edges+flow+centerNode+nodes+hubs+'</g></svg>';
     var zoom='<div class="nm-zoom-btns"><button type="button" data-nmz="in" title="Zoom in">+</button><button type="button" data-nmz="out" title="Zoom out">−</button><button type="button" data-nmz="reset" title="Reset" style="font-size:11px;">⤢</button></div>';
-    // legend is a boxed bar ABOVE the graph (never overlaps nodes, works at any density)
-    // fold the hint into the muted meta line (second row) so the legend stays two clean rows
-    var legendFull = hintText ? legendHtml.replace('</span></div></div>', ' · '+esc(hintText)+'</span></div></div>') : legendHtml;
-    return legendFull + '<div class="nm-graph-wrap">'+svg+zoom+'<div class="nm-detail" id="nm-detail" style="display:none;"></div></div>';
+    // visual key (top-right, under the zoom buttons) — replaces the old run-on
+    // "dot size = seniority · ringed dot = …" sentence with at-a-glance swatches.
+    var vizkey='<div class="nm-vizkey">' +
+      '<div class="nm-vk-row"><span class="nm-vk-dot ring"></span>Works at the company</div>' +
+      '<div class="nm-vk-row"><span class="nm-vk-dot"></span>At another company</div>' +
+      '<div class="nm-vk-row"><span class="nm-vk-dot sm"></span><span class="nm-vk-dot lg"></span>Larger = more senior</div>' +
+    '</div>';
+    // legend bar above the graph carries the warmth color key + Map/List toggle only
+    var legendFull = legendHtml;
+    return legendFull + '<div class="nm-graph-wrap">'+(controlsHtml||'')+zoom+vizkey+svg+'<div class="nm-detail" id="nm-detail" style="display:none;"></div></div>';
   }
 
   function withCo(p,co){ var d={}; for(var k in p) d[k]=p[k]; d.company=co; return d; }
 
   // company-centric: target company at center, Primary connectors as hubs
   function buildGraph(c){
-    var paths=(c.paths||[]).filter(senPass), connectors=[], seen={};
-    paths.forEach(function(p){ if(!(p.connector in seen)){ seen[p.connector]=1; connectors.push(p.connector); } });
+    // Company view: a contact SHOULD appear under each distinct connector who can
+    // intro them (both are real warm paths worth surfacing). What we collapse is
+    // duplicate Affinity records for the same person reached via the SAME connector.
+    var paths=(c.paths||[]).filter(senPass);
+    // company-wide contact grouping -> full connector list per person (for the card)
+    var full={}; groupPaths(paths).forEach(function(g){ full[contactKey(g)]=g.connectors; });
+    var allConns=[]; paths.forEach(function(p){ if(allConns.indexOf(p.connector)<0) allConns.push(p.connector); }); allConns.sort();
+    var connectors=[], seen={}, byConn={};
+    paths.forEach(function(p){ if((state.nmConn||'all')!=='all' && p.connector!==state.nmConn) return; if(!(p.connector in seen)){ seen[p.connector]=1; connectors.push(p.connector); byConn[p.connector]=[]; } byConn[p.connector].push(p); });
     var groups=connectors.map(function(name){
-      var mine=paths.filter(function(p){ return p.connector===name; });
+      // dedup this connector's own dup records; then apply warmth/freshness filters
+      var mine=groupPaths(byConn[name]).filter(function(g){ return nmWarmPass(g)&&nmFreshPass(g); });
+      if(!mine.length) return null;
       return { label:name, hubText:flabel(name), initials:initials(name), domain:null, clickKind:'connector', clickId:name,
-        items:mine.map(function(p){ return { label:p.contact_name, score:p.score, type:p.type, seniority:p.seniority, ring:!!p.at_target_company, data:withCo(p,c.company),
+        items:mine.map(function(p){ var data=withCo(p,c.company); data.connectors=full[contactKey(p)]||p.connectors; return { label:p.contact_name, score:p.score, type:p.type, seniority:p.seniority, ring:!!p.at_target_company, data:data,
           tooltip:p.contact_name+(p.contact_title?' — '+p.contact_title:'')+' · '+(p.score===null?'LinkedIn only':'warmth '+p.score)+' · via '+name+(p.at_target_company?'':' · '+(p.contact_affiliation||'external')) }; }) };
-    });
+    }).filter(Boolean);
+    var pickOpts=[['all','All connectors']].concat(allConns.map(function(n){return [n,n];}));
     return radialGraph({label:c.company, domain:domainFor(c), initials:initials(c.company)}, groups,
-      warmthLegend('Spoke to target = connector','works at the target company'),
-      'Click a connector for their full network · drag to pan');
+      warmthLegend('Each line = a Primary colleague who can intro that contact','the contact works at '+esc(c.company)),
+      'Click a connector for their full network · drag to pan',
+      mapFilterBar('company', pickOpts));
   }
 
   // connector-centric: the Primary PERSON at center, the ICP COMPANIES they reach
   // as hubs, and the PEOPLE they know at each company fanned around that company
   // hub. Reads: Tobias -> company -> the people he knows there.
   function buildConnectorGraph(conn){
-    var groups=conn.companies.map(function(co){ co={company:co.company,domain:co.domain,paths:co.paths.filter(senPass)}; if(!co.paths.length) return null;
+    var allCos=conn.companies.map(function(co){return co.company;});
+    var groups=conn.companies.map(function(co){
+      if((state.nmCompany||'all')!=='all' && co.company!==state.nmCompany) return null;
+      var ps=co.paths.filter(nmPass); if(!ps.length) return null;
       return { label:co.company, hubText:trunc(co.company,15), initials:initials(co.company), domain:co.domain, clickKind:'company', clickId:co.company,
-        items:co.paths.map(function(p){ return { label:p.contact_name, score:p.score, type:p.type, seniority:p.seniority, ring:!!p.at_target_company, data:withCo(p,co.company),
+        items:ps.map(function(p){ return { label:p.contact_name, score:p.score, type:p.type, seniority:p.seniority, ring:!!p.at_target_company, data:withCo(p,co.company),
           tooltip:p.contact_name+(p.contact_title?' — '+p.contact_title:'')+' · '+(p.score===null?'LinkedIn only':'warmth '+p.score)+' · at '+co.company }; }) };
     }).filter(Boolean);
+    var pickOpts=[['all','All companies']].concat(allCos.map(function(n){return [n,n];}));
     return radialGraph({label:conn.name, domain:null, initials:initials(conn.name)}, groups,
-      warmthLegend('Spoke from '+esc(fname(conn.name))+' = a company they reach','contact works at that company'),
-      'Click a company to focus it · drag to pan');
+      warmthLegend('Each hub is a company '+esc(fname(conn.name))+' can reach; each line = a contact there','the contact works at that company'),
+      'Click a company to focus it · drag to pan',
+      mapFilterBar('connector', pickOpts));
   }
 
   function wireGraph(){
@@ -1991,6 +2137,33 @@ function getAllCompaniesFlat(){
       evtRow('Next meeting', h.next_meeting, d.connector, {next:true}) +
       '<div class="nm-d-foot-note">Affinity history between '+esc(fname(d.contact_name))+' and anyone at Primary; “with '+esc(fname(d.connector))+'” marks '+esc(fname(d.connector))+'’s own threads. Per-relationship email counts aren’t exposed by Affinity’s API.</div>';
   }
+  // expanded content for a (possibly grouped) contact row. One connector -> the
+  // usual why + history. Multiple -> one section per connector, warmest first,
+  // each with its own score + history, so the full context lives in one place.
+  function groupExpandHtml(g){
+    var list=g.connectors||[g];
+    if(list.length<2) return whyHtml(g)+historyHtml(g);
+    return '<div class="nm-g-conns"><div class="nm-d-sec-lbl">'+list.length+' ways in</div>' +
+      list.map(function(p){
+        var isLi=(p.type==='linkedin'||p.score==null), t=tier(p.score);
+        return '<div class="nm-g-conn">' +
+          '<div class="nm-g-conn-head"><span class="nm-conn-av">'+esc(initials(p.connector))+'</span>' +
+          '<b>'+esc(p.connector)+'</b><span class="nm-score '+(isLi?'lo':t.key)+'">'+(isLi?'—':p.score+'%')+'</span></div>' +
+          whyHtml(p)+historyHtml(p) +
+        '</div>';
+      }).join('') + '</div>';
+  }
+
+  // close the detail card on the × button, a click anywhere outside it, or Escape.
+  // deferred to the next tick so the click that OPENED the card doesn't close it.
+  function wireCardDismiss(box){
+    function close(){ box.style.display='none'; document.removeEventListener('click', onDoc, true); document.removeEventListener('keydown', onKey); }
+    function onDoc(e){ if(!box.contains(e.target)) close(); }
+    function onKey(e){ if(e.key==='Escape') close(); }
+    var x=box.querySelector('.nm-d-close'); if(x) x.addEventListener('click', close);
+    setTimeout(function(){ document.addEventListener('click', onDoc, true); document.addEventListener('keydown', onKey); }, 0);
+    return close;
+  }
 
   function showPathDetail(pk){
     var d=_nmNodes[pk]; var box=document.getElementById('nm-detail'); if(!d||!box) return;
@@ -1998,15 +2171,17 @@ function getAllCompaniesFlat(){
     var scoreHtml = isLi ? '<span class="nm-d-score lo">—</span>'
       : '<span class="nm-d-score '+t.key+'">'+d.score+'<span class="nm-d-pct">%</span></span>';
     var liHref=safeUrl(d.linkedin_url);
+    var liInline = liHref ? ' <a class="nm-d-li" href="'+esc(liHref)+'" target="_blank" rel="noopener">in ↗</a>' : '';
     var aff = d.at_target_company ? ('Works at '+esc(d.company))
       : ('At '+esc(d.contact_affiliation||'another company')+' — not a current '+esc(d.company)+' employee');
     var hist=historyHtml(d);
+    var connNames=(d.connectors&&d.connectors.length? d.connectors.map(function(x){return x.connector;}) : [d.connector]).filter(Boolean);
 
     box.innerHTML =
       '<button class="nm-d-close" type="button" aria-label="Close">×</button>' +
       '<div class="nm-d-head"><div class="nm-d-av">'+esc(initials(d.contact_name))+'</div>' +
-        '<div style="flex:1;min-width:0;"><div class="nm-d-name">'+esc(d.contact_name)+'</div>' +
-        '<div class="nm-d-title">'+esc(d.contact_title||'—')+'</div></div>'+scoreHtml +
+        '<div style="flex:1;min-width:0;"><div class="nm-d-name">'+esc(d.contact_name)+liInline+'</div>' +
+        (d.contact_title?'<div class="nm-d-title">'+esc(d.contact_title)+'</div>':'')+'</div>'+scoreHtml +
       '</div>' +
       '<div class="nm-d-badges">' +
         '<span class="nm-badge '+(d.at_target_company?'sen':'aff')+'">'+aff+'</span>' +
@@ -2016,13 +2191,12 @@ function getAllCompaniesFlat(){
       whyHtml(d) +
       hist +
       '<div class="nm-d-rows" style="margin-top:'+(hist?'11px':'0')+';">' +
-        '<div class="nm-d-row"><span>Reached via</span><b>'+esc(d.connector)+'</b></div>' +
+        '<div class="nm-d-row"><span>'+(connNames.length>1?'Can intro':'Reached via')+'</span><b>'+esc(connNames.join(', '))+'</b></div>' +
         (d.last_contact?'<div class="nm-d-row"><span>Last contact</span><b>'+esc(relDate(d.last_contact)||d.last_contact)+'</b></div>':'') +
         '<div class="nm-d-row"><span>LinkedIn</span><b>'+(d.linkedin_connected?('connected'+(d.linkedin_connected_on?' '+esc(fmtD(d.linkedin_connected_on)||''):'')):'—')+'</b></div>' +
-      '</div>' +
-      (liHref?'<a class="nm-d-btn" href="'+esc(liHref)+'" target="_blank" rel="noopener">Open LinkedIn ↗</a>':'');
+      '</div>';
     box.style.display='block';
-    box.querySelector('.nm-d-close').addEventListener('click', function(){ box.style.display='none'; });
+    wireCardDismiss(box);
   }
 
   // click a Primary connector hub -> pop a card on that Primary person (title/org/
@@ -2033,11 +2207,12 @@ function getAllCompaniesFlat(){
     var idx=connectorIndex()[name];
     var total=idx?idx.total:0, ncos=idx?idx.companies.length:0;
     var liHref=safeUrl(meta.linkedin);
+    var liInline = liHref ? ' <a class="nm-d-li" href="'+esc(liHref)+'" target="_blank" rel="noopener">in ↗</a>' : '';
     var sub = meta.title ? esc(meta.title)+(meta.org?' · '+esc(meta.org):'') : (meta.org?esc(meta.org):'Primary');
     box.innerHTML =
       '<button class="nm-d-close" type="button" aria-label="Close">×</button>' +
       '<div class="nm-d-head"><div class="nm-d-av">'+esc(initials(name))+'</div>' +
-        '<div style="flex:1;min-width:0;"><div class="nm-d-name">'+esc(name)+'</div>' +
+        '<div style="flex:1;min-width:0;"><div class="nm-d-name">'+esc(name)+liInline+'</div>' +
         '<div class="nm-d-title">'+sub+'</div></div></div>' +
       '<div class="nm-d-badges">' +
         '<span class="nm-badge sen">Primary connector</span>' +
@@ -2047,11 +2222,10 @@ function getAllCompaniesFlat(){
         '<div class="nm-d-row"><span>Warm contacts</span><b>'+total+'</b></div>' +
         '<div class="nm-d-row"><span>ICP companies reached</span><b>'+ncos+'</b></div>' +
       '</div>' +
-      (liHref?'<a class="nm-d-btn" href="'+esc(liHref)+'" target="_blank" rel="noopener">Open LinkedIn ↗</a>':'') +
       '<button class="nm-d-btn nm-d-btn-primary" type="button" data-show-conns>Show all connections →</button>';
     box.style.display='block';
-    box.querySelector('.nm-d-close').addEventListener('click', function(){ box.style.display='none'; });
-    var sc=box.querySelector('[data-show-conns]'); if(sc) sc.addEventListener('click', function(){ box.style.display='none'; selectConnector(name); });
+    var closeCard=wireCardDismiss(box);
+    var sc=box.querySelector('[data-show-conns]'); if(sc) sc.addEventListener('click', function(e){ e.stopPropagation(); closeCard(); selectConnector(name); });
   }
 
   // ---- ranked path list -----------------------------------------------------
@@ -2090,64 +2264,64 @@ function getAllCompaniesFlat(){
   }
   function listInner(c){
     _nmList=[];
-    // defensive defaults (state object may predate these fields — avoids undefined filters)
-    state.nmlWarm=state.nmlWarm||'all'; state.nmlConn=state.nmlConn||'all'; state.nmlSort=state.nmlSort||'warmth';
+    state.nmlSort=state.nmlSort||'warmth';
     var base=(c.paths||[]).filter(senPass);
-    var conns=[]; base.forEach(function(p){ if(conns.indexOf(p.connector)<0) conns.push(p.connector); }); conns.sort();
-    var paths=base.filter(function(p){
-      if(state.nmlWarm==='hi' && !(p.score!=null&&p.score>=75)) return false;
-      if(state.nmlWarm==='mid' && !(p.score!=null&&p.score>=40&&p.score<75)) return false;
-      if(state.nmlWarm==='li' && !(p.type==='linkedin'||p.score==null)) return false;
-      if(state.nmlConn!=='all' && p.connector!==state.nmlConn) return false;
+    // one entry per contact; filters shared with the map bar (warmth/freshness/connector)
+    var groups=groupPaths(base).filter(function(g){
+      if(!nmWarmPass(g)) return false;
+      if(!nmFreshPass(g)) return false;
+      if((state.nmConn||'all')!=='all' && !g.connectors.some(function(p){return p.connector===state.nmConn;})) return false;
       return true;
     });
-    if(state.nmlSort==='name') paths.sort(function(a,b){ return (a.contact_name||'').localeCompare(b.contact_name||''); });
-    else if(state.nmlSort==='recent') paths.sort(function(a,b){ return (b.last_contact||'').localeCompare(a.last_contact||''); });
-    else paths.sort(function(a,b){ var as=!isWarmPath(a), bs=!isWarmPath(b); if(as!==bs) return as?1:-1; if(as&&bs) return 0; return b.score-a.score; });
-    // filter/sort toolbar (Contacts-style dropdowns)
-    var connOpts=[['all','All connectors']].concat(conns.map(function(n){return [n,n];}));
-    var warmLbl=(CT_WARM.find(function(o){return o[0]===state.nmlWarm;})||CT_WARM[0])[1];
-    var connLbl=(connOpts.find(function(o){return o[0]===state.nmlConn;})||connOpts[0])[1];
+    if(state.nmlSort==='name') groups.sort(function(a,b){ return (a.contact_name||'').localeCompare(b.contact_name||''); });
+    else if(state.nmlSort==='recent') groups.sort(function(a,b){ return (b.last_contact||'').localeCompare(a.last_contact||''); });
+    else groups.sort(_pathRank);
+    // list keeps only Sort — warmth/seniority/freshness/connector live in the map bar
     var sortLbl=(NML_SORT.find(function(o){return o[0]===state.nmlSort;})||NML_SORT[0])[1];
     var toolbar='<div class="ct-toolbar nm-list-toolbar" id="nm-list-anchor"><div class="ct-filters">' +
-      ctDD('nml-warm', warmLbl, CT_WARM, state.nmlWarm, 'nmlwarm') +
-      ctDD('nml-conn', connLbl, connOpts, state.nmlConn, 'nmlconn') +
       ctDD('nml-sort', sortLbl, NML_SORT, state.nmlSort, 'nmlsort') +
     '</div></div>';
-    var warm=paths.filter(isWarmPath).length, liOnly=paths.length-warm;
-    var head=warm+' warm path'+(warm!==1?'s':'');
+    var warm=groups.filter(isWarmPath).length, liOnly=groups.length-warm;
+    var head=groups.length+' contact'+(groups.length!==1?'s':'')+' · '+warm+' warm';
     if(liOnly>0) head+=' · '+liOnly+' LinkedIn-only';
     if(typeof c.total_paths==='number' && c.total_paths>base.length) head+=' · '+c.total_paths+' in Affinity';
-    if(!paths.length) head='No contacts match these filters';
+    if(!groups.length) head='No contacts match these filters';
     return toolbar + '<div class="nm-paths-head">'+head+'</div>' +
-      paths.map(function(p){
-        var t=tier(p.score);
-        var isLi=(p.type==='linkedin'||p.score===null);
-        var scoreTxt=isLi?'—':(p.score+'%');
+      groups.map(function(g){
+        var t=tier(g.score);
+        var isLi=(g.type==='linkedin'||g.score===null);
+        var scoreTxt=isLi?'—':(g.score+'%');
         var scoreCls=isLi?'lo':t.key;
         var badges='';
-        if(!p.at_target_company){
-          badges += '<span class="nm-badge aff" title="Not a current employee of '+esc(c.company)+'">'+esc((p.contact_title?p.contact_title+' @ ':'')+ (p.contact_affiliation||'external'))+'</span>';
+        if(!g.at_target_company){
+          badges += '<span class="nm-badge aff" title="Not a current employee of '+esc(c.company)+'">'+esc((g.contact_title?g.contact_title+' @ ':'')+ (g.contact_affiliation||'external'))+'</span>';
         }
         if(isLi){ badges += '<span class="nm-badge li">LinkedIn only</span>'; }
-        if(p.seniority){ badges += '<span class="nm-badge sen">'+esc(p.seniority)+'</span>'; }
-        var liHref=safeUrl(p.linkedin_url);
+        if(g.seniority){ badges += '<span class="nm-badge sen">'+esc(g.seniority)+'</span>'; }
+        var liHref=safeUrl(g.linkedin_url);
         var li = liHref ? '<a class="nm-li-link" href="'+esc(liHref)+'" target="_blank" rel="noopener">in ↗</a>' : '';
-        var last = relDate(p.last_contact);
+        var last = relDate(g.last_contact);
         var metaBits=[];
-        if(p.at_target_company) metaBits.push('@ '+esc(c.company));
+        if(g.at_target_company) metaBits.push('@ '+esc(c.company));
         if(last) metaBits.push('last contact '+esc(last));
-        if(isLi && p.linkedin_connected) metaBits.push('connected on LinkedIn');
-        var affRing = p.at_target_company ? 'var(--border)' : 'var(--tag-border)';
-        var lk=_nmList.length; _nmList.push(withCo(p, c.company));
+        if(isLi && g.linkedin_connected) metaBits.push('connected on LinkedIn');
+        var affRing = g.at_target_company ? 'var(--border)' : 'var(--tag-border)';
+        // connector chips: up to 3 avatars + "Name1, Name2 +N can intro";
+        // when a connector filter is active, highlight the one that matched.
+        var cs=g.connectors||[g], sel=state.nmConn||'all';
+        var avs=cs.slice(0,3).map(function(q){ var on=(sel!=='all'&&q.connector===sel); return '<span class="nm-conn-av'+(sel!=='all'&&!on?' dim':'')+(on?' on':'')+'" title="'+esc(q.connector)+'">'+esc(initials(q.connector))+'</span>'; }).join('');
+        var names=cs.map(function(q){return q.connector;});
+        var connLabel=names.slice(0,2).join(', ')+(names.length>2?' +'+(names.length-2):'');
+        var titleHtml = g.contact_title ? '<div class="nm-path-title">'+esc(g.contact_title)+'</div>' : '';
+        var lk=_nmList.length; _nmList.push(withCo(g, c.company));
         return '<div class="nm-path-row nm-expandable'+(isLi?' nm-li':'')+'" data-lk="'+lk+'">' +
-          '<div class="nm-path-av" style="border-color:'+affRing+';">'+esc(initials(p.contact_name))+'</div>' +
+          '<div class="nm-path-av" style="border-color:'+affRing+';">'+esc(initials(g.contact_name))+'</div>' +
           '<div class="nm-path-main">' +
-            '<div class="nm-path-name">'+esc(p.contact_name)+' '+li+'</div>' +
-            '<div class="nm-path-title">'+esc(p.contact_title||'')+'</div>' +
+            '<div class="nm-path-name">'+esc(g.contact_name)+' '+li+'</div>' +
+            titleHtml +
             (badges?'<div class="nm-path-meta" style="margin-top:6px;">'+badges+'</div>':'') +
             '<div class="nm-path-meta">' +
-              '<span class="nm-path-conn"><span class="nm-conn-av">'+esc(initials(p.connector))+'</span>'+esc(p.connector)+' can intro</span>' +
+              '<span class="nm-path-conn">'+avs+esc(connLabel)+' can intro</span>' +
               (metaBits.length?'<span>· '+metaBits.join(' · ')+'</span>':'') +
             '</div>' +
             '<div class="nm-path-expand" style="display:none;"></div>' +
@@ -2166,7 +2340,7 @@ function getAllCompaniesFlat(){
         var ex=row.querySelector('.nm-path-expand'); if(!ex) return;
         var open=ex.style.display!=='none';
         if(open){ ex.style.display='none'; ex.innerHTML=''; row.classList.remove('nm-open'); }
-        else { ex.innerHTML=whyHtml(d)+historyHtml(d); ex.style.display='block'; row.classList.add('nm-open'); }
+        else { ex.innerHTML=groupExpandHtml(d); ex.style.display='block'; row.classList.add('nm-open'); }
       });
     });
   }
@@ -2278,7 +2452,8 @@ function getAllCompaniesFlat(){
       if(hw){
         var chipCls={hi:'high',mid:'med',lo:'low'}[tier(b).key]||'med';
         chip='<span class="dt-tier-chip '+chipCls+'" style="font-size:8.5px;padding:2px 6px;flex-shrink:0;"><span class="chip-dot"></span>'+b+'%</span>';
-        info=warmPaths(c).length+' warm path'+(warmPaths(c).length!==1?'s':'')+(typeof c.total_paths==='number'&&c.total_paths>c.paths.length?' · '+c.total_paths+' total':'');
+        var warmCt=groupPaths(warmPaths(c)).length;
+        info=warmCt+' warm contact'+(warmCt!==1?'s':'')+(typeof c.total_paths==='number'&&c.total_paths>c.paths.length?' · '+c.total_paths+' total':'');
         infoColor='var(--green-dark)';
       } else if(err){
         chip='<span class="nm-badge err" style="flex-shrink:0;">unavailable</span>';
@@ -2328,6 +2503,7 @@ function getAllCompaniesFlat(){
 
   function selectNetworkCompany(name){
     if(state.tab!=='network') switchTab('network');
+    if(name!==state.nmSelected) state.nmConn='all';   // reset connector filter when switching companies
     state.nmMode='company'; state.nmConnector=null; state.nmSelected=name;
     document.querySelectorAll('.nm-conn-chip').forEach(function(el){ el.classList.remove('active'); });
     document.querySelectorAll('.network-row').forEach(function(el){ el.classList.toggle('active', el.dataset.nmName===name); });
@@ -2376,6 +2552,7 @@ function getAllCompaniesFlat(){
     wireHubClicks();
     wirePathRows(panel);
     wireListFilters(panel);
+    wireMapBar(panel);
   }
 
   // click a hub node in either graph: connector hub -> connector view, company hub -> company view
@@ -2404,10 +2581,17 @@ function getAllCompaniesFlat(){
       });
     });
     Object.keys(idx).forEach(function(k){
+      var total=0;
       idx[k].companies.forEach(function(co){
-        co.paths.sort(function(a,b){ var as=!isWarmPath(a),bs=!isWarmPath(b); if(as!==bs)return as?1:-1; if(as&&bs)return 0; return b.score-a.score; });
+        // one entry per person at this company — Affinity can hold several records
+        // (distinct contact_ids) for the same human; in a person-centric view they
+        // must not appear more than once for a single company. groupPaths keeps the
+        // warmest and already returns them sorted.
+        co.paths=groupPaths(co.paths);
         co.best=co.paths.reduce(function(m,p){ return (isWarmPath(p)&&p.score>m)?p.score:m; },0);
+        total+=co.paths.length;
       });
+      idx[k].total=total;
       idx[k].companies.sort(function(a,b){ return b.best-a.best; });
     });
     return idx;
@@ -2415,8 +2599,14 @@ function getAllCompaniesFlat(){
 
   function connectorList(conn){
     _nmList=[];
-    conn={name:conn.name,total:conn.total,companies:conn.companies.map(function(co){return {company:co.company,domain:co.domain,paths:co.paths.filter(senPass)};}).filter(function(co){return co.paths.length;})};
-    return '<div class="nm-paths-head" id="nm-list-anchor">'+conn.total+' contact'+(conn.total!==1?'s':'')+' · '+conn.companies.length+' compan'+(conn.companies.length!==1?'ies':'y')+'</div>' +
+    var companies=conn.companies.map(function(co){
+      if((state.nmCompany||'all')!=='all' && co.company!==state.nmCompany) return null;
+      var ps=co.paths.filter(nmPass); if(!ps.length) return null;
+      return {company:co.company, domain:co.domain, paths:ps};
+    }).filter(Boolean);
+    var total=companies.reduce(function(s,co){return s+co.paths.length;},0);
+    conn={name:conn.name,total:total,companies:companies};
+    return '<div class="nm-paths-head" id="nm-list-anchor">'+total+' contact'+(total!==1?'s':'')+' · '+companies.length+' compan'+(companies.length!==1?'ies':'y')+(total?'':' · none match the filters')+'</div>' +
       conn.companies.map(function(co){
         return '<div class="nm-cgroup">' +
           '<div class="nm-cgroup-head">' +
@@ -2429,10 +2619,11 @@ function getAllCompaniesFlat(){
             var liHref=safeUrl(p.linkedin_url);
             var li=liHref?'<a class="nm-li-link" href="'+esc(liHref)+'" target="_blank" rel="noopener">in ↗</a>':'';
             var lk=_nmList.length; _nmList.push(withCo(p, co.company));
+            var sub=[p.contact_title, p.at_target_company?'':(p.contact_affiliation||'external')].filter(Boolean).join(' · ');
             return '<div class="nm-path-row nm-expandable'+(isLi?' nm-li':'')+'" data-lk="'+lk+'" style="margin-bottom:6px;">' +
               '<div class="nm-path-av">'+esc(initials(p.contact_name))+'</div>' +
               '<div class="nm-path-main"><div class="nm-path-name">'+esc(p.contact_name)+' '+li+'</div>' +
-              '<div class="nm-path-title">'+esc(p.contact_title||'')+(p.at_target_company?'':' · '+esc(p.contact_affiliation||'external'))+'</div>' +
+              (sub?'<div class="nm-path-title">'+esc(sub)+'</div>':'') +
               '<div class="nm-path-expand" style="display:none;"></div></div>' +
               '<div class="nm-score-wrap"><span class="nm-score '+(isLi?'lo':t.key)+'">'+(isLi?'—':p.score+'%')+'</span><span class="nm-score-lbl">'+(isLi?'no score':'warmth')+'</span><span class="nm-chev" aria-hidden>▾</span></div>' +
             '</div>';
@@ -2443,6 +2634,7 @@ function getAllCompaniesFlat(){
 
   function selectConnector(name){
     if(state.tab!=='network') switchTab('network');
+    if(name!==state.nmConnector) state.nmCompany='all';   // reset company filter when switching people
     state.nmMode='connector'; state.nmConnector=name; state.nmSelected=null;
     document.querySelectorAll('.network-row').forEach(function(el){ el.classList.remove('active'); });
     document.querySelectorAll('.nm-conn-chip').forEach(function(el){ el.classList.toggle('active', el.dataset.conn===name); });
@@ -2465,6 +2657,7 @@ function getAllCompaniesFlat(){
     wireGraph();
     wireHubClicks();
     wirePathRows(panel);
+    wireMapBar(panel);
   }
 
   function setNmFilter(f){
@@ -2489,38 +2682,47 @@ function getAllCompaniesFlat(){
   // ══════════════════════════════════════════════════════════════════════
   var LIST_KEY='fdi_lists_{{PRODUCT_SLUG}}';
   var ctSel=new Set();
-  function rowKey(p){ return (p.contact_id||p.contact_name)+'|'+p.company+'|'+p.connector; }
-  function getLists(){ try{ return JSON.parse(localStorage.getItem(LIST_KEY)||'{}'); }catch(e){ return {}; } }
+  // key a contact per company (NOT per connector) so the same person reached via
+  // several connectors is one row. Old saved lists used a 3-part key incl. the
+  // connector; getLists() migrates them down to the 2-part key so they survive.
+  function rowKey(p){ return contactKey(p)+'|'+p.company; }
+  function getLists(){ try{ var o=JSON.parse(localStorage.getItem(LIST_KEY)||'{}'), out={};
+      Object.keys(o).forEach(function(nm){ out[nm]=(o[nm]||[]).map(function(k){ return k.split('|').slice(0,2).join('|'); }); });
+      return out;
+    }catch(e){ return {}; } }
   function saveLists(o){ try{ localStorage.setItem(LIST_KEY, JSON.stringify(o)); }catch(e){} }
 
-  // flatten every resolved path into a row-record (contact may recur per company/connector)
+  // one row per contact per company; each row carries every connector path so the
+  // connector cell, filters, search and expand can see all of them.
   function allContactRows(){
     var data=nd(), rows=[];
     if(!data || !Array.isArray(data.companies)) return rows;
     data.companies.forEach(function(c){ if(!hasPaths(c)) return;
-      (c.paths||[]).forEach(function(p){ var d=withCo(p, c.company); d._key=rowKey(d); rows.push(d); });
+      groupPaths(c.paths).forEach(function(g){ var d=withCo(g, c.company); d.connectors=g.connectors; d._key=rowKey(d); rows.push(d); });
     });
     return rows;
   }
   var CT_WARM=[['all','All warmth'],['hi','Warm 75+'],['mid','Mid 40–74'],['li','LinkedIn only']];
   var CT_ACT=[['all','Any activity'],['active30','Active in last 30d'],['meeting','Meeting scheduled'],['inbound','They wrote last'],['never','Never met']];
+  // activity presets are group-aware: a contact passes if ANY of their paths does.
   function ctActivePass(p){
-    var h=p.history||null, now=Date.now();
+    var now=Date.now();
     if(state.ctAct==='active30'){ if(!p.last_contact) return false; var d=new Date(p.last_contact+'T00:00:00'); return !isNaN(d)&&(now-d.getTime())<=30*86400000; }
-    if(state.ctAct==='meeting') return !!(h&&h.next_meeting&&h.next_meeting.date);
-    if(state.ctAct==='inbound') return !!(h&&h.last_email&&h.last_email.from_internal===false);
-    if(state.ctAct==='never') return !(h&&(h.first_meeting||h.last_meeting));
+    if(state.ctAct==='meeting') return anyPath(p,function(q){ var h=q.history; return !!(h&&h.next_meeting&&h.next_meeting.date); });
+    if(state.ctAct==='inbound') return anyPath(p,function(q){ var h=q.history; return !!(h&&h.last_email&&h.last_email.from_internal===false); });
+    if(state.ctAct==='never') return !anyPath(p,function(q){ var h=q.history; return !!(h&&(h.first_meeting||h.last_meeting)); });
     return true;
   }
   function ctMatch(p){
     if(state.ctList){ var L=getLists()[state.ctList]||[]; if(L.indexOf(p._key)<0) return false; }
     var q=state.ctQ;
-    if(q && !([p.contact_name,p.contact_title,p.company,p.connector,p.contact_affiliation].join(' ').toLowerCase().indexOf(q)>=0)) return false;
+    var connNames=(p.connectors||[p]).map(function(x){return x.connector;}).join(' ');
+    if(q && !([p.contact_name,p.contact_title,p.company,connNames,p.contact_affiliation].join(' ').toLowerCase().indexOf(q)>=0)) return false;
     if(state.ctWarm==='hi' && !(p.score!=null&&p.score>=75)) return false;
     if(state.ctWarm==='mid' && !(p.score!=null&&p.score>=40&&p.score<75)) return false;
     if(state.ctWarm==='li' && !(p.type==='linkedin'||p.score==null)) return false;
     if(state.ctSen!=='all' && senRank(p.seniority) < ({all:0,dir:2,vp:3,c:4}[state.ctSen]||0)) return false;
-    if(state.ctConn!=='all' && p.connector!==state.ctConn) return false;
+    if(state.ctConn!=='all' && !anyPath(p,function(x){return x.connector===state.ctConn;})) return false;
     if(state.ctAcct!=='all' && p.company!==state.ctAcct) return false;
     if(!ctActivePass(p)) return false;
     return true;
@@ -2544,9 +2746,16 @@ function getAllCompaniesFlat(){
       return;
     }
     if(un){ un.style.display='none'; } if(body) body.style.display='block';
+    // Back button — only when we arrived here by drilling in from a stat/link
+    var backBtn=document.getElementById('ct-back');
+    if(backBtn){
+      if(state.ctBackTo){ backBtn.style.display=''; backBtn.textContent='← Back to '+(TAB_LABEL[state.ctBackTo]||state.ctBackTo);
+        backBtn.onclick=function(){ var t=state.ctBackTo; state.ctBackTo=null; switchTab(t); }; }
+      else backBtn.style.display='none';
+    }
     var rows=allContactRows();
     // filter controls
-    var conns=[]; rows.forEach(function(p){ if(conns.indexOf(p.connector)<0) conns.push(p.connector); }); conns.sort();
+    var conns=[]; rows.forEach(function(p){ (p.connectors||[p]).forEach(function(x){ if(conns.indexOf(x.connector)<0) conns.push(x.connector); }); }); conns.sort();
     var accts=[]; rows.forEach(function(p){ if(accts.indexOf(p.company)<0) accts.push(p.company); }); accts.sort();
     var connOpts=[['all','All connectors']].concat(conns.map(function(n){return [n,n];}));
     var acctOpts=[['all','All accounts']].concat(accts.map(function(n){return [n,n];}));
@@ -2592,11 +2801,14 @@ function getAllCompaniesFlat(){
         var lk=_nmList.length; _nmList.push(p);
         var liHref=safeUrl(p.linkedin_url);
         var acc = isLi?'var(--nm-w-null)':t.color;
+        var sub=[p.contact_title, p.at_target_company?'':(p.contact_affiliation||'external')].filter(Boolean).join(' · ');
+        var cnames=(p.connectors||[p]).map(function(x){return x.connector;});
+        var connCell=esc(cnames.slice(0,2).join(', '))+(cnames.length>2?' <span class="ct-conn-more" title="'+esc(cnames.join(', '))+'">+'+(cnames.length-2)+'</span>':'');
         html += '<tr class="ct-row" data-lk="'+lk+'">' +
           '<td class="ct-cbcol" data-cb style="box-shadow:inset 3px 0 0 '+acc+';"><input type="checkbox" data-k="'+esc(p._key)+'"'+(ctSel.has(p._key)?' checked':'')+'></td>' +
-          '<td class="ct-contact"><div class="ct-name">'+esc(p.contact_name)+(liHref?' <a class="nm-li-link" href="'+esc(liHref)+'" target="_blank" rel="noopener">in ↗</a>':'')+'</div><div class="ct-sub">'+esc(p.contact_title||'—')+(p.at_target_company?'':' · '+esc(p.contact_affiliation||'external'))+'</div></td>' +
+          '<td class="ct-contact"><div class="ct-name">'+esc(p.contact_name)+(liHref?' <a class="nm-li-link" href="'+esc(liHref)+'" target="_blank" rel="noopener">in ↗</a>':'')+'</div>'+(sub?'<div class="ct-sub">'+esc(sub)+'</div>':'')+'</td>' +
           '<td><span class="ct-acct"><img src="'+esc(faviconUrl(domainForRow(p)))+'" onerror="this.style.opacity=0">'+esc(p.company)+'</span></td>' +
-          '<td class="ct-conn">'+esc(p.connector)+'</td>' +
+          '<td class="ct-conn" title="'+esc(cnames.join(', '))+'">'+connCell+'</td>' +
           '<td class="ct-num"><span class="nm-score '+(isLi?'lo':t.key)+'">'+(isLi?'—':p.score)+'</span></td>' +
           '<td class="ct-last">'+esc(p.last_contact?(relDate(p.last_contact)||p.last_contact):'—')+'</td>' +
         '</tr>' +
@@ -2612,7 +2824,7 @@ function getAllCompaniesFlat(){
         var exr=tb.querySelector('.ct-exp-row[data-for="'+lk+'"]'); if(!exr||!d) return;
         var ex=exr.querySelector('.ct-exp'), open=exr.style.display!=='none';
         if(open){ exr.style.display='none'; ex.innerHTML=''; row.classList.remove('ct-open'); }
-        else { ex.innerHTML=whyHtml(d)+historyHtml(d); exr.style.display='table-row'; row.classList.add('ct-open'); }
+        else { ex.innerHTML=groupExpandHtml(d); exr.style.display='table-row'; row.classList.add('ct-open'); }
       });
     });
     tb.querySelectorAll('.ct-row input[type=checkbox]').forEach(function(cb){
@@ -2680,10 +2892,11 @@ function getAllCompaniesFlat(){
   function exportCsv(keys){
     if(!keys.length) return;
     var byKey={}; allContactRows().forEach(function(p){ byKey[p._key]=p; });
-    var head=['Name','Title','Company','Connector','Warmth','Last contact','Works at target','LinkedIn'];
+    var head=['Name','Title','Company','Connectors','Best warmth','Last contact','Works at target','LinkedIn'];
     var lines=[head.map(csvCell).join(',')];
     keys.forEach(function(k){ var p=byKey[k]; if(!p) return;
-      lines.push([p.contact_name,p.contact_title||'',p.company,p.connector,(p.score==null?'LinkedIn only':p.score),p.last_contact||'',(p.at_target_company?'yes':'no'),safeUrl(p.linkedin_url)||''].map(csvCell).join(','));
+      var conns=(p.connectors||[p]).map(function(x){ return x.connector+(x.score!=null?' ('+x.score+')':''); }).join('; ');
+      lines.push([p.contact_name,p.contact_title||'',p.company,conns,(p.score==null?'LinkedIn only':p.score),p.last_contact||'',(p.at_target_company?'yes':'no'),safeUrl(p.linkedin_url)||''].map(csvCell).join(','));
     });
     var blob=new Blob([lines.join('\n')],{type:'text/csv'});
     var url=URL.createObjectURL(blob), a=document.createElement('a');
@@ -2692,10 +2905,15 @@ function getAllCompaniesFlat(){
   // enter the Contacts tab pre-filtered (from the clickable summary stats)
   function openContacts(preset){
     state.ctQ=''; state.ctWarm='all'; state.ctSen='all'; state.ctConn='all'; state.ctAcct='all'; state.ctList=null;
-    state.ctAct = preset || 'all';
+    if(preset==='strong'){ state.ctWarm='hi'; state.ctAct='all'; }
+    else if(preset==='clevel'){ state.ctSen='c'; state.ctAct='all'; }
+    else state.ctAct = preset || 'all';
     var s=document.getElementById('ct-search'); if(s) s.value='';
+    state.ctBackTo = state.tab || 'network';   // remember origin for the Back button
+    state._viaStat = true;
     switchTab('contacts');
   }
+  var TAB_LABEL={network:'network map',all:'overview',pipeline:'active pipeline',midmarket:'mid-market',enterprise:'enterprise'};
   var ctSearch=document.getElementById('ct-search');
   if(ctSearch) ctSearch.addEventListener('input', function(){ state.ctQ=ctSearch.value.trim().toLowerCase(); renderContacts(); });
 
