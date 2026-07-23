@@ -409,6 +409,42 @@ a{color:inherit;}
 .tip-pop::before{content:'';position:absolute;top:-4px;left:14px;width:8px;height:8px;background:var(--text);transform:rotate(45deg);}
 .tip-pop.below::before{top:auto;bottom:-4px;}
 .tip-pop strong{color:var(--bg);font-weight:600;}
+/* Top-10 warm contacts: glowing CTA + overlay list */
+@property --t10a{syntax:'<angle>';initial-value:0deg;inherits:false;}
+.nm-top10-btn{position:relative;display:inline-flex;align-items:center;gap:7px;padding:7px 15px;border-radius:999px;border:none;
+  background:linear-gradient(135deg, var(--purple-tint), var(--purple-tint2));color:var(--text);font-size:12px;font-weight:600;cursor:pointer;
+  box-shadow:0 0 10px var(--purple-ring), 0 0 26px var(--purple-ring);transition:box-shadow .2s, transform .1s;animation:t10pulse 2.6s ease-in-out infinite;}
+.nm-top10-btn::before{content:'';position:absolute;inset:0;border-radius:999px;padding:1.5px;
+  background:conic-gradient(from var(--t10a), var(--purple) 0%, transparent 22%, var(--purple-dark) 40%, var(--purple) 55%, transparent 78%, var(--purple) 100%);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  animation:t10spin 3.2s linear infinite;pointer-events:none;}
+@keyframes t10spin{to{--t10a:360deg;}}
+.nm-top10-btn:hover{box-shadow:0 0 14px var(--purple-ring), 0 0 40px var(--purple-ring);transform:translateY(-1px);}
+@keyframes t10pulse{0%,100%{box-shadow:0 0 10px var(--purple-ring), 0 0 26px var(--purple-ring);}50%{box-shadow:0 0 16px var(--purple-ring), 0 0 44px var(--purple-ring);}}
+.nm-t10-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);z-index:9000;display:flex;align-items:flex-start;justify-content:center;padding:7vh 16px 16px;}
+.nm-t10{width:min(680px,100%);max-height:82vh;overflow:auto;background:var(--surface);border:1px solid var(--purple-ring);border-radius:14px;
+  box-shadow:0 0 0 1px var(--purple-tint2), 0 0 46px var(--purple-ring), 0 24px 70px rgba(0,0,0,.5);padding:18px 20px 14px;}
+.nm-t10-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.nm-t10-head h3{margin:0;font-size:15px;font-weight:700;}
+.nm-t10-head .sub{font-size:11.5px;color:var(--text-muted);margin-top:3px;}
+.nm-t10-close{border:1px solid var(--border);background:var(--surface2);color:var(--text-mid);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:13px;line-height:1;}
+.nm-t10-row{display:flex;align-items:center;gap:12px;padding:10px 6px;border-bottom:1px solid var(--border-soft);cursor:pointer;border-radius:8px;transition:background .12s;}
+.nm-t10-row:hover{background:var(--purple-tint2);}
+.nm-t10-row:last-child{border-bottom:none;}
+.nm-t10-back{border:1px solid var(--border);background:var(--surface2);color:var(--text-mid);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11.5px;margin-bottom:10px;}
+.nm-t10-tie{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid var(--border-soft);font-size:12.5px;}
+.nm-t10-tie:last-child{border-bottom:none;}
+.nm-t10-tie .tn{flex:1;min-width:0;}
+.nm-t10-tie .tn b{font-weight:600;}
+.nm-t10-tie .tt{display:block;font-size:11px;color:var(--text-muted);margin-top:1px;}
+.nm-t10-tie .tl{font-size:11px;color:var(--text-muted);white-space:nowrap;}
+.nm-t10-rk{font-family:var(--font-mono, monospace);font-size:11px;color:var(--purple);width:18px;text-align:right;flex:none;}
+.nm-t10-who{min-width:0;flex:1;}
+.nm-t10-who .nm1{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nm-t10-who .nm2{font-size:11.5px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.nm-t10-via{font-size:11px;color:var(--text-mid);white-space:nowrap;flex:none;max-width:170px;overflow:hidden;text-overflow:ellipsis;}
+.nm-t10-sc{flex:none;font-family:var(--font-mono, monospace);font-size:12px;font-weight:700;color:var(--purple);background:var(--purple-tint);border:1px solid var(--purple-ring);border-radius:999px;padding:3px 9px;}
+.nm-t10-li{flex:none;font-size:11px;color:var(--purple);text-decoration:none;}
 
 /* === NETWORK MAP === */
 .network-grid{display:grid;grid-template-columns:300px 1fr;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--surface);min-height:520px;}
@@ -622,6 +658,10 @@ a{color:inherit;}
 .ct-row{border-top:1px solid var(--border-soft);cursor:pointer;transition:background 100ms;}
 .ct-row:hover{background:var(--surface2);}
 .ct-row.ct-open{background:var(--surface2);}
+.ct-row.ct-top10{background:var(--purple-tint2);}
+.ct-row.ct-top10:hover{background:var(--purple-tint);}
+.ct-t10-badge{display:inline-block;margin-left:7px;padding:1.5px 7px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.07em;
+  color:var(--purple);background:var(--purple-tint);border:1px solid var(--purple-ring);vertical-align:1px;}
 .ct-row td{padding:10px 14px;vertical-align:middle;}
 .ct-name{font-weight:600;color:var(--text);}
 .ct-sub{font-size:11px;color:var(--text-muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px;}
@@ -850,7 +890,8 @@ a{color:inherit;}
         <span class="nm-tool-label">Sort</span>
         <button class="filter-pill active" data-nmsort="warmth" onclick="setNmSort('warmth')"><span class="pill-dot"></span>Warmth</button>
         <button class="filter-pill" data-nmsort="name" onclick="setNmSort('name')"><span class="pill-dot"></span>A–Z</button>
-        <span class="queue-count" id="nm-count" style="margin-left:auto;"></span>
+        <button type="button" class="nm-top10-btn" onclick="showTop10()" style="margin-left:auto;">Top 10 warm contacts</button>
+        <span class="queue-count" id="nm-count"></span>
       </div>
       <div class="network-grid">
         <div class="network-list" id="network-list"></div>
@@ -2682,6 +2723,86 @@ function getAllCompaniesFlat(){
   window.setNmFilter=setNmFilter;
   window.setNmSort=setNmSort;
 
+  // Top 10 warm contacts across the ICP accounts (dedup by person; best path per person).
+  // Rows drill into a full detail view: every Primary tie + warmth + full history.
+  var _t10=[];
+  function _t10Key(p){ return (p.linkedin_url&&p.linkedin_url.trim())?p.linkedin_url.toLowerCase().replace(/\/+$/,''):('n:'+String(p.contact_name||'').toLowerCase()); }
+  // Heavy-hitter score: seniority dominates, finance/IT buyer function boosts, warmth breaks ties.
+  // Surfaces VP/C-level decision-makers and real buyers over warm-but-junior ICs.
+  function _t10Score(p){ return (p.rank||0)*30 + (p.buyer?15:0) + (p.score||0); }
+  function _t10Compute(){
+    var comps=(window.NETWORK_DATA&&window.NETWORK_DATA.companies)||[];
+    var best={};
+    comps.forEach(function(c){(c.paths||[]).forEach(function(p){
+      if(p.at_target_company!==true||p.score==null||p.score<25) return;  // real relationship, not an ice-cold path
+      var k=_t10Key(p);
+      if(!best[k]||_t10Score(p)>_t10Score(best[k])){var q={};for(var kk in p)q[kk]=p[kk];q.company=c.company;q._key=k;best[k]=q;}
+    });});
+    return Object.keys(best).map(function(k){return best[k];}).sort(function(a,b){return _t10Score(b)-_t10Score(a);}).slice(0,10);
+  }
+  function _t10Ties(key){
+    var comps=(window.NETWORK_DATA&&window.NETWORK_DATA.companies)||[];
+    var ties=[];
+    comps.forEach(function(c){(c.paths||[]).forEach(function(p){ if(_t10Key(p)===key) ties.push(p); });});
+    ties.sort(function(a,b){return (b.score||0)-(a.score||0);});
+    return ties;
+  }
+  function _t10ListHtml(){
+    var rows=_t10.map(function(p,i){
+      var sub=[p.contact_title?esc(p.contact_title):'', esc(p.company)].filter(Boolean).join(' · ');
+      var li=p.linkedin_url?'<a class="nm-t10-li" href="'+esc(p.linkedin_url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">in ↗</a>':'';
+      return '<div class="nm-t10-row" data-t10="'+i+'"><span class="nm-t10-rk">'+(i+1)+'</span>'+
+        '<div class="nm-t10-who"><div class="nm1">'+esc(p.contact_name)+'</div><div class="nm2">'+sub+'</div></div>'+
+        '<span class="nm-t10-via">via '+esc(p.connector)+'</span>'+
+        '<span class="nm-t10-sc">'+p.score+'</span>'+li+'</div>';
+    }).join('');
+    return '<div class="nm-t10-head"><div><h3>Top 10 warm contacts at the ICP accounts</h3><div class="sub">The most senior decision-makers and buyers at the ten targets · ranked by seniority and warm-path strength · click a row for full detail</div></div><button class="nm-t10-close" onclick="closeTop10()" title="Close">✕</button></div>'+rows;
+  }
+  function _t10DetailHtml(i){
+    var p=_t10[i]; if(!p) return _t10ListHtml();
+    var meta=(window.NETWORK_DATA&&window.NETWORK_DATA.connectors)||{};
+    var ties=_t10Ties(p._key);
+    var li=p.linkedin_url?'<a class="nm-t10-li" href="'+esc(p.linkedin_url)+'" target="_blank" rel="noopener" style="font-size:12.5px;">in ↗</a>':'';
+    var badges='<div class="nm-d-badges" style="margin:6px 0 2px;">'+
+      '<span class="nm-badge">'+(p.at_target_company?'Works at '+esc(p.company):esc(p.contact_affiliation||'Affiliation unknown'))+'</span>'+
+      (p.seniority?'<span class="nm-badge sen">'+esc(p.seniority)+'</span>':'')+'</div>';
+    var tieRows=ties.map(function(t){
+      var cm=meta[t.connector]||{};
+      var lc=t.last_contact?(' · last contact '+relDate(t.last_contact)):'';
+      return '<div class="nm-t10-tie"><div class="tn"><b>'+esc(t.connector)+'</b>'+
+        (cm.title?'<span class="tt">'+esc(cm.title)+(cm.org?' · '+esc(cm.org):'')+'</span>':'')+
+        '</div><span class="tl">'+(t.linkedin_connected?'LinkedIn connected'+lc:(lc?lc.replace(' · ',''):''))+'</span>'+
+        '<span class="nm-t10-sc">'+(t.score==null?'—':t.score)+'</span></div>';
+    }).join('');
+    var d={}; for(var kk in p) d[kk]=p[kk];
+    if(!d.history){ var th=ties.filter(function(t){return t.history;})[0]; if(th){ d.history=th.history; d.connector=th.connector; } }
+    return '<button class="nm-t10-back" onclick="t10Back()">← Back to top 10</button>'+
+      '<div class="nm-t10-head"><div><h3>'+esc(p.contact_name)+' '+li+'</h3>'+
+      '<div class="sub">'+[p.contact_title?esc(p.contact_title):'',esc(p.company)].filter(Boolean).join(' · ')+'</div></div>'+
+      '<span class="nm-t10-sc" style="font-size:14px;">'+p.score+'</span></div>'+
+      badges+
+      '<div class="nm-d-sec-lbl" style="margin-top:12px;">Who at Primary has ties · '+ties.length+'</div>'+tieRows+
+      '<div style="margin-top:12px;">'+historyHtml(d)+'</div>';
+  }
+  function _t10Wire(box){
+    box.querySelectorAll('[data-t10]').forEach(function(r){
+      r.addEventListener('click',function(){ box.innerHTML=_t10DetailHtml(+r.getAttribute('data-t10')); _t10Wire(box); box.scrollTop=0; });
+    });
+  }
+  function t10Back(){ var box=document.querySelector('#nm-t10-backdrop .nm-t10'); if(box){ box.innerHTML=_t10ListHtml(); _t10Wire(box); } }
+  function showTop10(){
+    _t10=_t10Compute();
+    closeTop10();
+    var bd=document.createElement('div');bd.className='nm-t10-backdrop';bd.id='nm-t10-backdrop';
+    var box=document.createElement('div');box.className='nm-t10';box.innerHTML=_t10ListHtml();
+    bd.appendChild(box);
+    bd.addEventListener('click',function(e){ if(e.target===bd) closeTop10(); });
+    document.body.appendChild(bd);
+    _t10Wire(box);
+  }
+  function closeTop10(){ var b=document.getElementById('nm-t10-backdrop'); if(b) b.remove(); }
+  window.showTop10=showTop10; window.closeTop10=closeTop10; window.t10Back=t10Back;
+
   // ══════════════════════════════════════════════════════════════════════
   // CONTACTS TAB — rows worklist + localStorage lists + CSV
   // ══════════════════════════════════════════════════════════════════════
@@ -2799,19 +2920,21 @@ function getAllCompaniesFlat(){
     if(shown.length===0){ tb.innerHTML='<tr><td colspan="6" class="ct-empty">No contacts match these filters.</td></tr>'; }
     else {
       _nmList=[]; var cur=-1, html='';
+      var t10set={}; try{ _t10Compute().forEach(function(x){ t10set[x._key]=1; }); }catch(e){}
       shown.forEach(function(p){
         var g=tg(p);
         if(g!==cur){ cur=g; html += '<tr class="ct-tier"><td colspan="6">'+TLAB[g]+'</td></tr>'; }
         var isLi=(p.type==='linkedin'||p.score==null), t=tier(p.score);
         var lk=_nmList.length; _nmList.push(p);
+        var isT10=!!t10set[_t10Key(p)];
         var liHref=safeUrl(p.linkedin_url);
         var acc = isLi?'var(--nm-w-null)':t.color;
         var sub=[p.contact_title, p.at_target_company?'':(p.contact_affiliation||'external')].filter(Boolean).join(' · ');
         var cnames=(p.connectors||[p]).map(function(x){return x.connector;});
         var connCell=esc(cnames.slice(0,2).join(', '))+(cnames.length>2?' <span class="ct-conn-more" title="'+esc(cnames.join(', '))+'">+'+(cnames.length-2)+'</span>':'');
-        html += '<tr class="ct-row" data-lk="'+lk+'">' +
+        html += '<tr class="ct-row'+(isT10?' ct-top10':'')+'" data-lk="'+lk+'">' +
           '<td class="ct-cbcol" data-cb style="box-shadow:inset 3px 0 0 '+acc+';"><input type="checkbox" data-k="'+esc(p._key)+'"'+(ctSel.has(p._key)?' checked':'')+'></td>' +
-          '<td class="ct-contact"><div class="ct-name">'+esc(p.contact_name)+(liHref?' <a class="nm-li-link" href="'+esc(liHref)+'" target="_blank" rel="noopener">in ↗</a>':'')+'</div>'+(sub?'<div class="ct-sub">'+esc(sub)+'</div>':'')+'</td>' +
+          '<td class="ct-contact"><div class="ct-name">'+esc(p.contact_name)+(isT10?'<span class="ct-t10-badge">TOP 10</span>':'')+(liHref?' <a class="nm-li-link" href="'+esc(liHref)+'" target="_blank" rel="noopener">in ↗</a>':'')+'</div>'+(sub?'<div class="ct-sub">'+esc(sub)+'</div>':'')+'</td>' +
           '<td><span class="ct-acct"><img src="'+esc(faviconUrl(domainForRow(p)))+'" onerror="this.style.opacity=0">'+esc(p.company)+'</span></td>' +
           '<td class="ct-conn" title="'+esc(cnames.join(', '))+'">'+connCell+'</td>' +
           '<td class="ct-num"><span class="nm-score '+(isLi?'lo':t.key)+'">'+(isLi?'—':p.score)+'</span></td>' +
