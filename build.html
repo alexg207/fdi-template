@@ -876,7 +876,7 @@ a{color:inherit;text-decoration:none;}
   document.getElementById('narrSignals').textContent=N.signals||('Standard firmographics only get you so far. We invent signals specific to '+NAME+'’s wedge and weight them by how strongly each one predicts a buyer who is ready now.');
   document.getElementById('narrEvidence').textContent=N.evidence||'Every field on every account, each claim backed by tiered sources. Nothing ships uncited.';
   document.getElementById('narrScore').textContent=N.score||('The '+(NUMWORD[D.axes.length]||D.axes.length).toString().toLowerCase()+' signals combine on '+NAME+'’s weights into a single 0-100 score. It sets the order you work the list - not whether an account belongs. Everything here already cleared the bar.');
-  document.getElementById('narrShortlist').textContent=N.shortlist||('The '+String(NUMWORD[D.scan.curated]||D.scan.curated).toLowerCase()+' highest-quality accounts in the market - each one cleared every bar we set. Below them: the design partners already signed.');
+  document.getElementById('narrShortlist').textContent=N.shortlist||('The '+String(NUMWORD[D.scan.curated]||D.scan.curated).toLowerCase()+' highest-quality accounts in the market - each one cleared every bar we set.');
   document.getElementById('narrNetwork').textContent=N.network||'Through Primary’s network of partners, advisors, founders, and operators, we already hold warm introductions into much of the shortlist. Every line is a real relationship.';
   // score formula, rendered from the axes themselves
   document.getElementById('formulaLine').innerHTML=D.axes.map(function(a){
