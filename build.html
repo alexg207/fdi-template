@@ -398,6 +398,13 @@ a{color:inherit;text-decoration:none;}
 .pcard .pnote{font-size:11px;color:var(--text-faint);margin-top:5px;line-height:1.4;}
 
 /* ---------- act 8 · network map ---------- */
+.intro-strip{max-width:1020px;margin:0 auto 14px;}
+.intro-strip .ish{text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);margin-bottom:10px;}
+.intro-strip .isg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.intro-strip .isc{padding:9px 11px;border-radius:10px;background:var(--glass-2);border:1px solid var(--border);text-align:center;}
+.intro-strip .isc .in{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.intro-strip .isc .im{font-family:var(--sans);font-size:11px;color:hsl(var(--acc-soft));margin-top:4px;}
+@media (max-width:760px){ .intro-strip .isg{grid-template-columns:repeat(2,1fr);} }
 .net-wrap{position:relative;max-width:1020px;margin:0 auto;}
 .net-svg{width:100%;height:min(56vh,480px);display:block;cursor:grab;touch-action:none;border-radius:16px;
   background:radial-gradient(circle at 50% 46%,hsl(var(--nh) 11% / .5),transparent 62%);border:1px solid var(--border);}
@@ -742,6 +749,10 @@ a{color:inherit;text-decoration:none;}
     <div class="act-eyebrow rv" data-at="0.02"><span class="chip"><span class="n">08</span> Map the way in</span></div>
     <h2 class="act-title rv" data-at="0.02">And map the <span class="grad">warm paths in.</span></h2>
     <p class="act-narr rv" data-at="0.04" id="narrNetwork"></p>
+    <div class="intro-strip rv" data-at="0.06" id="introStripWrap" style="display:none;">
+      <div class="ish">The intros we can make tomorrow</div>
+      <div class="isg" id="introStrip"></div>
+    </div>
     <div class="net-wrap rv" data-at="0.08">
       <svg class="net-svg" id="netSvg" viewBox="0 0 1160 600"><g id="netZoom"></g></svg>
       <div class="net-legend" id="netLegend"></div>
@@ -878,6 +889,16 @@ a{color:inherit;text-decoration:none;}
   document.getElementById('narrScore').textContent=N.score||('The '+(NUMWORD[D.axes.length]||D.axes.length).toString().toLowerCase()+' signals combine on '+NAME+'’s weights into a single 0-100 score. It sets the order you work the list - not whether an account belongs. Everything here already cleared the bar.');
   document.getElementById('narrShortlist').textContent=N.shortlist||('The '+String(NUMWORD[D.scan.curated]||D.scan.curated).toLowerCase()+' highest-quality accounts in the market - each one cleared every bar we set.');
   document.getElementById('narrNetwork').textContent=N.network||'Through Primary’s network of partners, advisors, founders, and operators, we already hold warm introductions into much of the shortlist. Every line is a real relationship.';
+  // "intros we can make tomorrow" strip - per-account warm-contact counts from the live graph
+  (function(){
+    var il=(D.network&&D.network.introList)||[];
+    if(!il.length) return;
+    var sn=(D.network&&D.network.shortNames)||{};
+    document.getElementById('introStrip').innerHTML=il.map(function(r){
+      return '<div class="isc"><div class="in">'+(sn[r.name]||r.name)+'</div><div class="im">'+r.warm+' warm contact'+(r.warm===1?'':'s')+' · '+r.best+'</div></div>';
+    }).join('');
+    document.getElementById('introStripWrap').style.display='';
+  })();
   // score formula, rendered from the axes themselves
   document.getElementById('formulaLine').innerHTML=D.axes.map(function(a){
     return '<b>'+(a.weight/100).toFixed(2)+'</b>·'+(a.short||a.name.split(' ')[0]);}).join(' + ');
@@ -1403,7 +1424,7 @@ a{color:inherit;text-decoration:none;}
    logo. Fails soft: on any error the flat layered fallback stays. */
 try{
   const cfg=window.__FDI3D;
-  if(cfg&&!cfg.reduced){
+  if(false){ /* 2D mode: WebGL tube-extrusion hero disabled — flat SVG fallback only */
     const THREE=await import('three');
     const {SVGLoader}=await import('https://unpkg.com/three@0.160.0/examples/jsm/loaders/SVGLoader.js');
     const host=document.getElementById('mmInner');
