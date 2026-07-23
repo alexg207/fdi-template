@@ -2750,7 +2750,7 @@ function getAllCompaniesFlat(){
   function _t10ListHtml(){
     var rows=_t10.map(function(p,i){
       var sub=[p.contact_title?esc(p.contact_title):'', esc(p.company)].filter(Boolean).join(' · ');
-      var li=p.linkedin_url?'<a class="nm-t10-li" href="'+esc(p.linkedin_url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">in ↗</a>':'';
+      var lu=safeUrl(p.linkedin_url); var li=lu?'<a class="nm-t10-li" href="'+esc(lu)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">in ↗</a>':'';
       return '<div class="nm-t10-row" data-t10="'+i+'"><span class="nm-t10-rk">'+(i+1)+'</span>'+
         '<div class="nm-t10-who"><div class="nm1">'+esc(p.contact_name)+'</div><div class="nm2">'+sub+'</div></div>'+
         '<span class="nm-t10-via">via '+esc(p.connector)+'</span>'+
@@ -2762,7 +2762,7 @@ function getAllCompaniesFlat(){
     var p=_t10[i]; if(!p) return _t10ListHtml();
     var meta=(window.NETWORK_DATA&&window.NETWORK_DATA.connectors)||{};
     var ties=_t10Ties(p._key);
-    var li=p.linkedin_url?'<a class="nm-t10-li" href="'+esc(p.linkedin_url)+'" target="_blank" rel="noopener" style="font-size:12.5px;">in ↗</a>':'';
+    var lu=safeUrl(p.linkedin_url); var li=lu?'<a class="nm-t10-li" href="'+esc(lu)+'" target="_blank" rel="noopener" style="font-size:12.5px;">in ↗</a>':'';
     var badges='<div class="nm-d-badges" style="margin:6px 0 2px;">'+
       '<span class="nm-badge">'+(p.at_target_company?'Works at '+esc(p.company):esc(p.contact_affiliation||'Affiliation unknown'))+'</span>'+
       (p.seniority?'<span class="nm-badge sen">'+esc(p.seniority)+'</span>':'')+'</div>';
