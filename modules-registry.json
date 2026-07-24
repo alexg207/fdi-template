@@ -1,0 +1,72 @@
+{
+  "_readme": "Single source of truth for FDI build MODULES (theme-presets.json pattern). A module is one composable feature of a build. Consumed by: (1) the hub menu UI (which modules to offer), (2) the skill (which optional modules to generate — see SKILL.md 'Modules'), (3) the engine (registry-aware gates + build-summary.modules). Adding a feature = a folder/phase + one line here, nothing else. BACKWARD-COMPAT IS SACRED: a build with no config.json.modules[] generates every default:true module = today's exact behavior, forever.",
+  "schema_version": 1,
+  "tiers": {
+    "core": "Always generated. Hard-fails the build if missing (walkthrough + dashboard are the product).",
+    "optional": "Generated only when selected (or default:true and no explicit selection). If skipped or its generator fails, the build DEGRADES to a designed empty state and still ships — one feature can never tank the 1.5h build."
+  },
+  "modules": [
+    {
+      "key": "walkthrough",
+      "label": "Scroll walkthrough",
+      "lane": "gtm",
+      "tier": "core",
+      "status": "live",
+      "default": true,
+      "artifacts": ["index.html", "build-data.js", "assets/"],
+      "entry": "index.html",
+      "generator": "skill:8c",
+      "refreshable": false
+    },
+    {
+      "key": "dashboard",
+      "label": "Account dashboard",
+      "lane": "gtm",
+      "tier": "core",
+      "status": "live",
+      "default": true,
+      "artifacts": ["dashboard.html", "data.js"],
+      "entry": "dashboard.html",
+      "generator": "skill:7,8",
+      "refreshable": false
+    },
+    {
+      "key": "network",
+      "label": "Network & warm paths",
+      "lane": "gtm",
+      "tier": "optional",
+      "status": "live",
+      "default": true,
+      "artifacts": ["network-data.js"],
+      "data_global": "NETWORK_DATA",
+      "entry": "dashboard.html#network",
+      "generator": "engine:fetch-affinity-network.mjs",
+      "refreshable": true
+    },
+    {
+      "key": "landing",
+      "label": "Landing page",
+      "lane": "gtm",
+      "tier": "optional",
+      "status": "live",
+      "default": false,
+      "artifacts": ["landing.html"],
+      "entry": "landing.html",
+      "generator": "skill:8b",
+      "refreshable": false
+    },
+    {
+      "key": "competitors",
+      "label": "Competitor teardown",
+      "lane": "gtm",
+      "tier": "optional",
+      "status": "soon",
+      "default": false,
+      "artifacts": ["competitors.html", "competitors-data.js"],
+      "data_global": "COMPETITORS_DATA",
+      "entry": "competitors.html",
+      "generator": "skill:soon",
+      "refreshable": true
+    }
+  ]
+}
