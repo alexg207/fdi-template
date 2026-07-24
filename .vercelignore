@@ -6,6 +6,8 @@
 !/data.js
 !/network-data.js
 !/build-data.js
+!/competitors.html
+!/competitors-data.js
 !/middleware.js
 !/vercel.json
 !/package.json
