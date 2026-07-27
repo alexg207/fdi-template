@@ -60,13 +60,14 @@
       "label": "Competitor teardown",
       "lane": "gtm",
       "tier": "optional",
-      "status": "soon",
+      "status": "live",
       "default": false,
       "artifacts": ["competitors.html", "competitors-data.js"],
       "data_global": "COMPETITORS_DATA",
       "entry": "competitors.html",
-      "generator": "skill:soon",
-      "refreshable": true
+      "generator": "skill:8d",
+      "refreshable": false,
+      "_refresh_note": "v2: refreshing competitors is a paid Claude research re-run (skill:8d), not a deterministic engine fetch like network — keep refreshable:false until fdi-module-refresh grows a research path."
     }
   ]
 }
