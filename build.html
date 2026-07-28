@@ -153,19 +153,20 @@ a{color:inherit;text-decoration:none;}
 #s-hero .pin{justify-content:flex-start;padding-top:96px;}
 .hero-stage{position:relative;width:100%;max-width:1080px;flex:1;text-align:center;}
 
-/* the giant floating founder mark */
-.mega-mark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;perspective:1200px;}
+/* The giant founder mark. ONE flat layer, static — a clean 2D geometric line icon in
+   the same register as the dashboard's own mark (minimal, sharp, no motion). It used to
+   be three stacked copies at different translateZ spinning on mmSpin, which read as
+   fake 3D rather than as a logo. Entrance is a single scale-in, and reduced-motion gets
+   the end state with no movement. */
+.mega-mark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;}
 .mm-scroll{will-change:transform,opacity;}
-.mm-tilt{transform-style:preserve-3d;animation:mmFloat 10s ease-in-out infinite;}
-.mm-inner{position:relative;width:min(80vh,44vw,780px);height:min(80vh,44vw,780px);transform-style:preserve-3d;animation:mmSpin 26s linear infinite;opacity:0;transition:opacity 1.2s ease;}
-.mm-inner.mm-on{opacity:1;}
-@keyframes mmSpin{from{transform:rotateY(0deg);}to{transform:rotateY(360deg);}}
+.mm-inner{position:relative;width:min(72vh,40vw,700px);height:min(72vh,40vw,700px);opacity:0;transform:scale(.965);transition:opacity 1s ease,transform 1.4s cubic-bezier(.2,.8,.2,1);}
+.mm-inner.mm-on{opacity:1;transform:scale(1);}
 .mm-inner .mml{position:absolute;inset:0;}
-.mm-inner .mml svg{width:100%;height:100%;fill:none;stroke:hsl(var(--acc));stroke-linecap:round;stroke-linejoin:round;stroke-width:.3;}
-.mm-inner .l1{transform:translateZ(70px);filter:drop-shadow(0 0 34px hsl(var(--acc) / .3));opacity:.3;}
-.mm-inner .l2{transform:translateZ(0);opacity:.13;}
-.mm-inner .l3{transform:translateZ(-80px);opacity:.06;filter:blur(2px);}
-@keyframes mmFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-18px);}}
+.mm-inner .mml svg{width:100%;height:100%;fill:none;stroke:hsl(var(--acc));stroke-linecap:round;stroke-linejoin:round;stroke-width:.34;opacity:.17;filter:drop-shadow(0 0 44px hsl(var(--acc) / .18));}
+/* No reduced-motion override here on purpose: that media query already hides
+   .mega-mark outright, because it also un-pins the hero into a statically stacked
+   document where this absolutely-positioned mark would land behind beat 2's stats. */
 
 /* beat 1 — founder-first */
 .intro-beat{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -577,7 +578,10 @@ a{color:inherit;text-decoration:none;}
   .mesh i,.axis-card.wow::before,.hero-badge .pulse,.scroll-cue .sc-line::after,.mm-inner{animation:none !important;}
   .qual-item .tick svg{stroke-dashoffset:0;}
   .pipe-beam i{transform:scaleX(1) !important;}
-  /* beats stack statically; the floating mark hides */
+  /* Beats stack statically, so the mark hides: it is absolutely positioned across the
+     whole hero-stage, and once the beats un-pin into a static column it would sit behind
+     beat 2's stats rather than behind the intro. (Still true now that the mark itself no
+     longer animates — this is a layout call, not only a motion one.) */
   .mega-mark{display:none;}
   .intro-beat,.punch-beat{position:static;opacity:1 !important;transform:none !important;pointer-events:auto !important;}
   .intro-beat{margin-bottom:64px;}
@@ -603,7 +607,7 @@ a{color:inherit;text-decoration:none;}
 <!-- ================= hero: 3D preview flattens on scroll ================= -->
 <section class="scene" data-scrub id="s-hero">
   <div class="pin">
-    <div class="mega-mark"><div class="mm-scroll" id="mmScroll"><div class="mm-tilt"><div class="mm-inner" id="mmInner"></div></div></div></div>
+    <div class="mega-mark"><div class="mm-scroll" id="mmScroll"><div class="mm-inner" id="mmInner"></div></div></div>
     <div class="hero-stage">
       <div class="intro-beat" id="introBeat">
         <div class="intro-word"><span id="introName"></span><span class="ix">×</span><img class="ip-lockup" src="./assets/primary-lockup.svg" alt="Primary"></div>
@@ -859,17 +863,12 @@ a{color:inherit;text-decoration:none;}
   // optional warmth line (narration.introWarmth) — trusted HTML like introHeadline; hidden when the key is absent
   var iw=document.getElementById('introWarmth');
   if(iw){if(N.introWarmth)iw.innerHTML=N.introWarmth;else iw.style.display='none';}
-  // the wow layer: flat layered fallback first; the WebGL module below swaps
-  // in a true 3D neon-tube sculpture of the same mark when it loads
-  document.getElementById('mmInner').innerHTML=
-    '<div class="mml l1">'+D.founder.logoSvg+'</div>'+
-    '<div class="mml l2">'+D.founder.logoSvg+'</div>'+
-    '<div class="mml l3">'+D.founder.logoSvg+'</div>';
-  window.__FDI3D={logo:D.founder.logoSvg,acc:ACCENT,reduced:REDUCED,hero3d:D.founder.hero3d||''};
-  // show the flat fallback only if the 3D module hasn't mounted quickly -
-  // avoids the fallback->canvas pop on load
-  setTimeout(function(){var mi=document.getElementById('mmInner');
-    if(mi&&!mi.querySelector('canvas'))mi.classList.add('mm-on');},1400);
+  // the backdrop mark: one flat copy of the founder's own logo, scaled up. (Was three
+  // stacked copies for a faux-3D spin; `founder.hero3d` is now inert but tolerated in
+  // existing build data.)
+  document.getElementById('mmInner').innerHTML='<div class="mml">'+D.founder.logoSvg+'</div>';
+  // fade/scale it in once, shortly after the beat settles
+  setTimeout(function(){var mi=document.getElementById('mmInner');if(mi)mi.classList.add('mm-on');},450);
   document.getElementById('heroBadge').innerHTML='Live build · <b>'+NAME+'</b>'+(D.founder.fileNo?' · '+D.founder.fileNo:'');
   document.getElementById('heroTitle').innerHTML=(N.heroTitle&&N.heroTitle.length===2?N.heroTitle:[fmt(D.scan.universe)+' '+D.scan.universeLabel+' in.','The readiest buyers out.']).join('<br>');
   document.getElementById('heroSubP').innerHTML=N.heroSub||('The machine we built around <b>'+NAME+'</b> - custom signals, cited evidence, a readiness score on every account, and a warm path in. Scroll to watch it run.');
@@ -1416,134 +1415,6 @@ a{color:inherit;text-decoration:none;}
   if(m){var ai=clamp(parseInt(m[1],10),0,scenes.length-1);window.scrollTo(0,scenes[ai].offsetTop+(scenes[ai].hasAttribute('data-scrub')?scenes[ai].offsetHeight-window.innerHeight:0));}
   if(!REDUCED)requestAnimationFrame(tick);
 })();
-</script>
-<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}</script>
-<script type="module">
-/* True-3D founder mark: sweep cylindrical tubes along the logo's SVG paths,
-   spread subpaths across depth, light it, spin it. Generic for any founder
-   logo. Fails soft: on any error the flat layered fallback stays. */
-try{
-  const cfg=window.__FDI3D;
-  if(false){ /* 2D mode: WebGL tube-extrusion hero disabled — flat SVG fallback only */
-    const THREE=await import('three');
-    const {SVGLoader}=await import('https://unpkg.com/three@0.160.0/examples/jsm/loaders/SVGLoader.js');
-    const host=document.getElementById('mmInner');
-    const size=Math.round(host.getBoundingClientRect().width)||760;
-
-    // accent "H S% L%" -> hex
-    function hsl2hex(str){
-      const m=str.trim().split(/\s+/);const h=parseFloat(m[0]),s=parseFloat(m[1])/100,l=parseFloat(m[2])/100;
-      const c=new THREE.Color();c.setHSL(h/360,s,l);return c;
-    }
-    const accent=hsl2hex(cfg.acc||'26 96% 58%');
-
-    const group=new THREE.Group();
-
-    // ---- named procedural objects: a real volumetric model, not tube art ----
-    function buildLantern(){
-      const g=new THREE.Group();
-      const amber=new THREE.Color().setHSL(24/360,.95,.5);       // deeper amber, less gold
-      const amberDeep=new THREE.Color().setHSL(18/360,.9,.42);
-      const metal=new THREE.MeshStandardMaterial({color:0x3a2b1c,metalness:.7,roughness:.34,emissive:amberDeep,emissiveIntensity:.14});
-      const glass=new THREE.MeshStandardMaterial({color:amber,transparent:true,opacity:.2,emissive:amberDeep,emissiveIntensity:.3,side:THREE.DoubleSide});
-      const add=(geo,mat,x,y,z,rx,ry)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);if(rx)m.rotation.x=rx;if(ry)m.rotation.y=ry;g.add(m);return m;};
-      // hanging ring + finial
-      add(new THREE.TorusGeometry(1.5,.22,12,40),metal,0,8.6,0);
-      add(new THREE.CylinderGeometry(.32,.42,1.1,10),metal,0,6.9,0);
-      // pyramidal roof (4-sided) + cap plate
-      add(new THREE.ConeGeometry(3.5,2.4,4,1),metal,0,5.4,0,0,Math.PI/4);
-      add(new THREE.BoxGeometry(4.9,.34,4.9),metal,0,4.05,0);
-      // cage: 4 corner posts + glass panels + bottom plate
-      for(const sx of [-1,1])for(const sz of [-1,1])
-        add(new THREE.BoxGeometry(.4,5.1,.4),metal,sx*2.05,1.45,sz*2.05);
-      add(new THREE.BoxGeometry(3.9,4.7,3.9),glass,0,1.45,0);
-      add(new THREE.BoxGeometry(4.9,.4,4.9),metal,0,-1.25,0);
-      for(const sx of [-1,1])for(const sz of [-1,1])
-        add(new THREE.BoxGeometry(.5,.5,.5),metal,sx*1.9,-1.7,sz*1.9);
-      // a burning candle
-      add(new THREE.CylinderGeometry(.66,.74,.4,14),metal,0,-1,0);   // drip cup
-      const wax=new THREE.MeshStandardMaterial({color:0xf3e2c4,roughness:.55,emissive:0xb96f22,emissiveIntensity:.1});
-      add(new THREE.CylinderGeometry(.5,.56,1.7,16),wax,0,-.1,0);
-      add(new THREE.CylinderGeometry(.045,.045,.32,6),new THREE.MeshStandardMaterial({color:0x1c1208}),0,.85,0);
-      const flameM=new THREE.MeshStandardMaterial({color:amber,emissive:amber,emissiveIntensity:1.5,transparent:true,opacity:.92});
-      const coreM=new THREE.MeshStandardMaterial({color:0xffdfae,emissive:0xffc27a,emissiveIntensity:2.3});
-      const flame=new THREE.Mesh(new THREE.SphereGeometry(.34,12,12),flameM);
-      flame.scale.set(.73,1.76,.73);flame.position.set(0,1.5,0);g.add(flame);
-      const core=new THREE.Mesh(new THREE.SphereGeometry(.17,10,10),coreM);
-      core.scale.set(.7,1.5,.7);core.position.set(0,1.32,0);g.add(core);
-      const inner=new THREE.PointLight(amber,53,40);inner.position.set(0,1.45,0);g.add(inner);
-      g.scale.setScalar(1.16); g.position.y=-4.9;   // keep the ring inside frame
-      return g;
-    }
-
-    if(cfg.hero3d==='lantern'){
-      group.add(buildLantern());
-    }else{
-    const data=new SVGLoader().parse(cfg.logo);
-    const mat=new THREE.MeshStandardMaterial({color:accent.clone().multiplyScalar(.55),emissive:accent,emissiveIntensity:.75,metalness:.25,roughness:.35});
-    // collect all subpath point sets first to compute a shared bbox
-    const sets=[];
-    for(const p of data.paths)for(const sp of p.subPaths){
-      const pts=sp.getPoints(72).map(v=>new THREE.Vector2(v.x,v.y));
-      if(pts.length>1)sets.push(pts);
-    }
-    if(!sets.length)throw new Error('no paths');
-    const box=new THREE.Box2();sets.forEach(pts=>pts.forEach(v=>box.expandByPoint(v)));
-    const c=box.getCenter(new THREE.Vector2()),sz=box.getSize(new THREE.Vector2());
-    const scale=13/Math.max(sz.x,sz.y);
-    sets.forEach((pts,i)=>{
-      const z=((i%5)-2)*0.55;   // spread parts through depth -> volume while spinning
-      const v3=pts.map(v=>new THREE.Vector3((v.x-c.x)*scale,-(v.y-c.y)*scale,z));
-      const closed=v3[0].distanceTo(v3[v3.length-1])<0.25;
-      const curve=new THREE.CatmullRomCurve3(closed?v3.slice(0,-1):v3,closed,'catmullrom',0.02);
-      const tube=new THREE.TubeGeometry(curve,Math.min(220,v3.length*3),0.34,10,closed);
-      group.add(new THREE.Mesh(tube,mat));
-      // rounded tube ends for open strokes
-      if(!closed){
-        for(const end of [v3[0],v3[v3.length-1]]){
-          const cap=new THREE.Mesh(new THREE.SphereGeometry(0.34,10,10),mat);
-          cap.position.copy(end);group.add(cap);
-        }
-      }
-    });
-    }
-
-    const scene=new THREE.Scene();
-    scene.add(group);
-    scene.add(new THREE.AmbientLight(0xffffff,.35));
-    const key=new THREE.DirectionalLight(0xffffff,1.9);key.position.set(6,8,10);scene.add(key);
-    const accHue=((parseFloat(String(cfg.acc||'26').split(/\s+/)[0])||26))/360;
-    const rim=new THREE.DirectionalLight(new THREE.Color().setHSL(accHue,.9,.55),1.3);rim.position.set(-7,4,-9);scene.add(rim);
-    const warm=new THREE.PointLight(new THREE.Color().setHSL(accHue,.9,.55),60,60);warm.position.set(-6,-3,8);scene.add(warm);
-    const cam=new THREE.PerspectiveCamera(34,1,.1,100);cam.position.set(0,0,27);
-
-    const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
-    renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
-    renderer.setSize(size,size);
-    renderer.domElement.style.cssText='width:100%;height:100%;display:block;opacity:.78;filter:drop-shadow(0 0 22px hsl('+cfg.acc+' / .18));';
-    if(window.ResizeObserver)new ResizeObserver(function(){
-      var s2=Math.round(host.getBoundingClientRect().width);
-      if(s2>0)renderer.setSize(s2,s2,false);
-    }).observe(host);
-    // render the first frame before the canvas is ever visible, then fade in
-    renderer.render(scene,cam);
-    const attach=()=>{host.innerHTML='';host.style.animation='none';host.appendChild(renderer.domElement);
-      requestAnimationFrame(()=>requestAnimationFrame(()=>host.classList.add('mm-on')));};
-    if(host.classList.contains('mm-on')){   // fallback already faded in - cross it out first
-      host.classList.remove('mm-on');setTimeout(attach,650);
-    }else{attach();}
-
-    const t0=performance.now();
-    (function spin(){
-      const t=(performance.now()-t0)/1000;
-      group.rotation.y=t*0.24;                       // full 360 every ~26s - pure yaw
-      group.rotation.x=0.06;                          // fixed tilt, no wobble
-
-      renderer.render(scene,cam);
-      requestAnimationFrame(spin);
-    })();
-  }
-}catch(e){/* fallback stays */}
 </script>
 </body>
 </html>
