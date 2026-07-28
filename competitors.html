@@ -40,8 +40,20 @@ function toggleTheme(){var h=document.documentElement;if(h.getAttribute("data-th
   --text:hsl(0 0% 10%);--text-mid:hsl(0 0% 28%);--text-muted:hsl(0 0% 45%);--text-faint:hsl(0 0% 62%);
   {{THEME_ACCENT_LIGHT}}
   --purple:hsl(265 55% 58%);--purple-dark:hsl(265 55% 48%);--purple-tint:hsl(265 55% 58% / .1);
-  --red:hsl(0 72% 51%);--red-tint:hsl(0 72% 51% / .15);--teal:hsl(215 60% 52%);--teal-tint:hsl(215 60% 52% / .12);
+  /* --teal darkened from 52% to 42%: it colours the Strengths heading, and at 52% it
+     scored 4.41:1 on the light surface — just under WCAG AA. --teal-tint keeps the
+     original lightness since it is only ever a fill. */
+  --red:hsl(0 72% 51%);--red-tint:hsl(0 72% 51% / .15);--teal:hsl(215 62% 42%);--teal-tint:hsl(215 60% 52% / .12);
 }
+/* Light-theme text contrast. The raw accent (--green) is a mid-tone that only reaches
+   2.35-5.43:1 on the light surface depending on which of the 12 presets a build uses, so
+   accent-coloured TEXT switches to --green-deep in light mode — that clears AA on every
+   preset (6.60-10.59:1). Fills, borders and dots keep the raw accent, where the contrast
+   requirement does not apply. */
+:root[data-theme="light"] .eyebrow,
+:root[data-theme="light"] .crumb a:hover,
+:root[data-theme="light"] .cmp-more summary:hover{color:var(--green-deep, var(--green));}
+:root[data-theme="light"] .map-node-label-founder{fill:var(--green-deep, var(--green));}
 *{margin:0;padding:0;box-sizing:border-box;}
 html, body{font-family:var(--font-sans);}
 body{background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
