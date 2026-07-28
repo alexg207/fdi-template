@@ -62,12 +62,15 @@ a{color:inherit;}
 .theme-toggle .icon-moon{display:none;}
 :root[data-theme="light"] .theme-toggle .icon-sun{display:none;}
 :root[data-theme="light"] .theme-toggle .icon-moon{display:inline-block;}
-.main{max-width:1120px;margin:0 auto;padding:32px 24px 80px;}
+/* Narrower than the dashboard on purpose: this page is read, not scanned in a grid. */
+.main{max-width:940px;margin:0 auto;padding:32px 24px 80px;}
 .page-head{margin-bottom:8px;}
 .eyebrow{font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin-bottom:8px;}
 .page-title{font-family:var(--font-display);font-size:26px;font-weight:700;letter-spacing:-.02em;}
 .page-sub{font-size:14.5px;color:var(--text-muted);line-height:1.55;max-width:70ch;margin-top:8px;}
-.section-label{font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin:36px 0 14px;}
+/* Sticky under the 56px topbar so you always know which section you are in while
+   scrolling a long field of competitors. */
+.section-label{font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin:36px 0 14px;position:sticky;top:56px;z-index:100;background:var(--bg);padding:10px 0;}
 /* market map */
 .map-wrap{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:18px;}
 .map-svg{width:100%;height:auto;display:block;}
@@ -78,28 +81,44 @@ a{color:inherit;}
 .map-dot-founder{fill:var(--green);}
 .map-node-label{fill:var(--text-mid);font-family:var(--font-sans);font-size:11px;}
 .map-node-label-founder{fill:var(--green);font-weight:600;}
-/* teardown cards */
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;}
-.cmp-card{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:20px;display:flex;flex-direction:column;gap:12px;}
-.cmp-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;}
-.cmp-name{font-family:var(--font-display);font-size:18px;font-weight:700;letter-spacing:-.01em;}
+/* teardown cards — ONE per row. Three narrow columns forced the strengths/weaknesses
+   lists into ~160px ribbons; full-width rows give each bullet a readable measure. */
+.cards{display:flex;flex-direction:column;gap:14px;}
+.cmp-card{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:22px 24px;display:flex;flex-direction:column;gap:14px;}
+.cmp-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px 22px;flex-wrap:wrap;}
+.cmp-head-id{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;min-width:0;}
+.cmp-name{font-family:var(--font-display);font-size:19px;font-weight:700;letter-spacing:-.015em;}
 .cmp-cat{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em;}
-.cmp-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--text-muted);}
-.cmp-meta b{color:var(--text-mid);font-weight:600;}
-.cmp-one{font-size:14px;color:var(--text-mid);line-height:1.5;}
-.cmp-pos{font-size:13px;color:var(--text-muted);line-height:1.55;}
-.cmp-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.cmp-col h4{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
-.cmp-col.str h4{color:var(--q-high, var(--teal));}
-.cmp-col.weak h4{color:var(--red);}
-.cmp-col ul{list-style:none;display:flex;flex-direction:column;gap:5px;}
-.cmp-col li{font-size:12.5px;color:var(--text-muted);line-height:1.45;padding-left:12px;position:relative;}
+.cmp-meta{overflow-wrap:anywhere;display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--text-muted);}
+.cmp-meta b{color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;margin-right:3px;}
+/* the claim line: what this competitor actually is, in one sentence */
+.cmp-one{font-size:15px;color:var(--text);font-weight:500;line-height:1.5;max-width:88ch;}
+.cmp-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px 30px;}
+.cmp-col h3{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;}
+.cmp-col.str h3{color:var(--q-high, var(--teal));}
+.cmp-col.weak h3{color:var(--red);}
+.cmp-col ul{list-style:none;display:flex;flex-direction:column;gap:7px;}
+.cmp-col li{font-size:13px;color:var(--text-mid);line-height:1.5;padding-left:13px;position:relative;}
 .cmp-col li::before{content:"";position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:var(--border-mid);}
-.cmp-win{border-top:1px solid var(--border-soft);padding-top:12px;font-size:13px;color:var(--text-mid);line-height:1.55;}
-.cmp-win b{color:var(--green);font-weight:600;}
-.cmp-customers{font-size:12px;color:var(--text-muted);}
-.cmp-sources{display:flex;flex-wrap:wrap;gap:8px;border-top:1px solid var(--border-soft);padding-top:10px;}
-.cmp-source{font-size:11.5px;color:var(--purple-dark);text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:3px 9px;}
+.cmp-col.str li::before{background:var(--q-high, var(--teal));}
+.cmp-col.weak li::before{background:var(--red);}
+/* our angle — the one thing a reader should leave with, so it gets the accent */
+.cmp-win{display:flex;flex-direction:column;gap:3px;background:var(--green-tint2, var(--green-tint));border-left:3px solid var(--green);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;color:var(--text-mid);line-height:1.55;}
+.cmp-win b{color:var(--green-deep, var(--green));font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.07em;}
+.cmp-foot{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--border-soft);padding-top:12px;}
+.cmp-customers{overflow-wrap:anywhere;font-size:12.5px;color:var(--text-muted);line-height:1.5;}
+.cmp-customers b{color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;margin-right:4px;}
+/* long-form prose is demoted: available, but never in the way of the scan */
+/* --text-muted, not --text-faint: this is an interactive control, and faint fails
+   WCAG AA against the light theme's white surface (2.7:1). */
+.cmp-more summary{font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:6px;}
+.cmp-more summary::-webkit-details-marker{display:none;}
+.cmp-more summary::after{content:"+";font-size:13px;line-height:1;color:var(--text-muted);}
+.cmp-more[open] summary::after{content:"\2212";}
+.cmp-more summary:hover{color:var(--green);}
+.cmp-pos{font-size:13px;color:var(--text-muted);line-height:1.6;margin-top:8px;max-width:88ch;}
+.cmp-sources{display:flex;flex-wrap:wrap;gap:8px;}
+.cmp-source{overflow-wrap:anywhere;font-size:11.5px;color:var(--purple-dark);text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:3px 9px;}
 .cmp-source:hover{border-color:var(--purple);}
 .summary-note{margin-top:28px;font-size:13px;color:var(--text-muted);line-height:1.6;max-width:78ch;border-left:2px solid var(--border-mid);padding-left:14px;}
 /* empty state (mirrors the dashboard's Network empty state) */
@@ -108,7 +127,8 @@ a{color:inherit;}
 .cmp-empty .es-icon svg{width:40px;height:40px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
 .cmp-empty .es-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px;}
 .cmp-empty .es-body{font-size:12.5px;color:var(--text-muted);line-height:1.55;max-width:440px;margin:0 auto;}
-@media (max-width:560px){.cmp-cols{grid-template-columns:1fr;}}
+/* Stack the bullet columns before they get narrow enough to ribbon again. */
+@media (max-width:700px){.cmp-cols{grid-template-columns:1fr;}.cmp-card{padding:18px 16px;}.main{padding:24px 16px 60px;}}
 </style>
 </head>
 <body>
@@ -168,28 +188,72 @@ a{color:inherit;}
   // ---- market map (inline SVG, 0..100 coordinate space) --------------------
   function marketMap(mm){
     if (!mm || !mm.axis_x || !mm.axis_y || !Array.isArray(mm.placements) || !mm.placements.length) return "";
-    var W = 720, H = 460, pad = 54;
-    var sx = function(x){ return pad + (Math.max(0, Math.min(100, x)) / 100) * (W - 2 * pad); };
-    var sy = function(y){ return (H - pad) - (Math.max(0, Math.min(100, y)) / 100) * (H - 2 * pad); };
+    // Asymmetric padding. The left gutter holds TWO stacked vertical text columns
+    // (axis title + the low/high end labels); every label there is rotated, so its
+    // length consumes the plot's HEIGHT and can never clip off the left edge. The
+    // previous version drew them horizontally with text-anchor="end" at x=pad-8, so
+    // any label wider than ~46px ran off the viewBox — real axis names like
+    // "Autonomous PO generation" were cut to "eneration".
+    var W = 720, H = 460, padL = 58, padR = 30, padT = 30, padB = 62;
+    var sx = function(x){ return padL + (Math.max(0, Math.min(100, x)) / 100) * (W - padL - padR); };
+    var sy = function(y){ return (H - padB) - (Math.max(0, Math.min(100, y)) / 100) * (H - padT - padB); };
     var parts = [];
     parts.push('<svg class="map-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Competitive market map">');
-    parts.push('<line class="map-axis-line" x1="' + pad + '" y1="' + (H - pad) + '" x2="' + (W - pad) + '" y2="' + (H - pad) + '"/>');
-    parts.push('<line class="map-axis-line" x1="' + pad + '" y1="' + pad + '" x2="' + pad + '" y2="' + (H - pad) + '"/>');
-    // x axis labels
-    parts.push('<text class="map-axis-end" x="' + pad + '" y="' + (H - pad + 20) + '" text-anchor="start">' + esc(mm.axis_x.low) + '</text>');
-    parts.push('<text class="map-axis-end" x="' + (W - pad) + '" y="' + (H - pad + 20) + '" text-anchor="end">' + esc(mm.axis_x.high) + '</text>');
-    parts.push('<text class="map-axis-label" x="' + (W / 2) + '" y="' + (H - 12) + '" text-anchor="middle">' + esc(mm.axis_x.label) + '</text>');
-    // y axis labels
-    parts.push('<text class="map-axis-end" x="' + (pad - 8) + '" y="' + (H - pad) + '" text-anchor="end">' + esc(mm.axis_y.low) + '</text>');
-    parts.push('<text class="map-axis-end" x="' + (pad - 8) + '" y="' + (pad + 6) + '" text-anchor="end">' + esc(mm.axis_y.high) + '</text>');
-    parts.push('<text class="map-axis-label" transform="translate(16 ' + (H / 2) + ') rotate(-90)" text-anchor="middle">' + esc(mm.axis_y.label) + '</text>');
-    mm.placements.forEach(function(p){
-      var cx = sx(p.x), cy = sy(p.y), founder = p.is_founder === true;
-      parts.push('<circle class="' + (founder ? "map-dot-founder" : "map-dot") + '" data-founder="' + (founder ? "1" : "0") + '" cx="' + cx + '" cy="' + cy + '" r="' + (founder ? 7 : 5) + '"/>');
-      parts.push('<text class="' + (founder ? "map-node-label map-node-label-founder" : "map-node-label") + '" x="' + (cx + 9) + '" y="' + (cy + 4) + '">' + esc(p.name) + '</text>');
+    parts.push('<line class="map-axis-line" x1="' + padL + '" y1="' + (H - padB) + '" x2="' + (W - padR) + '" y2="' + (H - padB) + '"/>');
+    parts.push('<line class="map-axis-line" x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (H - padB) + '"/>');
+    var plotW = (W - padR) - padL, plotH = (H - padB) - padT, midX = padL + plotW / 2;
+    // x axis: end labels sit under the axis, anchored inward from each end, each
+    // capped at half the axis so the two can never collide in the middle.
+    parts.push(svgText("map-axis-end", 'x="' + padL + '" y="' + (H - padB + 20) + '" text-anchor="start"', fitLabel(mm.axis_x.low, plotW / 2 - 8, 10)));
+    parts.push(svgText("map-axis-end", 'x="' + (W - padR) + '" y="' + (H - padB + 20) + '" text-anchor="end"', fitLabel(mm.axis_x.high, plotW / 2 - 8, 10)));
+    parts.push(svgText("map-axis-label", 'x="' + midX + '" y="' + (H - 14) + '" text-anchor="middle"', fitLabel(mm.axis_x.label, W - 16, 11)));
+    // y axis: title in the outer gutter column, end labels in the inner one. Both
+    // rotated, anchored so they grow along the axis rather than toward the edge, and
+    // each end label capped at half the plot height so they cannot meet.
+    parts.push(svgText("map-axis-label", 'transform="translate(17 ' + (padT + plotH / 2) + ') rotate(-90)" text-anchor="middle"', fitLabel(mm.axis_y.label, plotH, 11)));
+    parts.push(svgText("map-axis-end", 'transform="translate(40 ' + (H - padB - 4) + ') rotate(-90)" text-anchor="start"', fitLabel(mm.axis_y.low, plotH / 2 - 8, 10)));
+    parts.push(svgText("map-axis-end", 'transform="translate(40 ' + (padT + 4) + ') rotate(-90)" text-anchor="end"', fitLabel(mm.axis_y.high, plotH / 2 - 8, 10)));
+    // Nudge labels apart when dots land on top of each other, so a tight cluster stays
+    // readable instead of overprinting. Bounded passes, largest-y first for stability.
+    var placed = [];
+    var nodes = mm.placements.map(function(p){ return { p: p, cx: sx(p.x), cy: sy(p.y) }; })
+      .sort(function(a, b){ return a.cy - b.cy; });
+    nodes.forEach(function(n){
+      var flip = n.cx > midX, ly = n.cy + 4;
+      for (var i = 0; i < 6; i++){
+        var hit = placed.some(function(q){ return q.flip === flip && Math.abs(q.ly - ly) < 12 && Math.abs(q.cx - n.cx) < 130; });
+        if (!hit) break;
+        ly += 12;
+      }
+      ly = Math.max(padT + 8, Math.min(H - padB - 4, ly));
+      placed.push({ ly: ly, cx: n.cx, flip: flip });
+      var founder = n.p.is_founder === true;
+      // Cap the name at the room between the dot and the edge it grows toward, and at
+      // ~30 characters regardless: a label long enough to fit still reaches across the
+      // plot and prints over its neighbours. The full name stays in the <title>.
+      var room = Math.min(flip ? (n.cx - 9 - 4) : ((W - padR) - (n.cx + 9) + padR - 4), 30 * 11 * 0.55);
+      parts.push('<circle class="' + (founder ? "map-dot-founder" : "map-dot") + '" data-founder="' + (founder ? "1" : "0") + '" cx="' + n.cx + '" cy="' + n.cy + '" r="' + (founder ? 7 : 5) + '"/>');
+      parts.push(svgText((founder ? "map-node-label map-node-label-founder" : "map-node-label"),
+        'x="' + (flip ? n.cx - 9 : n.cx + 9) + '" y="' + ly + '" text-anchor="' + (flip ? "end" : "start") + '"',
+        fitLabel(n.p.name, room, 11)));
     });
     parts.push('</svg>');
     return '<div class="map-wrap">' + parts.join("") + '</div>';
+  }
+
+  // Bound a label to the space it actually has. Rotating the y-gutter labels stopped
+  // them clipping sideways, but a long enough string still runs past the plot; same
+  // for a competitor name near the map's midpoint, where flipping side buys nothing.
+  // Inter averages ~0.55em, so budget characters from the available pixels and keep the
+  // full string in a <title> so nothing is lost.
+  function fitLabel(text, availablePx, fontPx){
+    var s = String(text == null ? "" : text);
+    var max = Math.max(3, Math.floor(availablePx / (fontPx * 0.55)));
+    return s.length <= max ? { text: s, full: null } : { text: s.slice(0, max - 1).trimEnd() + "…", full: s };
+  }
+  function svgText(cls, attrs, fitted){
+    return '<text class="' + cls + '" ' + attrs + '>' +
+      (fitted.full ? '<title>' + esc(fitted.full) + '</title>' : "") + esc(fitted.text) + '</text>';
   }
 
   function list(items){
@@ -197,28 +261,39 @@ a{color:inherit;}
     return items.map(function(i){ return '<li>' + esc(i) + '</li>'; }).join("");
   }
 
+  // Bullets-first, one competitor per full-width row. The old version stacked two
+  // prose paragraphs above a 2-column bullet grid inside a ~340px card, which turned
+  // every list into a 3-words-per-line ribbon. Order now runs claim -> evidence ->
+  // our angle, and the long `positioning` prose is demoted behind a disclosure so the
+  // scannable parts are what you meet first.
   function card(c){
     var meta = [];
     if (c.funding_stage) meta.push('<span><b>Stage</b> ' + esc(c.funding_stage) + '</span>');
     if (c.pricing_model) meta.push('<span><b>Pricing</b> ' + esc(c.pricing_model) + '</span>');
     if (c.domain) meta.push('<span><b>Site</b> ' + esc(c.domain) + '</span>');
     var customers = Array.isArray(c.notable_customers) && c.notable_customers.length
-      ? '<div class="cmp-customers"><b>Customers:</b> ' + c.notable_customers.map(esc).join(", ") + '</div>' : "";
+      ? '<div class="cmp-customers"><b>Customers</b> ' + c.notable_customers.map(esc).join(", ") + '</div>' : "";
     var sources = (Array.isArray(c.sources) ? c.sources : []).filter(function(s){ return s && isHttps(s.url); })
       .map(function(s){ return '<a class="cmp-source" href="' + esc(s.url) + '" target="_blank" rel="noreferrer noopener">' + esc(s.title || s.url) + '</a>'; }).join("");
-    return '<div class="cmp-card">' +
-      '<div class="cmp-head"><span class="cmp-name">' + esc(c.name) + '</span><span class="cmp-cat">' + esc(c.category) + '</span></div>' +
-      (meta.length ? '<div class="cmp-meta">' + meta.join("") + '</div>' : "") +
-      (c.one_liner ? '<div class="cmp-one">' + esc(c.one_liner) + '</div>' : "") +
-      (c.positioning ? '<div class="cmp-pos">' + esc(c.positioning) + '</div>' : "") +
-      '<div class="cmp-cols">' +
-        '<div class="cmp-col str"><h4>Strengths</h4><ul>' + list(c.strengths) + '</ul></div>' +
-        '<div class="cmp-col weak"><h4>Weaknesses</h4><ul>' + list(c.weaknesses) + '</ul></div>' +
+    return '<article class="cmp-card">' +
+      '<div class="cmp-head">' +
+        '<div class="cmp-head-id"><h2 class="cmp-name">' + esc(c.name) + '</h2>' +
+          (c.category ? '<span class="cmp-cat">' + esc(c.category) + '</span>' : "") + '</div>' +
+        (meta.length ? '<div class="cmp-meta">' + meta.join("") + '</div>' : "") +
       '</div>' +
-      customers +
-      (c.why_founder_wins ? '<div class="cmp-win"><b>Where we win:</b> ' + esc(c.why_founder_wins) + '</div>' : "") +
-      (sources ? '<div class="cmp-sources">' + sources + '</div>' : "") +
-    '</div>';
+      (c.one_liner ? '<p class="cmp-one">' + esc(c.one_liner) + '</p>' : "") +
+      '<div class="cmp-cols">' +
+        '<div class="cmp-col str"><h3>Strengths</h3><ul>' + list(c.strengths) + '</ul></div>' +
+        '<div class="cmp-col weak"><h3>Weaknesses</h3><ul>' + list(c.weaknesses) + '</ul></div>' +
+      '</div>' +
+      (c.why_founder_wins ? '<div class="cmp-win"><b>Where we win</b><span>' + esc(c.why_founder_wins) + '</span></div>' : "") +
+      (customers || c.positioning || sources
+        ? '<div class="cmp-foot">' + customers +
+            (c.positioning ? '<details class="cmp-more"><summary>How they position themselves</summary><p class="cmp-pos">' + esc(c.positioning) + '</p></details>' : "") +
+            (sources ? '<div class="cmp-sources">' + sources + '</div>' : "") +
+          '</div>'
+        : "") +
+    '</article>';
   }
 
   var html = "";
