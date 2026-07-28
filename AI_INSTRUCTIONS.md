@@ -47,7 +47,8 @@ The dashboard (`index.html`) ships these defaults. They already live in the temp
 - **Ember color system.** Cool ink canvas + single accent ramp. Per-founder accent overrides go through `BUILD_DATA.founder.themeAccent` (cinematic) and the token block in the dashboard; never fork the palette ad hoc.
 - **Network + Contacts tabs (data-driven, engine-owned).** Two extra tabs beyond the 3 segment tabs + All, driven solely by `window.NETWORK_DATA` (`network-data.js`, engine-generated post-build). Never edit their markup/JS per founder; never remove `<script src="network-data.js">`. They show designed empty states when the data file is absent.
 - **Balanced headers.** `text-wrap:balance` on `.context-h1`/`.context-sub` (no orphaned single-word last line).
-- **Uniform card heights.** `.card-grid` `align-items:stretch` + `grid-auto-rows:1fr`, `.card{height:100%}`.
+- **Uniform card heights, per row.** `.card-grid` `align-items:stretch` + `.card{height:100%}` — cards match the tallest card in their own row. Never add `grid-auto-rows:1fr`: it makes every row as tall as the tallest row on the page, so one expanded card inflates every other card into a giant empty box.
+- **Expanded card = full-width row.** `.card-cell.is-expanded` gets `grid-column:1/-1` and hides its own preview `.card`, so the expansion replaces the card in place rather than cramming into one column. `renderQueue` must keep emitting the `is-expanded` class on the cell.
 - **Tab bar.** 17px/600 near-white; count pills are hidden by CSS (`display:none`) — do not "fix" them back on.
 - **Partner mark.** Inline Primary icon SVG + "Primary" text sized to the product name — no `<img src="assets/primary-lockup.svg">` in the dashboard topbar.
 - **Deploy gate.** `middleware.js` Basic-Auth + `{"framework":null}` `vercel.json` ship with the build; the engine deploys only the dashboard files (allowlist) and sets `FDI_DASHBOARD_PASSWORD`.

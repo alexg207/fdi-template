@@ -150,16 +150,21 @@ a{color:inherit;}
 
 /* === PAGE TABS (below header) === */
 .page-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:24px;gap:0;}
-.page-tab{padding:13px 22px;font-size:17px;font-weight:600;cursor:pointer;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--text);font-family:inherit;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;transition:color 120ms;}
+.page-tab{padding:13px 22px;font-size:17px;font-weight:600;cursor:pointer;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--text);font-family:inherit;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;transition:color 120ms;text-decoration:none;}
 .page-tab:hover{color:var(--text);}
 .page-tab.active{color:var(--purple-dark);border-bottom-color:var(--purple);font-weight:700;}
 .page-tab .tab-count{display:none;}
 .page-tab.active .tab-count{background:var(--purple-tint);color:var(--purple-dark);}
 
 /* === CARD GRID === */
-.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;align-items:stretch;grid-auto-rows:1fr;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;align-items:stretch;}
 .card-grid .card{height:100%;}
 .card-cell{display:flex;flex-direction:column;gap:8px;min-width:0;}
+/* Expanded cell takes its own full-width row and the expansion replaces the
+   preview card in place (the expansion head restates everything the card shows).
+   Without the row span, one expansion inflates every sibling card in its row. */
+.card-cell.is-expanded{grid-column:1/-1;display:block;}
+.card-cell.is-expanded .card{display:none;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0;cursor:pointer;transition:all 150ms cubic-bezier(.2,.8,.2,1);position:relative;display:flex;flex-direction:column;overflow:hidden;}
 .card:hover{border-color:var(--border-mid);transform:translateY(-1px);box-shadow:var(--shadow-md);}
 .card.selected{border-color:var(--green);box-shadow:var(--green-glow);}
@@ -1194,7 +1199,7 @@ function renderQueue(){
     var isExpanded = isCardExpanded(c);
     var starred = state.starred[companyKey(c)];
     var tagsHtml = (c.tags||[]).slice(0,3).map(function(t){return '<span class="tag '+t.c+'" data-tip="'+(t.tip||t.t).replace(/"/g,'&quot;')+'">'+t.t+'</span>';}).join('');
-    var card = '<div class="card-cell"><div class="card'+(isSelected?' selected':'')+(isExpanded?' expanded':'')+'" data-key="'+c.name+'" onclick="onCardClick(event, \''+c.name+'\')">' +
+    var card = '<div class="card-cell'+(isExpanded?' is-expanded':'')+'"><div class="card'+(isSelected?' selected':'')+(isExpanded?' expanded':'')+'" data-key="'+c.name+'" onclick="onCardClick(event, \''+c.name+'\')">' +
       '<div class="card-tier-bar '+c.tier+'"></div>' +
       '<div class="card-body">' +
         '<div class="card-head">' +
