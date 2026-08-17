@@ -62,6 +62,22 @@ Every build ships: **index.html (the scroll walkthrough, two-beat founder opener
 
 Walkthrough finale CTA + skip link → `./dashboard.html`. `landing.html` only on explicit request.
 
+### The in-site editor tag (leave it alone)
+
+Both pages end with a `<script src="…/fdi-edit/widget.js">` tag. It is what lets
+a Primary teammate polish a shipped build from the page itself — no terminal, no
+git — so **never strip it** when customising a page.
+
+- On `index.html` (the dashboard) it carries `data-fdi-slug="{{PRODUCT_SLUG}}"`,
+  which the normal token substitution fills like every other placeholder.
+- On `build.html` it carries no slug, because that file ships verbatim; the
+  widget derives the slug from the project hostname instead.
+
+The founder never sees it: the launcher stays hidden unless the browser has
+connected as an editor before, or the URL carries `?edit=1`. The editor can only
+change `build-data.js`, `data.js`, `dashboard.html` and `index.html`, and every
+publish runs the full gate suite via `fdi-redeploy.yml`.
+
 The landing's CTAs link to `./dashboard.html`, so the rename makes the links resolve. The landing introduces its own placeholders (in addition to the dashboard's):
 
 - `{{POSITIONING_EYEBROW}}` — the one-line positioning eyebrow above the headline

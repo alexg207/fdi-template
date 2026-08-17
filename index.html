@@ -3302,5 +3302,11 @@ function applyHashRoute(){
 applyHashRoute();
 window.addEventListener('hashchange', applyHashRoute);
 </script>
+
+<!-- In-site editor: lets a Primary teammate polish this build from the page itself.
+     Hidden from the founder — the launcher only appears for a browser that has
+     connected before, or a deliberate ?edit=1 visit. See primary-gtm-team
+     public/fdi-edit/widget.js. -->
+<script src="https://primary-gtm-team.vercel.app/fdi-edit/widget.js" data-fdi-slug="{{PRODUCT_SLUG}}" defer></script>
 </body>
 </html>
