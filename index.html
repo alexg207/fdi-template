@@ -163,7 +163,10 @@ a{color:inherit;}
 /* Expanded cell takes its own full-width row and the expansion replaces the
    preview card in place (the expansion head restates everything the card shows).
    Without the row span, one expansion inflates every sibling card in its row. */
-.card-cell.is-expanded{grid-column:1/-1;display:block;}
+/* Preview expands IN PLACE: the card keeps its own grid column - vertical and
+   skinny - so several previews compare side by side (the Frost behaviour;
+   grid-column:1/-1 blew each preview up to the full row - Forgepoint, 8/17). */
+.card-cell.is-expanded{display:block;}
 .card-cell.is-expanded .card{display:none;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0;cursor:pointer;transition:all 150ms cubic-bezier(.2,.8,.2,1);position:relative;display:flex;flex-direction:column;overflow:hidden;}
 .card:hover{border-color:var(--border-mid);transform:translateY(-1px);box-shadow:var(--shadow-md);}

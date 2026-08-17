@@ -876,7 +876,7 @@ a{color:inherit;text-decoration:none;}
     {n:D.scan.universe,label:'scanned'},
     {n:D.axes.length,label:'custom signals'},
     {n:D.scan.curated,label:'accounts curated'},
-    {n:D.companies.filter(function(c){return c.contact;}).length,label:'named buyers'}];
+    {n:D.companies.length,label:'accounts curated'}];
   document.getElementById('heroStats').innerHTML=heroStats.map(function(s){
     return '<div class="hstat"><div class="n" data-count="'+s.n+'">0</div><div class="l">'+s.label+'</div></div>';}).join('');
   document.getElementById('processLead').textContent=D.process.lead;
