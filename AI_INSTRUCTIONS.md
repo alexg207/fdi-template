@@ -92,6 +92,42 @@ The landing's CTAs link to `./dashboard.html`, so the rename makes the links res
   product there makes the company introduce itself as its own product.
 - plus the shared `{{PRODUCT_NAME}}`, `{{PRODUCT_LOGO_SVG}}`, `{{AXIS1_LABEL}}`, `{{AXIS2_LABEL}}` (the `Buying Trigger` and `Hiring` axis names are generic, not placeholders).
 
+## Scoring data rules (Forgepoint 8/17 — every one of these shipped broken)
+
+- **Axis values are numbers 0–5. Never categorical.** Builds RENAME the template's
+  axes (`competitive_distress`, `data_residency`, `signal_score`) but keep the field
+  names. Writing the ORIGINAL template's vocabulary (`'low'`, `'us'`) into a renamed
+  axis renders "low/5" bars and tooltips that answer the wrong question. When adding
+  accounts, read the axis-rename comment at the top of data.js first, then score on
+  THOSE meanings.
+- **Never hand-write `composite`.** `computeSignal()` prefers a stored composite over
+  the formula, so an invented one masks broken axes — the headline number looks sane
+  while `0.30 * 'low'` computes nothing. Omit it; the formula is the source of truth.
+  (`tier` in data.js is dead weight too — the dashboard overwrites it at load.)
+- **Never hand-write a "<Product> Fit: High/Med" level.** The dashboard derives the
+  level from the computed tier at load, so a hand-written level is at best redundant
+  and at worst a visible contradiction next to the tier chip.
+- **`{{HIRING_KEYWORD_REGEX}}` is a regex SOURCE STRING** — no slashes, no flags
+  (`i` is applied by the page). It sits inside quotes in index.html; substitute the
+  token only, never paste a `/…/i` literal. An unsubstituted token falls back to a
+  generic office-roles pattern instead of killing the page.
+
+## Network map lists (`network-data.js`, optional)
+
+When the map mixes kinds of companies (peers, advisors, incumbents), say so IN THE
+DATA — the dashboard renders it:
+
+- Top-level `groups`: `[{ key, title, blurb }]` — `title` names the list, `blurb` is
+  one sentence on what the list IS and what to do with it ("founders who solved your
+  problem in another trade", "people we have already spoken with about your market").
+- Per company: `group` (a groups key) and `why_here` — lead with what the company IS
+  and the action ("a very similar business to yours … an introduction here is worth
+  taking early"), never just a warmth score. Shown directly under the panel header on
+  click, and the list renders grouped under the titles.
+- Both optional; an artifact without them renders exactly as before. When Primary's
+  relationship somewhere is thin, say that plainly in the blurb rather than dressing
+  it up as warm paths.
+
 ## When this file gets out of date
 
 If SKILL.md has a rule that contradicts this file, SKILL.md wins. This file is best-effort; SKILL.md is the spec.

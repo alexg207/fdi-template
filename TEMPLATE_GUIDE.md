@@ -713,7 +713,12 @@ Shared with the dashboard on the landing: `{{PRODUCT_NAME}}`, `{{PRODUCT_LOGO_SV
 ### Two silent-render gotchas (both render a blank/stuck page with no error)
 
 1. **Apostrophe in inserted text breaks single-quoted JS strings.** The renderer builds HTML by string concatenation inside single-quoted JS. An apostrophe in a value you splice in (e.g. a company name or a description with `'`) terminates the string and the page hangs on "Loading…". After any edit to the inline `<script>`, run `node --check` on the extracted script before shipping.
-2. **`computeJobSignal()` `/careers` URL filter.** The first regex in `computeJobSignal()` strips generic `/careers` landing-page URLs so they don't count as real open reqs; keep it verbatim. The SECOND regex is the vertical keyword test, replaced by `{{HIRING_KEYWORD_REGEX}}` — set it per vertical or the Hiring axis silently scores everything as 1.
+2. **Unsubstituted `{{tokens}}` in executable JS position.** Fixed for
+   `{{HIRING_KEYWORD_REGEX}}` on 8/17 (it is now a quoted source string with a
+   fallback), but the class remains: a token outside a string literal or comment is
+   a SyntaxError that kills the WHOLE inline script — the dashboard renders blank
+   with only a console error. Any new per-build token in JS must sit inside quotes.
+3. **`computeJobSignal()` `/careers` URL filter.** The first regex in `computeJobSignal()` strips generic `/careers` landing-page URLs so they don't count as real open reqs; keep it verbatim. The SECOND regex is the vertical keyword test, replaced by `{{HIRING_KEYWORD_REGEX}}` — set it per vertical or the Hiring axis silently scores everything as 1.
 
 ## 16. The scroll cinematic (`build.html` + `build-data.js`) — STANDARD
 

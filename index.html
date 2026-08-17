@@ -416,6 +416,17 @@ a{color:inherit;}
 .tip-pop strong{color:var(--bg);font-weight:600;}
 /* Top-10 warm contacts: glowing CTA + overlay list */
 @property --t10a{syntax:'<angle>';initial-value:0deg;inherits:false;}
+/* Why a company is on this map - rendered from network-data.js `why_here`/`groups`.
+   Sits directly under the panel header, above the graph, so the explanation is the
+   first thing read after the name. */
+.nm-why{border:1px solid var(--border);border-left:2px solid var(--purple);border-radius:8px;
+  background:var(--surface);padding:12px 14px;margin:0 0 14px;}
+.nm-why-tag{font-size:10px;font-weight:700;letter-spacing:.075em;text-transform:uppercase;color:var(--purple);margin-bottom:6px;}
+.nm-why-body{margin:0;font-size:13px;line-height:1.6;color:var(--text);text-wrap:pretty;}
+/* List group header: the name of the list plus what the list IS. */
+.nm-grp{display:block;}
+.nm-grp-sub{display:block;margin-top:4px;font-size:10.5px;line-height:1.5;font-weight:400;
+  letter-spacing:0;text-transform:none;color:var(--text-muted);text-wrap:pretty;}
 .nm-top10-btn{position:relative;display:inline-flex;align-items:center;gap:7px;padding:7px 15px;border-radius:999px;border:none;
   background:linear-gradient(135deg, var(--purple-tint), var(--purple-tint2));color:var(--text);font-size:12px;font-weight:600;cursor:pointer;
   box-shadow:0 0 10px var(--purple-ring), 0 0 26px var(--purple-ring);transition:box-shadow .2s, transform .1s;animation:t10pulse 2.6s ease-in-out infinite;}
@@ -1082,9 +1093,18 @@ function computeJobSignal(c){
     var url=(j.url||'').toLowerCase();
     return !/\/careers\/?$|\/careers\.html$|\/careers-home\/?$|^https?:\/\/jobs\.[a-z]+\.com\/?$|\/careers\/jobs\/all\/?$|\/company\/careers\/?$|\/careers\/$|careers\/apply-now/.test(url);
   });
+  // The per-build hiring-keyword regex arrives as a SOURCE STRING (no slashes, 'i'
+  // applied here), never as a bare regex literal: an unsubstituted {{token}} in
+  // executable position is a SyntaxError that kills this whole script - the entire
+  // dashboard rendered blank on the raw template until 8/17 because of exactly that.
+  // An intact token or a bad pattern falls back to the generic office-roles regex,
+  // so the page always renders and the fallback is visibly generic rather than dead.
+  var HIRING_SRC = '{{HIRING_KEYWORD_REGEX}}';
+  var HIRING_RX = /estimat(or|ing)|cost estimator|inside sales|sales engineer|applications? engineer|quot(e|es|ing)|\brfq\b|proposal (engineer|coordinator|specialist)|office (manager|admin)/i;
+  if (HIRING_SRC.indexOf('{{') !== 0) { try { HIRING_RX = new RegExp(HIRING_SRC, 'i'); } catch(e) { /* keep the fallback */ } }
   var hasInf = specific.some(function(j){
     var t=((j.title||'')+' '+(j.techs||'')).toLowerCase();
-    return {{HIRING_KEYWORD_REGEX}}.test(t);
+    return HIRING_RX.test(t);
   });
   if (specific.length>=5 && hasInf) return 5;
   if (specific.length>=4) return 4;
@@ -1113,6 +1133,17 @@ SEGMENTS.forEach(function(seg){
     }
     co._signal = computeSignal(co);
     co.tier = co._signal>=75?'high':'med';  // two-tone: green (best) / amber (below), no red
+    // A "<Product> Fit: High/Med" tag is hand-written in data.js while the tier above
+    // is computed from the axes, so the two can drift (Forgepoint 8/17: five accounts
+    // shipped a "Fit: High" tag beside a computed med tier - a contradiction on one
+    // card). The tag makes the same claim as the tier, so derive its level here, at
+    // the single point tier is computed; all render sites read co.tags. Label only -
+    // the tag keeps its own class.
+    (co.tags||[]).forEach(function(t){
+      if (t && /\bFit:\s*(High|Med|Low)\b/i.test(t.t||'')) {
+        t.t = (t.t||'').replace(/\bFit:\s*(High|Med|Low)\b/i, 'Fit: ' + (co.tier === 'high' ? 'High' : 'Med'));
+      }
+    });
     co._idxStable = idx;
   });
 });
@@ -1690,6 +1721,26 @@ function getAllCompaniesFlat(){
   }
   function domainFor(c){ if(c.domain) return c.domain; var m=meta(c.company); return m?m.domain:''; }
   function categoryFor(c){ var m=meta(c.company); return m?(m.subtitle||m.category||''):''; }
+  // ---- why a company is on this map ----------------------------------------
+  // A network map can mix peers, experts and incumbents, so the reason has to
+  // travel WITH the company: clicking a peer should say in the first sentence what
+  // it is and what to do about it, not leave the founder to infer that from a
+  // warmth score. network-data.js MAY carry `groups` (list definitions: key, title,
+  // blurb) and per-company `group` + `why_here`. All optional - an artifact without
+  // them renders exactly as before.
+  function groupDefs(){ var d=nd(); return (d && Array.isArray(d.groups)) ? d.groups : []; }
+  function groupDef(key){ var g=groupDefs().filter(function(x){return x.key===key;}); return g.length?g[0]:null; }
+  function whyHereHtml(c){
+    var why = c && typeof c.why_here==='string' ? c.why_here.trim() : '';
+    var g = c ? groupDef(c.group) : null;
+    if(!why && !g) return '';
+    return '<div class="nm-why">' +
+      (g ? '<div class="nm-why-tag">'+esc(g.title)+'</div>' : '') +
+      (why ? '<p class="nm-why-body">'+esc(why)+'</p>' : '') +
+    '</div>';
+    // The group blurb is deliberately not repeated here: the tag names the list and
+    // the left rail defines it, both visible at once on desktop.
+  }
 
   // any resolved paths at all (interaction OR linkedin-only) — used to decide whether to draw a graph
   function hasPaths(c){ return c.status==='resolved' && Array.isArray(c.paths) && c.paths.length>0; }
@@ -2509,7 +2560,29 @@ function getAllCompaniesFlat(){
       document.getElementById('network-panel').innerHTML='<div class="nc-empty">No accounts to show</div>';
       return;
     }
-    list.innerHTML=peopleHtml+rows.map(function(c){
+    // Grouped when the artifact defines groups: each list gets its header and its
+    // one-line purpose, so the founder reads WHAT a list is before its rows. Falls
+    // back to one flat list when `groups` is absent.
+    var defs=groupDefs();
+    var ordered=rows, headerFor={};
+    if(defs.length){
+      var seen={}, out=[];
+      defs.forEach(function(g){
+        var mine=rows.filter(function(c){return c.group===g.key;});
+        if(!mine.length) return;
+        headerFor[mine[0].company]=g;
+        mine.forEach(function(c){ seen[c.company]=1; out.push(c); });
+      });
+      var rest=rows.filter(function(c){return !seen[c.company];});
+      if(rest.length){ headerFor[rest[0].company]={title:'Also on this map', blurb:''}; rest.forEach(function(c){out.push(c);}); }
+      ordered=out;
+    }
+    function groupHead(c){
+      var g=headerFor[c.company]; if(!g) return '';
+      return '<div class="nm-list-section nm-grp">'+esc(g.title)+
+        (g.blurb?'<span class="nm-grp-sub">'+esc(g.blurb)+'</span>':'')+'</div>';
+    }
+    list.innerHTML=peopleHtml+ordered.map(function(c){
       var hw=hasWarm(c);            // warm-path company: at least one scored interaction path
       var hp=hasPaths(c);           // has any resolved paths at all (may be LinkedIn-only)
       var err=isError(c);
@@ -2536,7 +2609,7 @@ function getAllCompaniesFlat(){
         info='Primary knows no one here yet';
         infoColor='var(--text-faint)';
       }
-      return '<div class="network-row'+(isActive?' active':'')+(hw?'':' nm-nopath')+(err?' nm-err':'')+'" data-nm-name="'+esc(c.company)+'">' +
+      return groupHead(c) + '<div class="network-row'+(isActive?' active':'')+(hw?'':' nm-nopath')+(err?' nm-err':'')+'" data-nm-name="'+esc(c.company)+'">' +
         '<div style="display:flex;align-items:center;gap:8px;">' +
           (dom?'<img src="'+esc(faviconUrl(dom))+'" style="width:22px;height:22px;border-radius:5px;border:1px solid var(--border);flex-shrink:0;" onerror="this.style.opacity=0">':'') +
           '<div style="flex:1;min-width:0;">' +
@@ -2599,7 +2672,7 @@ function getAllCompaniesFlat(){
     function wireOpen(){ var ob=panel.querySelector('[data-nm-open]'); if(ob) ob.addEventListener('click', function(){ openDetail(ob.dataset.nmOpen); }); }
 
     if(isError(c)){
-      panel.innerHTML = head + emptyStateHtml('Account unavailable',
+      panel.innerHTML = head + whyHereHtml(c) + emptyStateHtml('Account unavailable',
         'Affinity could not resolve <strong>'+esc(c.company)+'</strong> for this build (fetch error). Warm paths could not be computed — this is different from having no relationships. Re-run the build to try again.');
       wireOpen();
       return;
@@ -2608,12 +2681,12 @@ function getAllCompaniesFlat(){
       var msg = c.status==='no_relationships'
         ? 'The Primary network has <strong>no mapped relationships</strong> at or near '+esc(c.company)+' yet. There are no warm paths to surface — this account would need a cold approach or a new introduction.'
         : 'This account could not be resolved in Affinity, so no warm paths are available.';
-      panel.innerHTML = head + emptyStateHtml('No warm paths yet', msg);
+      panel.innerHTML = head + whyHereHtml(c) + emptyStateHtml('No warm paths yet', msg);
       wireOpen();
       return;
     }
 
-    panel.innerHTML = head + buildGraph(c) + rankedList(c);
+    panel.innerHTML = head + whyHereHtml(c) + buildGraph(c) + rankedList(c);
     wireOpen();
     wireViewToggle(panel);
     wireGraph();
