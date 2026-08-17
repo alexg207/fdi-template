@@ -656,7 +656,10 @@ These are technically configurable but the defaults are tuned. Don't touch unles
 
 ## 14. Things you should always change
 
-- The product name (`{{PRODUCT_NAME}}`).
+- The product name (`{{PRODUCT_NAME}}`). **Fill this with the COMPANY name.** The
+  token is badly named: it renders as the `<name> x Primary` mark, the dashboard and
+  landing `<title>`, and the walkthrough masthead - all company identity. Name the
+  product in prose instead.
 - The signal axis labels (almost always, see Section 3).
 - The opportunity section title (`{{OPPORTUNITY_SECTION_TITLE}}`).
 - The hiring keyword regex.

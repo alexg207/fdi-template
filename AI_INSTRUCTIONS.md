@@ -87,6 +87,9 @@ The landing's CTAs link to `./dashboard.html`, so the rename makes the links res
 - `{{ICP_DESCRIPTION}}` — the target-account noun phrase (e.g. "multi-rooftop dealer group")
 - `{{MARKET_SIZE_PHRASE}}` — the full-universe size phrase (e.g. "18,000 cold names")
 - `{{BUYER_ROLE}}` — the named buyer role per account (e.g. "fixed-ops buyer")
+- `{{PRODUCT_NAME}}` is the **COMPANY** name in every slot it fills (the `x Primary`
+  mark, both `<title>`s, the walkthrough masthead). The token is misnamed; putting the
+  product there makes the company introduce itself as its own product.
 - plus the shared `{{PRODUCT_NAME}}`, `{{PRODUCT_LOGO_SVG}}`, `{{AXIS1_LABEL}}`, `{{AXIS2_LABEL}}` (the `Buying Trigger` and `Hiring` axis names are generic, not placeholders).
 
 ## When this file gets out of date

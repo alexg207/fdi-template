@@ -22,7 +22,13 @@
    ============================================================================ */
 window.BUILD_DATA = {
   founder: {
-    name: "{{PRODUCT_NAME}}",            // from config.json
+    // The COMPANY name, not the product. Despite the token's name, this slot is
+    // the site's IDENTITY: build.html renders it as the "<name> x Primary" masthead,
+    // the intro beat, the live-build badge and the page title. A product name here
+    // introduces the company as its own product (Forgepoint shipped as "Frank x
+    // Primary", 8/17). The product belongs in the narration prose, where it reads
+    // as the thing being sold.
+    name: "{{PRODUCT_NAME}}",            // from config.json -> company name
     cobrand: "Primary",
     fileNo: "",                          // optional "FDI-###" badge; "" hides it
     hero3d: "",                          // optional named 3D object for the opener ("lantern" available); omit = neon-tube render of logoSvg
