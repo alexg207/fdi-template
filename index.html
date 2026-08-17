@@ -2435,7 +2435,15 @@ function getAllCompaniesFlat(){
     var note=document.getElementById('nm-status-note');
     if(note){
       var errored=data.companies.filter(function(c){return c.status==='error';}).length;
-      if(data.build_status==='partial' || errored>0){
+      if(data.build_status==='no_coverage'){
+        /* AN HONEST ZERO, SAID OUT LOUD. Without this the tab is six "0" tiles and
+           "0% coverage", which reads as a broken build rather than the true answer:
+           Affinity is a VC's DEAL crm, so an ICP of non-tech SMBs is simply not in
+           it. Saying that is worth more than an empty graph pretending to load. */
+        note.style.display='';
+        note.className='nm-status-note';
+        note.innerHTML='<span>◦</span><span>No warm paths for this build — none of these '+data.companies.length+' accounts appear in Primary&rsquo;s CRM. Expected when the buyers sit outside Primary&rsquo;s network; the account intelligence on the other tabs is unaffected.</span>';
+      } else if(data.build_status==='partial' || errored>0){
         note.style.display='';
         note.className='nm-status-note';
         note.innerHTML='<span>⚠</span><span>Partial build — some accounts could not be resolved'+(errored?' ('+errored+')':'')+'. The rest are shown below.</span>';
