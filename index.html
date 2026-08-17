@@ -2435,6 +2435,14 @@ function getAllCompaniesFlat(){
     var note=document.getElementById('nm-status-note');
     if(note){
       var errored=data.companies.filter(function(c){return c.status==='error';}).length;
+      /* A no-coverage build has nothing to filter, sort or plot, so the toolbar and
+         the graph/list panels are ~500px of void under a note that already gave the
+         answer. Collapse them and let the stats + the note be the whole tab. */
+      var nmTool=document.querySelector('#nm-body .nm-toolbar');
+      var nmGraphWrap=document.querySelector('#nm-body .network-grid');
+      var emptyNet=(data.build_status==='no_coverage');
+      if(nmTool) nmTool.style.display = emptyNet ? 'none' : '';
+      if(nmGraphWrap) nmGraphWrap.style.display = emptyNet ? 'none' : '';
       if(data.build_status==='no_coverage'){
         /* AN HONEST ZERO, SAID OUT LOUD. Without this the tab is six "0" tiles and
            "0% coverage", which reads as a broken build rather than the true answer:
