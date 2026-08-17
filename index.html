@@ -3272,6 +3272,19 @@ document.addEventListener('mouseout', function(e){
 
 // === INIT ===
 renderQueue();
+
+// Deep links from the FDI combined site. The welcome launch pad publishes one card
+// per lane feature, and the Network map's card points at dashboard.html#network —
+// so the hash has to actually route here or that card lands on the overview. Only
+// the tabs listed below are addressable; any other hash is ignored, so a stale or
+// hand-typed link still opens a working page instead of a blank frame.
+var HASH_TABS = { '#network': 'network' };
+function applyHashRoute(){
+  var tab = HASH_TABS[location.hash];
+  if (tab) switchTab(tab);
+}
+applyHashRoute();
+window.addEventListener('hashchange', applyHashRoute);
 </script>
 </body>
 </html>
