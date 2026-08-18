@@ -7,6 +7,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Blank stub, swapped at runtime for the build's own favicon when one exists.
+     This file ships VERBATIM, so a hard link to ./assets/favicon.png would 404 on
+     every build that has no founder logo. -->
+<link rel="icon" id="favicon" href="data:,">
+<link rel="apple-touch-icon" id="appleIcon" href="data:,">
 <style>
 /* ============================================================
    PROTOTYPE — "TECH DEMO" direction. Acts 1-3.
@@ -164,6 +169,17 @@ a{color:inherit;text-decoration:none;}
 .mm-inner.mm-on{opacity:1;transform:scale(1);}
 .mm-inner .mml{position:absolute;inset:0;}
 .mm-inner .mml svg{width:100%;height:100%;fill:none;stroke:hsl(var(--acc));stroke-linecap:round;stroke-linejoin:round;stroke-width:.34;opacity:.17;filter:drop-shadow(0 0 44px hsl(var(--acc) / .18));}
+/* A RASTER ghost mark (the founder's own logo, transformed to a white silhouette
+   by the build). The svg rule above never matched an <img>, so a raster logo used
+   to render at full colour and full opacity - a coloured block behind every
+   heading. object-fit:cover because the asset already carries its own square. */
+.mm-inner .mml img{width:100%;height:100%;object-fit:cover;opacity:.17;filter:drop-shadow(0 0 44px hsl(var(--acc) / .18));}
+/* A FILLED mark (a solid signet) is far heavier than line art at the same
+   opacity, and the glow reads as a smudge on it rather than a halo. Both 8/17
+   builds arrived at these numbers by hand; `founder.logoIsFilled` now sets the
+   class and the template applies them. */
+.mm-inner.mm-filled{width:min(56vh,32vw,540px);height:min(56vh,32vw,540px);}
+.mm-inner.mm-filled .mml img,.mm-inner.mm-filled .mml svg{opacity:.085;filter:none;}
 /* No reduced-motion override here on purpose: that media query already hides
    .mega-mark outright, because it also un-pins the hero into a statically stacked
    document where this absolutely-positioned mark would land behind beat 2's stats. */
@@ -911,6 +927,26 @@ a{color:inherit;text-decoration:none;}
   var NUMWORD={1:'One',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six'};
   document.title='How we built '+NAME+'’s sales intelligence · Primary FDI';
   document.getElementById('brandMark').innerHTML=D.founder.logoSvg;
+  // The founder's own brand colour behind the mark. The default chip is a light
+  // gradient, which makes a white-on-colour signet invisible - Forgepoint needed a
+  // per-build <style> block for exactly this. `founder.logoChipBg` is sampled from
+  // the logo by the build, so the shared template no longer has to guess.
+  if(D.founder.logoChipBg){
+    var bm=document.getElementById('brandMark');
+    if(bm)bm.style.background=D.founder.logoChipBg;
+  }
+  // Swap the blank favicon stubs for this build's own icons when they exist. An
+  // Image probe rather than a bare assignment: assigning a 404 leaves the tab
+  // showing a broken-icon glyph on some browsers.
+  (function(){
+    [['favicon','./assets/favicon.png'],['appleIcon','./assets/apple-touch-icon.png']].forEach(function(pair){
+      var el=document.getElementById(pair[0]);
+      if(!el)return;
+      var probe=new Image();
+      probe.onload=function(){el.href=pair[1];};
+      probe.src=pair[1];
+    });
+  })();
   document.getElementById('brandName').textContent=NAME;
   // beat 1: the founder, front and center
   document.getElementById('introName').textContent=NAME;
@@ -932,7 +968,13 @@ a{color:inherit;text-decoration:none;}
   // the backdrop mark: one flat copy of the founder's own logo, scaled up. (Was three
   // stacked copies for a faux-3D spin; `founder.hero3d` is now inert but tolerated in
   // existing build data.)
-  document.getElementById('mmInner').innerHTML='<div class="mml">'+D.founder.logoSvg+'</div>';
+  // Prefer the white-on-transparent silhouette when the build produced one; the
+  // colour logo is the fallback and is merely plain, never broken.
+  (function(){
+    var mi=document.getElementById('mmInner');
+    mi.innerHTML='<div class="mml">'+(D.founder.logoMarkWhite||D.founder.logoSvg)+'</div>';
+    if(D.founder.logoIsFilled)mi.classList.add('mm-filled');
+  })();
   // fade/scale it in once, shortly after the beat settles
   setTimeout(function(){var mi=document.getElementById('mmInner');if(mi)mi.classList.add('mm-on');},450);
   document.getElementById('heroBadge').innerHTML='Live build · <b>'+NAME+'</b>'+(D.founder.fileNo?' · '+D.founder.fileNo:'');

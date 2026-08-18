@@ -47,7 +47,23 @@ window.BUILD_DATA = {
     hero3d: "",                          // optional named 3D object for the opener ("lantern" available); omit = neon-tube render of logoSvg
     tagline: "{{PRODUCT_TAGLINE}}",       // renders above introHeadline in beat 1; set "" if it would restate the headline (anti-duplication)
     oneLine: "{{PRODUCT_ONELINE}}",
-    logoSvg: '{{PRODUCT_LOGO_SVG}}'      // inline SVG, stroke-based, 24x24 viewBox
+    // ---- logo -------------------------------------------------------------
+    // AUTO-FILLED by the build when the founder uploaded a logo
+    // (fdi-engine scripts/fdi/build-logo-assets.mjs turns one file into all of
+    // these). Leave them alone unless you are hand-finishing a build.
+    logoSvg: '{{PRODUCT_LOGO_SVG}}',     // inline SVG (24x24 viewBox) OR an <img> at the generated square icon
+    // logoMarkWhite: white-on-transparent silhouette for the ghost mark behind
+    // the intro. ABSENT when the build could not derive one it trusted - the
+    // ghost falls back to logoSvg, which is plain but never a coloured smear.
+    // Never hand-derive this by thresholding a colour logo; supply a designed
+    // asset or leave it out.
+    // logoMarkWhite: '<img src="./assets/logo-mark-white.png" alt="">',
+    // logoChipBg: the brand colour sampled from the logo, painted behind the
+    // header mark. A white-on-colour signet is invisible on the default chip.
+    // logoChipBg: "#b80000",
+    // logoIsFilled: true for a solid signet, false for line art. A filled mark
+    // needs a quieter ghost (lower opacity, no glow, smaller) than line art.
+    // logoIsFilled: false,
     // themeAccent (optional): per-founder override of the Ember default.
     // AUTO-FILLED by the skill (Phase 8c) from the chosen preset in theme-presets.json
     // when config.theme_color is set; omit to keep Ember. Hand-set to override a preset.
