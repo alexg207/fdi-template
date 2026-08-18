@@ -1229,7 +1229,7 @@ function renderQueue(){
     grid.innerHTML = '<div class="card-empty">› no accounts match filter</div>';
     return;
   }
-  grid.innerHTML = rows.map(function(c){
+  grid.innerHTML = rows.map(function(c, _rowIdx){
     var status = statusFor(c);
     var isSelected = state.selected && state.selected.name === c.name && state.selected._segId === c._segId;
     var isExpanded = isCardExpanded(c);
@@ -1258,16 +1258,17 @@ function renderQueue(){
         (tagsHtml ? '<div class="card-tags">'+tagsHtml+'</div>' : '') +
         '<div class="card-meta-foot">' +
           '<span class="card-updated">Updated '+timeAgo(c._idxStable)+'</span>' +
-          '<button class="card-details-toggle" onclick="event.stopPropagation();toggleExpand(\''+c.name.replace(/\'/g,"\\\'")+'\')">'+(isExpanded?'Hide':'Preview')+' <span class="chev">▾</span></button>' +
+          '<button class="card-details-toggle" onclick="event.stopPropagation();toggleExpand(\''+c.name.replace(/\'/g,"\\\'")+'\','+_rowIdx+')">'+(isExpanded?'Hide':'Preview')+' <span class="chev">▾</span></button>' +
         '</div>' +
       '</div>' +
-    '</div>'+(isExpanded ? buildExpansion(c) : '')+'</div>';
+    '</div>'+(isExpanded ? buildExpansion(c, _rowIdx) : '')+'</div>';
     return card;
   }).join('');
 
   // Right rail removed — card click goes to detail page instead.
   state.selected = null;
   document.getElementById('work-grid').classList.remove('has-selection');
+  reconcileExpandedRows();
 }
 
 function selectCompany(name){
@@ -1296,34 +1297,69 @@ function onCardClick(e, name){
   openDetail(name);
 }
 
-function toggleExpand(name){
-  var seg = getCurrentSeg();
-  var c = seg.companies.find(function(x){return x.name===name;});
-  if (!c) return;
-  var expanding = !state.expanded[expansionKey(c)];
-  // The whole visual row toggles together: grid rows share a height, so one
-  // open preview used to stretch its row-mates into tall blank cards. Cells in
-  // the same CSS-grid row share offsetTop; read the row from the live DOM
-  // before re-rendering, so this holds at any column count.
-  var names = [name];
-  var clickedCard = document.querySelector('#queue-grid .card[data-key="'+CSS.escape(name)+'"]');
-  var clickedCell = clickedCard && clickedCard.closest('.card-cell');
-  if (clickedCell) {
-    var rowTop = clickedCell.offsetTop;
-    document.querySelectorAll('#queue-grid .card-cell').forEach(function(cell){
-      if (cell.offsetTop !== rowTop) return;
-      var el = cell.querySelector('.card');
-      if (el && el.dataset.key && names.indexOf(el.dataset.key) === -1) names.push(el.dataset.key);
-    });
-  }
-  names.forEach(function(nm){
-    var co = seg.companies.find(function(x){return x.name===nm;});
-    if (!co) return;
-    var k = expansionKey(co);
-    if (expanding) state.expanded[k] = true;
-    else delete state.expanded[k];
+// A "row" here is a layout artifact, not data: cells in the same CSS-grid row
+// share offsetTop. Everything below addresses companies by their INDEX in the
+// rendered list rather than by name, because the all tab flattens segments and
+// two segments may legitimately hold the same company name.
+function _renderedCells(){
+  return Array.prototype.slice.call(document.querySelectorAll('#queue-grid .card-cell'));
+}
+// Indexes of every cell sharing a visual row with cell `i` (itself included).
+function _rowMates(cells, i){
+  var top = cells[i].offsetTop, out = [];
+  for (var j = 0; j < cells.length; j++) if (cells[j].offsetTop === top) out.push(j);
+  return out;
+}
+
+function toggleExpand(name, idx){
+  var rows = getFilteredCompanies();
+  // Prefer the rendered index; fall back to a name lookup so an older call site
+  // (or a hand-edited page) still works.
+  var i = (typeof idx === 'number' && rows[idx]) ? idx : -1;
+  if (i < 0) { for (var n = 0; n < rows.length; n++) if (rows[n].name === name) { i = n; break; } }
+  if (i < 0) return;
+
+  var expanding = !isCardExpanded(rows[i]);
+  // The whole visual row toggles together. Grid rows share a height, so one open
+  // preview used to stretch its row-mates into tall blank cards; Alex's rule is
+  // to show all of them rather than leave blanks (8/17).
+  var cells = _renderedCells();
+  var targets = (cells.length === rows.length) ? _rowMates(cells, i) : [i];
+  targets.forEach(function(j){
+    var k = expansionKey(rows[j]);
+    if (expanding) state.expanded[k] = true; else delete state.expanded[k];
   });
   renderQueue();
+}
+
+// Filtering, searching, tab switches and viewport resizes all reflow the grid,
+// which can leave an expanded card sitting beside collapsed row-mates - exactly
+// the stretched-blank-card state the row toggle exists to prevent. After every
+// paint, bring each row back to all-expanded or all-collapsed. Re-entrancy
+// guarded: the fix itself re-renders, and one corrective pass is always enough.
+var _reconcilingRows = false;
+function reconcileExpandedRows(){
+  if (_reconcilingRows) return;
+  var rows = getFilteredCompanies();
+  var cells = _renderedCells();
+  if (cells.length !== rows.length || !cells.length) return;
+  var changed = false;
+  var seen = {};
+  for (var i = 0; i < cells.length; i++) {
+    if (seen[i]) continue;
+    var mates = _rowMates(cells, i);
+    mates.forEach(function(j){ seen[j] = true; });
+    var anyOpen = mates.some(function(j){ return isCardExpanded(rows[j]); });
+    if (!anyOpen) continue;
+    mates.forEach(function(j){
+      if (isCardExpanded(rows[j])) return;
+      state.expanded[expansionKey(rows[j])] = true;
+      changed = true;
+    });
+  }
+  if (!changed) return;
+  _reconcilingRows = true;
+  try { renderQueue(); } finally { _reconcilingRows = false; }
 }
 
 function toggleCxSection(sectionEl){
@@ -1331,7 +1367,7 @@ function toggleCxSection(sectionEl){
   sectionEl.classList.toggle('open');
 }
 
-function buildExpansion(c){
+function buildExpansion(c, _rowIdx){
   var status = statusFor(c);
   var pain = c.competitive_distress || 0;
   var res = c.data_residency || 0;
@@ -1423,7 +1459,7 @@ function buildExpansion(c){
     (sectionsHtml || jobsBlock ? '<div class="cx-sections">'+sectionsHtml+jobsBlock+'</div>' : '') +
     '<div class="cx-foot">' +
       '<a class="cx-foot-link" onclick="openDetail(\''+c.name+'\')">Open full profile · sources, jobs, network ↗</a>' +
-      '<button class="card-details-toggle" onclick="toggleExpand(\''+c.name+'\')">Hide <span class="chev" style="transform:rotate(180deg);">▾</span></button>' +
+      '<button class="card-details-toggle" onclick="toggleExpand(\''+c.name.replace(/\'/g,"\\\'")+'\','+_rowIdx+')">Hide <span class="chev" style="transform:rotate(180deg);">▾</span></button>' +
     '</div>' +
   '</div>';
 }
@@ -3399,6 +3435,19 @@ function applyHashRoute(){
 }
 applyHashRoute();
 window.addEventListener('hashchange', applyHashRoute);
+
+// A resize changes the grid's column count, which re-forms the visual rows and
+// can split an open preview away from its row-mates. Cheap guard: only re-render
+// when something is actually expanded.
+(function(){
+  var t;
+  window.addEventListener('resize', function(){
+    clearTimeout(t);
+    t = setTimeout(function(){
+      for (var k in state.expanded) { if (state.expanded[k]) { renderQueue(); return; } }
+    }, 150);
+  });
+})();
 </script>
 
 <!-- In-site editor: lets a Primary teammate polish this build from the page itself.

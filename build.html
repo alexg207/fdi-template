@@ -878,14 +878,21 @@ a{color:inherit;text-decoration:none;}
   document.getElementById('heroSubP').innerHTML=N.heroSub||('The machine we built around <b>'+NAME+'</b> - custom signals, cited evidence, a readiness score on every account, and a warm path in. Scroll to watch it run.');
   // Fallback stats: FIVE, matching the schema, every label distinct. (A four-entry
   // fallback with 'accounts curated' twice shipped on 8/17 when the named-buyers
-  // stat was swapped out.) Counts only - the fallback never claims a surface the
-  // build may not ship.
-  var heroStats=N.heroStats||[
-    {n:D.scan.universe,label:D.scan.universeLabel||'in your ICP, your sizing'},
-    {n:D.scan.matched,label:'companies profiled'},
+  // stat was swapped out.) Every label states what its number actually counts,
+  // and none of them claims a surface the build may not ship. An EMPTY authored
+  // array falls through to these rather than rendering no stats at all.
+  var citedSources=(function(){
+    // The real citation count is the companies' own sources; evidenceFeed is just
+    // the 8-9 lines the terminal shows.
+    var n=0;D.companies.forEach(function(c){n+=(c.sources||[]).length;});
+    return n||(D.evidenceFeed||[]).length;
+  })();
+  var heroStats=(N.heroStats&&N.heroStats.length)?N.heroStats:[
+    {n:D.scan.universe||0,label:D.scan.universeLabel||'in your ICP, your sizing'},
+    {n:D.scan.matched||0,label:'high-fit matches found'},
     {n:D.axes.length,label:'custom signals'},
-    {n:D.scan.curated,label:'accounts curated'},
-    {n:(D.evidenceFeed||[]).length,label:'cited sources'}];
+    {n:D.scan.curated||D.companies.length,label:'accounts curated'},
+    {n:citedSources,label:'cited sources'}];
   document.getElementById('heroStats').innerHTML=heroStats.map(function(s){
     return '<div class="hstat"><div class="n" data-count="'+s.n+'">0</div><div class="l">'+s.label+'</div></div>';}).join('');
   document.getElementById('processLead').textContent=D.process.lead;

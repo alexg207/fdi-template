@@ -189,6 +189,40 @@ async function checkDashboard(page, base) {
       `${expand.expandedCount} cell(s) expanded, ${expand.rowMates} in the row; ${expand.collapsed} left open after collapse`);
   }
 
+  // D3b — the row invariant has to survive a reflow. Filtering changes which
+  // companies sit beside each other, which used to strand an expanded card next
+  // to collapsed row-mates (the stretched-blank-card state, one layer down).
+  const afterFilter = await page.evaluate(() => {
+    const cells = () => Array.from(document.querySelectorAll("#queue-grid .card-cell"));
+    if (typeof toggleExpand !== "function" || !cells().length) return { skip: "no grid" };
+    toggleExpand(cells()[0].querySelector(".card")?.dataset.key, 0);
+    const search = document.getElementById("search-input");
+    if (!search || typeof renderQueue !== "function") return { skip: "no search input" };
+    const before = cells().filter((c) => c.classList.contains("is-expanded")).length;
+    // Drop one company out of the list, forcing the survivors to re-flow.
+    search.value = "a";
+    renderQueue();
+    const now = cells();
+    const mixedRows = (() => {
+      const byTop = new Map();
+      now.forEach((c) => {
+        const k = c.offsetTop;
+        if (!byTop.has(k)) byTop.set(k, []);
+        byTop.get(k).push(c.classList.contains("is-expanded"));
+      });
+      return Array.from(byTop.values()).filter((r) => r.some(Boolean) && !r.every(Boolean)).length;
+    })();
+    search.value = "";
+    renderQueue();
+    document.querySelectorAll("#queue-grid .card-cell.is-expanded").forEach(() => {});
+    // leave the grid collapsed for the checks that follow
+    if (typeof state !== "undefined") { state.expanded = {}; renderQueue(); }
+    return { before, rowsAfter: now.length, mixedRows };
+  });
+  if (afterFilter.skip) add("dashboard: rows stay whole across a filter change", false, `could not test — ${afterFilter.skip}`);
+  else add("dashboard: rows stay whole across a filter change", afterFilter.mixedRows === 0,
+    `${afterFilter.mixedRows} row(s) left half-expanded after filtering (${afterFilter.rowsAfter} cell(s) rendered)`);
+
   // D4/D5 — display band is 70-100 anchored on this build's own spread, and the
   // high/med split still derives from the RAW score.
   const scores = await page.evaluate(() => {
@@ -234,6 +268,11 @@ async function checkWalkthrough(page, base, viewport) {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message || String(e)));
   await page.setViewportSize(viewport);
+  // Reduced motion is the template's own "everything revealed" state (see the
+  // prefers-reduced-motion block in build.html: .rv gets opacity:1 and
+  // transform:none). Measuring without it reads elements mid-reveal, still
+  // translated 22px down their scene, which fakes a 22px overflow.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto(`${base}/walkthrough.html`, { waitUntil: "networkidle" });
   await page.addScriptTag({ content: HELPERS });
   const tag = `${viewport.width}x${viewport.height}`;
@@ -271,6 +310,23 @@ async function checkWalkthrough(page, base, viewport) {
   add(`walkthrough ${tag}: narration beats <= 3 rendered lines`, overLong.length === 0,
     overLong.length ? overLong.map((n) => `${n.id}: ${n.lines} lines ("${n.text}...")`).join("; ") : `${narr.length} beat(s) all within 3`);
 
+  // W3b — the WOW note is the largest type on a pinned, overflow:hidden scene,
+  // so a size bump that reads well on a desktop can clip on a short viewport.
+  const wow = await page.evaluate(() => {
+    const el = document.getElementById("wowNote");
+    if (!el || getComputedStyle(el).display === "none") return { absent: true };
+    // .pin is the element that actually clips (height:100vh; overflow:hidden);
+    // .pin-inner is unconstrained and centred inside it, so measuring against
+    // the inner wrapper would never show a real clip.
+    const pin = el.closest(".pin");
+    if (!pin) return { noPin: true };
+    const e = el.getBoundingClientRect(), p = pin.getBoundingClientRect();
+    return { overflowBottom: Math.round(e.bottom - p.bottom), overflowRight: Math.round(e.right - p.right), h: Math.round(e.height) };
+  });
+  if (wow.absent || wow.noPin) add(`walkthrough ${tag}: WOW note fits its scene`, true, wow.absent ? "no WOW note in this build" : "no pin ancestor to measure");
+  else add(`walkthrough ${tag}: WOW note fits its scene`, wow.overflowBottom <= 2 && wow.overflowRight <= 2,
+    `${wow.h}px tall, overflows pin by ${Math.max(0, wow.overflowBottom)}px bottom / ${Math.max(0, wow.overflowRight)}px right`);
+
   // W4 — banned copy / em dashes in rendered text.
   const text = await page.evaluate(() => window.__visibleText());
   const hits = BANNED.filter((b) => b.rx.test(text));
@@ -281,18 +337,19 @@ async function checkWalkthrough(page, base, viewport) {
 // ── main ────────────────────────────────────────────────────────────────────
 let dir, server, browser;
 try {
+  // A missing browser is an infra skip by default so a plain checkout can still
+  // run `npm run smoke`. Set FDI_SMOKE_REQUIRE_BROWSER=1 in CI, where "no browser"
+  // must never be indistinguishable from "all checks passed".
+  const REQUIRE = process.env.FDI_SMOKE_REQUIRE_BROWSER === "1";
+  const infraExit = (msg) => {
+    if (REQUIRE) { console.error(`\n❌ SMOKE TEST could not run and FDI_SMOKE_REQUIRE_BROWSER=1: ${msg}\n`); process.exit(1); }
+    console.warn(`\n⚠️  SMOKE TEST SKIPPED (infra): ${msg}`);
+    console.warn("   Install with: npm i -D playwright-core && npx playwright install chromium\n");
+    process.exit(0);
+  };
   let chromium;
-  try { ({ chromium } = await importPlaywright()); }
-  catch (e) {
-    console.warn(`\n⚠️  SMOKE TEST SKIPPED (infra): ${e.message}`);
-    console.warn("   Install with: npm i -D playwright-core  (or check out fdi-engine as a sibling)\n");
-    process.exit(0);
-  }
-  try { browser = await launchBrowser(chromium); }
-  catch (e) {
-    console.warn(`\n⚠️  SMOKE TEST SKIPPED (infra): ${e.message}\n`);
-    process.exit(0);
-  }
+  try { ({ chromium } = await importPlaywright()); } catch (e) { infraExit(e.message); }
+  try { browser = await launchBrowser(chromium); } catch (e) { infraExit(e.message); }
 
   dir = stage();
   server = await serveDir(dir);
