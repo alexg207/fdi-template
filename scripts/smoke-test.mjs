@@ -301,9 +301,13 @@ async function checkWalkthrough(page, base, viewport) {
     `${stats.count} stat(s), ${stats.distinct} distinct label(s): ${stats.labels.join(" | ")}`);
 
   // W3 — narration beats stay within three rendered lines at their real width.
+  // The intro beat's headline and process line are measured too: they are the
+  // first thing a founder reads and the locked copy is long enough to wrap.
   const narr = await page.evaluate(() => {
-    return Array.from(document.querySelectorAll(".act-narr")).map((el) => ({
-      id: el.id || "(unnamed)", lines: window.__lineBoxes(el), text: (el.textContent || "").slice(0, 60),
+    const els = Array.from(document.querySelectorAll(".act-narr"));
+    ["introHead", "introWarmth"].forEach((id) => { const e = document.getElementById(id); if (e) els.push(e); });
+    return els.map((el) => ({
+      id: el.id || el.className || "(unnamed)", lines: window.__lineBoxes(el), text: (el.textContent || "").slice(0, 60),
     })).filter((n) => n.lines > 0);
   });
   const overLong = narr.filter((n) => n.lines > 3);

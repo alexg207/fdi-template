@@ -128,6 +128,28 @@ DATA — the dashboard renders it:
   relationship somewhere is thin, say that plainly in the blurb rather than dressing
   it up as warm paths.
 
+## Copy rules the founder review keeps enforcing (Jason, 8/17)
+
+Full detail in TEMPLATE_GUIDE.md ("A sample, never a census"); the short version:
+
+- **What ships is a SAMPLE, not a census.** A first-pass sample of the strongest
+  ICP fits our process surfaced, shown to the founder to sharpen the filtering and
+  the signals. Banned in rendered copy: "most ready to buy", "the readiest
+  buyers", "the [N] accounts to target", "we scan the entire market", "accounts
+  worth walking into", any market-wide superlative. Rankings are scoped to
+  "relative readiness within this sample".
+- **Leave `introHeadline`, `introWarmth` and `heroTitle` EMPTY** in build-data.js.
+  build.html carries locked, approved, company-agnostic copy for all three. The
+  intro beat sells Primary's process and must contain no account counts.
+- **Write RAW scores only.** Both pages rescale to a 70-100 display band at
+  runtime from the same formula. A hand-scaled value gets scaled twice.
+- **Every tool and source NAME must exist in this build's artifacts.** A tool list
+  carried over from a previous build is a fabricated citation (Sumble and D&B
+  shipped that way on 8/17). The publish gate refuses names it cannot find.
+- **Three rendered lines per beat, no orphan words, no em dashes.** Measured, not
+  eyeballed: `npm run smoke` renders both pages and fails on any of them.
+- **`network: { show: false }`** removes walkthrough act 08 cleanly. Default ON.
+
 ## When this file gets out of date
 
 If SKILL.md has a rule that contradicts this file, SKILL.md wins. This file is best-effort; SKILL.md is the spec.

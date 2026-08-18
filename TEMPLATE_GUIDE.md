@@ -747,6 +747,62 @@ Fill every key from the build's real artifacts (mapping is commented per-key in 
 - **Tagline anti-duplication:** `founder.tagline` renders directly above `introHeadline`. If it would restate the headline, set it to `""` — beat 1 renders cleanly without it.
 - **Score parity on ties:** if Phase 7 broke composite ties with `composite` overrides in data.js, `companies[].score` here carries the identical numbers (see §3 "Breaking score ties"). Walkthrough shortlist and dashboard must agree. (Manual check — `universe` is a number and `finaleSub` is prose, so there's no automated equality gate; eyeball that they state the same figure.)
 
+#### A sample, never a census (Jason, 2026-08-17)
+
+The single most important framing rule, and the one the Forgepoint founder review
+kept correcting. What ships is a **first-pass sample of the strongest ICP fits our
+process surfaced**, put in front of the founder to get their feedback and sharpen
+the filtering and the signals. It is not the market, not a finished target list,
+and not "the N companies out there."
+
+- **Banned in rendered copy:** "most ready to buy", "the readiest buyers", "the
+  [N] accounts to target", "we scan the entire market", "the accounts worth
+  walking into", "the highest-quality accounts in the market", and any
+  market-wide superlative. `scripts/smoke-test.mjs` sweeps rendered text for
+  these and fails.
+- **Scope rankings to the sample:** "relative readiness within this sample",
+  never "readiest in the market".
+- **Counts are process artifacts.** The scan beat keeps its big number, but
+  labelled as what the process found, not as the size of the opportunity. A
+  figure that came from the founder is attributed ("your own sizing").
+- **[X] profiled and [Y] curated are different numbers** and must never be
+  conflated. A "[Y] profiled" slip shipped once.
+- **The locked beats.** `introHeadline`, `introWarmth` and `heroTitle` have
+  approved company-agnostic defaults inside build.html. Leave them empty in
+  build-data.js. The intro beat sells Primary's PROCESS and carries **no account
+  counts or sample sizes at all** — Alex cut them explicitly ("it's about the
+  process, not the outcomes; we're selling Primary and our services, not this
+  actual build"). The subheader stops hard at "…Primary's network."
+
+#### Display score band: 70-100
+
+Raw composites read like school grades — the best account in a strong sample
+looks like a B-minus and the floor looks like a failure, when every account shown
+already cleared the bar. Both pages rescale **at runtime**, from the same
+formula, so they cannot drift:
+
+```
+display = round(70 + (raw - lo) * 30 / (hi - lo))      // all tied -> 100
+```
+
+`lo`/`hi` are this build's own min and max. The dashboard runs it after tiering,
+so the high/med split still derives from the RAW score; raw is preserved on
+`_signalRaw` (dashboard) and `_scoreRaw` (walkthrough). The map is monotonic, so
+every sort and ranking is unaffected.
+
+**Write RAW scores only.** Never hand-write `composite`, a display score, or a
+pre-scaled number — it gets scaled twice and silently drifts the two surfaces
+apart, which is the bug this replaced.
+
+#### Act 08 is opt-out
+
+`network: { show: false }` in build-data.js removes act 08 (the illustrative
+warm-path fan) entirely: scene, rail entry and render hook. Default is ON. Use
+the flag rather than commenting the markup out — both 8/17 builds cut the act by
+hand and left ~25 lines of defused HTML behind. This is unrelated to the
+DASHBOARD's Network tab, which renders real Affinity data and has its own empty
+state.
+
 ### Assets
 
 - `assets/logos/` (tool logos for the process act) copies from the template as-is.
@@ -755,8 +811,13 @@ Fill every key from the build's real artifacts (mapping is commented per-key in 
 
 ### Self-check before shipping
 
+0. `npm run smoke` in the template repo passes (headless render of both pages:
+   zero page errors, one card per company, previews expand in-column and by row,
+   70-100 band with tiers off raw, hero on one line per line, no banned copy).
 1. `node --check build-data.js` passes.
-2. Every `narration` key filled (shipping the generic fallbacks fails the build QA).
+2. Every `narration` key filled EXCEPT the three locked beats (`introHeadline`,
+   `introWarmth`, `heroTitle`), which stay empty so build.html's approved copy
+   renders.
 3. `grep -i` the previous founder's name in build-data.js → 0 hits.
 4. Open `build.html?act=N` for N=0..9 - every scene renders with this build's data.
 5. Weights in `axes[]` sum to 100; `companies[0]` is the intended hero account (act 6 uses it).

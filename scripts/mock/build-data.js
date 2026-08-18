@@ -14,9 +14,12 @@ window.BUILD_DATA = {
   },
 
   narration: {
-    introHeadline: "We help you design a winning go-to-market strategy by intelligently <span class=\"accent\">mapping your universe of potential customers</span>.",
-    introWarmth: "We are so excited by the prospect of working with you.",
-    heroTitle: ["We started researching your market.", "Here's a sample of what we can build together."],
+    // Left empty on purpose: the intro beat and hero are locked template defaults
+    // (Jason 8/17), so a conforming build lets build.html supply them. Keeping
+    // them blank here is what proves the defaults render and fit.
+    introHeadline: "",
+    introWarmth: "",
+    heroTitle: ["", ""],
     heroSub: "The machine we built around <b>Acme Robotics</b> - custom signals, cited evidence, a readiness score on every account, and a warm path in. Scroll to watch it run.",
     heroStats: [
       { n: 14000, label: "in your ICP, your sizing" },

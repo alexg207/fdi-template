@@ -15,7 +15,20 @@
    COPY RULES for every narration string (validated in Phase 10):
      - Voice: confident analyst briefing the founder. No vendor pitch.
      - Hyphens only. NEVER em dashes.
-     - Hero frames account QUALITY, not count ("... in. The readiest buyers out.")
+     - A SAMPLE, NEVER A CENSUS. What ships is a first-pass sample of the
+       strongest ICP fits our process surfaced, shown to the founder to sharpen
+       the filtering and the signals. It is not the market and not a finished
+       target list. Banned outright: "most ready to buy", "the readiest buyers",
+       "the [N] accounts to target", "we scan the entire market", "accounts worth
+       walking into", and any market-wide superlative. Scope rankings to
+       "relative readiness within this sample". (Jason, 8/17.)
+     - Numbers that came from the FOUNDER get attributed ("your own sizing"), and
+       every count reads as an artifact of the process, never as the size of the
+       opportunity. [X] profiled and [Y] curated are different numbers - never
+       conflate them.
+     - Three rendered lines maximum per beat, and no line may wrap onto a single
+       orphan word. Measure it: `npm run smoke` in the template repo renders both
+       pages and fails on either.
      - Honest hedges stay ("illustrative", "where we have one").
      - Apostrophes inside JS strings must be curly (’), never straight quotes
        that terminate the string.
@@ -46,16 +59,27 @@ window.BUILD_DATA = {
   // ---- per-founder copy for every act (all REQUIRED; generic fallbacks exist
   //      in build.html but shipping fallbacks fails the Phase 10 check) -------
   narration: {
-    introHeadline: "",                   // beat 1 product headline (accent spans allowed: <span class="accent">...</span>); falls back to founder.oneLine
-    introWarmth: "",                     // optional warmth line under the headline; 1 sentence, partnership tone (Rule #18); <b> ok; hidden when absent
-    heroTitle: ["", ""],                 // 2 lines. Line 1 = scale in; line 2 = quality out
+    // LEAVE THESE THREE EMPTY. The intro beat and hero carry locked, approved,
+    // company-agnostic copy inside build.html (Jason + Alex, 8/17): the intro
+    // sells Primary's PROCESS and must contain no account counts or sample sizes,
+    // and the hero's two lines are Alex's exact wording. An empty string here
+    // renders the locked default. Only override if the founder's own review asks,
+    // and never with a product pitch aimed back at the founder.
+    introHeadline: "",                   // locked default; accent spans allowed if you must override
+    introWarmth: "",                     // locked default: the "this is how we execute" process line, hard stop at "network."
+    heroTitle: ["", ""],                 // locked default; if overridden, each line must hold ONE rendered line (<=46 chars)
     heroSub: "",                         // may contain <b>...</b>; ends "Scroll to watch it run."
-    heroStats: [                         // exactly 5; all values REAL; lead with the narrow-ICP TAM estimate (== scan.universe)
-      { n: 0, label: "TAM (US + Canada)" },   // scan.universe — the ICP-TAM estimate; adjust geo label if not US/Canada
-      { n: 0, label: "companies analyzed" },
+    heroStats: [                         // exactly 5, every label distinct; all values REAL
+      { n: 0, label: "est. in your ICP, your sizing" },  // scan.universe — attribute it when it is the founder's own figure
+      { n: 0, label: "companies profiled" },             // what we read closely (NOT the curated count)
       { n: 0, label: "custom signals" },
       { n: 0, label: "accounts curated" },
-      { n: 0, label: "named contacts" }
+      { n: null, label: "named contacts" }               // WRITE null: derives from network-data.js, which the workflow
+                                                         // generates from Affinity AFTER the build agent stops. Any number
+                                                         // here is a guess that will disagree with the real one (a build
+                                                         // shipped 20 against a derived 23). backfill-build-data.mjs stamps
+                                                         // the true value, and swaps this stat for a cited-sources count
+                                                         // when the network came back empty.
     ],
     icp: "",                             // act 02 narration, <=2 sentences
     signals: "",                         // act 03
@@ -78,6 +102,11 @@ window.BUILD_DATA = {
   },
 
   // ---- act 01: the process (stages + REAL tools; logos in assets/logos) ----
+  // Every tool NAME here is a citation. If this build never called it, it must not
+  // appear: a tool list carried over from a previous build is a fabricated
+  // citation, and one shipped to a founder on 8/17 (Sumble and D&B, neither of
+  // which the build touched). The publish gate refuses names it cannot find in
+  // data.js / BUILD_NOTES.md. Same rule for enrichments[].src and evidenceFeed.
   process: {
     lead: "",                            // one-line hands-on framing
     foot: "",                            // mono footer line
@@ -99,11 +128,17 @@ window.BUILD_DATA = {
 
   // ---- act 04: scan the market ----------------------------------------------
   scan: {
-    universeLabel: "",                   // plural noun phrase, e.g. "companies in [Founder]'s ICP, est."
+    universeLabel: "",                   // plural noun phrase; attribute the founder's own figure, e.g. "in your ICP, your sizing"
     universe: 0, groups: 0, matched: 0, curated: 10, partners: 0,   // universe = NARROW-ICP estimate matching the scan query, NOT broad TAM
     query: "",                           // the Webset search query, human-readable
-    funnel: { universe: "est. in [Founder]'s ICP", groups: "", matched: "high-fit matches" },  // 3 short stat labels
-    methodNote: "",                      // optional; replaces the generic scan-note. Full funnel story in plain language, <=~40 words: TAM est. -> surfaced & analyzed -> strongest fits -> curated to final N
+    funnel: { universe: "est. in your ICP, your sizing", groups: "", matched: "high-quality companies found" },  // 3 short stat labels
+    // The scan beat's big count is an artifact of the PROCESS, never a sample-size
+    // stat. Pattern (Alex's wording for the tool list is mandatory):
+    //   "[Universe number, attributed to the founder's own sizing]. We pointed our
+    //    process at [the segments] - Exa websets, web scraping, enrichment,
+    //    hands-on research - and it surfaced [X] high-quality companies. This is a
+    //    sample; the same process scales to the whole universe."
+    methodNote: "",                      // optional; replaces the generic scan-note. <=~40 words
     excludes: [ "" ]                     // competitor/vendor names struck out on screen
   },
 
@@ -115,6 +150,11 @@ window.BUILD_DATA = {
   evidenceFeed: [ ["1", "", ""] ],
 
   // ---- acts 06/07: the scored companies (top of list = hero account) --------
+  // `score` is the RAW composite. build.html rescales it at runtime to a 70-100
+  // display band (top pick 100, floor 70) using the SAME formula the dashboard
+  // runs, so the two surfaces cannot drift - which is exactly what happened when
+  // scores were hand-written. Never pre-scale a value here; it would be scaled
+  // twice. Raw is preserved on `_scoreRaw` after the map runs.
   companies: [
     { name: "", seg: "", tier: "high|med|low", score: 0,
       s: { /* one 0-5 value per axes[].key */ },
@@ -131,6 +171,12 @@ window.BUILD_DATA = {
   // supplied. Each account appears under exactly ONE connector (a partition);
   // secondary paths go in alsoReaches (rendered as a ring, not an edge).
   network: {
+    // show: false removes act 08 entirely - the scene, its rail entry and its
+    // render hook. Default (absent) is ON. Use the flag rather than commenting the
+    // markup out, which is how both 8/17 builds did it and left defused HTML
+    // behind. Unrelated to the DASHBOARD's Network tab, which is real Affinity
+    // data written by the engine after the build.
+    // show: false,
     hub: "Primary",
     illustrative: true,
     shortNames: {},                      // display-name overrides where suffix-strip heuristic reads wrong

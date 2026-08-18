@@ -1153,6 +1153,29 @@ SEGMENTS.forEach(function(seg){
   });
 });
 
+// Display rescale (Jason 8/17, per Alex): raw composites read like school grades -
+// an 83 looks like a B-minus and the floor of the list like an F, when every
+// account here already cleared the bar. Anchor the display so the top pick sits
+// at exactly 100 and the lowest at 70. Tier is derived from the RAW score above,
+// so the high/med split is unchanged, and the map is monotonic so every sort and
+// ranking is unaffected. Raw kept on _signalRaw.
+//
+// This runs on the template side ON PURPOSE: build agents write RAW scores only.
+// A hand-rescaled value entering here gets rescaled twice and drifts the
+// walkthrough and dashboard apart.
+(function(){
+  var all = [];
+  SEGMENTS.forEach(function(s){ all = all.concat(s.companies); });
+  if (!all.length) return;
+  var lo = Infinity, hi = -Infinity;
+  all.forEach(function(c){ if (c._signal < lo) lo = c._signal; if (c._signal > hi) hi = c._signal; });
+  all.forEach(function(c){
+    c._signalRaw = c._signal;
+    // Every account tied on raw reads 100: they are all the top of this sample.
+    c._signal = hi > lo ? Math.round(70 + (c._signal - lo) * 30 / (hi - lo)) : 100;
+  });
+})();
+
 // Tab counts
 SEGMENTS.forEach(function(seg){
   var el = document.getElementById('tab-count-'+seg.id);
@@ -1621,7 +1644,7 @@ function animateTerminal(c){
     {text: '+ trigger      '+trig+'/5'+(trigReason ? '  — '+trigReason : ''), cls: trig >= 3 ? 'success' : 'dim'},
     {text: '+ hiring       '+hir+'/5'+(hirReason ? '  — '+hirReason : ''), cls: hir >= 3 ? 'success' : 'dim'},
     {text: ''},
-    {text: '= score       '+c._signal+'/100  (weighted 25/25/25/25)', cls:'success'},
+    {text: '= score       '+c._signal+'/100  (weighted 25/25/25/25, scaled to a 70-100 display band)', cls:'success'},
     {text: '  sources     '+sourceCount+' citation'+(sourceCount!==1?'s':'')+' · see footer for details', cls:'meta'}
   ];
 

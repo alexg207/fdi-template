@@ -180,13 +180,20 @@ a{color:inherit;text-decoration:none;}
   max-width:880px;margin:0 auto;color:var(--text);}
 .intro-head b,.intro-head .accent{color:hsl(var(--acc));font-weight:600;}
 /* optional warmth line under the intro headline (narration.introWarmth) — trusted HTML, hidden when key absent */
-.intro-warmth{font-size:15px;color:var(--text-muted);max-width:620px;margin:18px auto 0;line-height:1.6;}
+/* Sized so the locked process line (the "this is how we execute" sentence, fixed
+   wording as of 8/17) lands in three rendered lines. It is the densest copy on
+   the page and the widest text block on purpose; text-wrap:pretty keeps a single
+   word off the last line. Measured by scripts/smoke-test.mjs, not eyeballed. */
+.intro-warmth{font-size:15px;color:var(--text-muted);max-width:860px;margin:18px auto 0;line-height:1.6;text-wrap:pretty;}
 .intro-warmth b{color:var(--text-mid);font-weight:600;}
 
 /* beat 2 — the dashboard pivot */
 .punch-beat{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
   z-index:1;opacity:0;pointer-events:none;will-change:transform,opacity;}
-.punch-h{font-family:var(--display);font-size:clamp(38px,5.6vw,68px);font-weight:600;letter-spacing:-.038em;line-height:1.0;
+/* Capped at 43px so both locked hero lines each hold ONE rendered line. The
+   short-viewport rules below carry their own cap and must move with this one -
+   a fix applied only here silently reverts on any laptop under 900px tall. */
+.punch-h{font-family:var(--display);font-size:clamp(34px,3.4vw,43px);font-weight:600;letter-spacing:-.038em;line-height:1.05;
   max-width:940px;margin:0 auto 18px;}
 .hero-inner{width:100%;max-width:1080px;text-align:center;}
 .hero-badge{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;
@@ -504,7 +511,7 @@ a{color:inherit;text-decoration:none;}
 @media (max-height:900px){
   #s-hero .pin{padding-top:84px;}
   .hero-badge{margin-bottom:18px;}
-  .punch-h{font-size:clamp(34px,4.6vw,54px);margin-bottom:14px;}
+  .punch-h{font-size:clamp(30px,3vw,38px);margin-bottom:14px;}
   .intro-word{font-size:clamp(38px,5vw,58px);}
   .intro-head{font-size:clamp(21px,2.4vw,30px);}
   .mm-inner{width:min(52vh,470px);height:min(52vh,470px);}
@@ -523,7 +530,7 @@ a{color:inherit;text-decoration:none;}
   .pin{padding:70px 18px 28px;}
   .act-title{font-size:28px;}
   .act-narr{font-size:13.5px;margin-bottom:22px;}
-  .punch-h{font-size:36px;}
+  .punch-h{font-size:26px;}
   .intro-word{font-size:38px;}
   .intro-head{font-size:19px;padding:0 8px;}
   .intro-tag{font-size:15px;}
@@ -689,13 +696,13 @@ a{color:inherit;text-decoration:none;}
 <section class="scene" data-scrub id="s-scan">
   <div class="pin"><div class="pin-inner">
     <div class="act-eyebrow rv" data-at="0.02"><span class="chip"><span class="n">04</span> Scan the market</span></div>
-    <h2 class="act-title rv" data-at="0.02">Then we scan <span class="grad">the entire market.</span></h2>
+    <h2 class="act-title rv" data-at="0.02">Then we search <span class="grad">for the strongest fits.</span></h2>
     <p class="act-narr rv" data-at="0.04" id="scanQuery"></p>
     <div class="scan-wrap">
       <div class="scan-counter rv" data-at="0.06"><div class="n" id="scanN">0</div><div class="l" id="scanL"></div></div>
       <div class="dot-grid rv" data-at="0.06" id="dotGrid"><div class="sweep" id="sweep"></div></div>
       <div class="funnel" id="funnel"></div>
-      <div class="scan-note rv" data-at="0.74">Many more clear the bar. We pull the strongest matches to enrich and score in depth, then curate the shortlist from there.</div>
+      <div class="scan-note rv" data-at="0.74">Many more clear the bar. This is a sample, not the whole universe: we pull the strongest matches to enrich and score in depth, and the same process scales to the rest.</div>
       <div class="excludes" id="excludes"></div>
     </div>
   </div></div>
@@ -727,7 +734,7 @@ a{color:inherit;text-decoration:none;}
 <!-- ================= act 6 · score ================= -->
 <section class="scene" data-scrub id="s-score">
   <div class="pin"><div class="pin-inner">
-    <div class="act-eyebrow rv" data-at="0.02"><span class="chip"><span class="n">06</span> Score 0-100</span></div>
+    <div class="act-eyebrow rv" data-at="0.02"><span class="chip"><span class="n">06</span> Score 70-100</span></div>
     <h2 class="act-title rv" data-at="0.02">Blended into <span class="grad">one readiness score.</span></h2>
     <p class="act-narr rv" data-at="0.04" id="narrScore"></p>
     <div class="formula rv" data-at="0.08" id="formulaLine"></div>
@@ -744,7 +751,7 @@ a{color:inherit;text-decoration:none;}
 <section class="scene" data-scrub id="s-shortlist">
   <div class="pin"><div class="pin-inner">
     <div class="act-eyebrow rv" data-at="0.02"><span class="chip"><span class="n">07</span> Curate the shortlist</span></div>
-    <h2 class="act-title rv" data-at="0.02">The accounts <span class="grad">worth walking into.</span></h2>
+    <h2 class="act-title rv" data-at="0.02">A curated sampling, <span class="grad">ranked by readiness.</span></h2>
     <p class="act-narr rv" data-at="0.04" id="narrShortlist"></p>
     <div class="ranked" id="ranked"></div>
     <div class="partners rv" data-at="0.78"><div class="ph">Already signed &amp; onboarding</div><div class="prow" id="prow"></div></div>
@@ -799,6 +806,40 @@ a{color:inherit;text-decoration:none;}
 (function(){
   var D=window.BUILD_DATA;
   if(!D){document.body.innerHTML='<div style="font-family:monospace;color:#999;padding:80px 40px;text-align:center">build-data.js missing or failed to parse. Generate it from build-data-template.js (see TEMPLATE_GUIDE.md Section 16).</div>';return;}
+  /* ---- display rescale: THE SAME MAP THE DASHBOARD RUNS ----
+     Raw composites read like school grades: the best account in a strong sample
+     looks like a B-minus and the floor looks like a failure, when every account
+     here already cleared the bar. Anchor the display so the top pick reads 100
+     and the floor reads 70 (Jason 8/17, per Alex).
+
+     Both surfaces rescale at runtime off the same formula, so the walkthrough and
+     the dashboard cannot drift - which is exactly what happened when scores were
+     hand-written into build-data.js. Build agents write RAW scores only; a
+     pre-scaled value would be scaled twice here. Raw kept on _scoreRaw. */
+  (function(){
+    var cos=(D.companies||[]).filter(function(c){return typeof c.score==='number';});
+    if(!cos.length)return;
+    var lo=Infinity,hi=-Infinity;
+    cos.forEach(function(c){if(c.score<lo)lo=c.score;if(c.score>hi)hi=c.score;});
+    cos.forEach(function(c){
+      c._scoreRaw=c.score;
+      c.score=hi>lo?Math.round(70+(c.score-lo)*30/(hi-lo)):100;
+    });
+  })();
+  /* Act 8 (the illustrative warm-path fan) is opt-OUT per build: set
+     network:{show:false} in build-data.js and the act, its rail entry and its
+     scrub hook all disappear together. Both 8/17 builds cut this act by
+     hand-commenting ~25 lines of markup and neutralising inner comment markers;
+     a flag does the same job without leaving defused HTML in the file for the
+     next reader to puzzle over. Removed here, before anything writes into it, so
+     the whole page sees one consistent DOM. Default ON - the act ships unless a
+     build says otherwise. (The DASHBOARD's Network tab is separate and
+     unaffected: it renders real Affinity data and has its own empty state.) */
+  var SHOW_NETWORK=!(D.network&&D.network.show===false);
+  if(!SHOW_NETWORK){
+    var netSec=document.getElementById('s-network');
+    if(netSec&&netSec.parentNode)netSec.parentNode.removeChild(netSec);
+  }
   var REDUCED=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var TICK='<svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>';
   function qsa(s,el){return Array.prototype.slice.call((el||document).querySelectorAll(s));}
@@ -863,10 +904,20 @@ a{color:inherit;text-decoration:none;}
   // beat 1: the founder, front and center
   document.getElementById('introName').textContent=NAME;
   document.getElementById('introTag').textContent=D.founder.tagline||'';
-  document.getElementById('introHead').innerHTML=N.introHeadline||D.founder.oneLine||'';
-  // optional warmth line (narration.introWarmth) — trusted HTML like introHeadline; hidden when the key is absent
+  // The intro beat sells PRIMARY'S PROCESS, never this build's outcomes: no
+  // account counts, no sample sizes, nothing about what this particular build
+  // found. Alex dictated this sentence verbatim on 8/17 after rejecting three
+  // drafts, and the accent phrase is his wording - it is company-agnostic on
+  // purpose, so it is the default rather than something each build rewrites.
+  var LOCKED_INTRO_HEAD='We help you design a winning go-to-market strategy by intelligently <span class="accent">mapping your universe of potential customers</span>.';
+  document.getElementById('introHead').innerHTML=N.introHeadline||LOCKED_INTRO_HEAD;
+  // The line under the headline says HOW we work, in the same process-first
+  // register: locked wording from 8/17, hard stop at "network." (Alex cut
+  // everything that came after it, including the sample count and the feedback
+  // ask). Company-agnostic, so it is the default; an authored value overrides.
+  var LOCKED_INTRO_SUB='This is how we execute a well-researched GTM strategy: scraping and structuring market data with tools like Exa, Clay, and Claude, translating your ICP into founder-specific signals, backing every claim with cited evidence, and mapping warm paths in through Primary’s network.';
   var iw=document.getElementById('introWarmth');
-  if(iw){if(N.introWarmth)iw.innerHTML=N.introWarmth;else iw.style.display='none';}
+  if(iw)iw.innerHTML=N.introWarmth||LOCKED_INTRO_SUB;
   // the backdrop mark: one flat copy of the founder's own logo, scaled up. (Was three
   // stacked copies for a faux-3D spin; `founder.hero3d` is now inert but tolerated in
   // existing build data.)
@@ -874,7 +925,12 @@ a{color:inherit;text-decoration:none;}
   // fade/scale it in once, shortly after the beat settles
   setTimeout(function(){var mi=document.getElementById('mmInner');if(mi)mi.classList.add('mm-on');},450);
   document.getElementById('heroBadge').innerHTML='Live build · <b>'+NAME+'</b>'+(D.founder.fileNo?' · '+D.founder.fileNo:'');
-  document.getElementById('heroTitle').innerHTML=(N.heroTitle&&N.heroTitle.length===2?N.heroTitle:[fmt(D.scan.universe)+' '+D.scan.universeLabel+' in.','The readiest buyers out.']).join('<br>');
+  // Hero: Alex's wording, do not reword. Frames the build as a SAMPLE and an
+  // opening, not a finished list ("the readiest buyers out" was the old fallback
+  // and is exactly the census claim Jason struck). Each line must hold on ONE
+  // rendered line; the 43px .punch-h cap below exists for these two strings.
+  var LOCKED_HERO=['We started researching your market.','Here’s a sample of what we can build together.'];
+  document.getElementById('heroTitle').innerHTML=(N.heroTitle&&N.heroTitle.length===2&&N.heroTitle[0]?N.heroTitle:LOCKED_HERO).join('<br>');
   document.getElementById('heroSubP').innerHTML=N.heroSub||('The machine we built around <b>'+NAME+'</b> - custom signals, cited evidence, a readiness score on every account, and a warm path in. Scroll to watch it run.');
   // Fallback stats: FIVE, matching the schema, every label distinct. (A four-entry
   // fallback with 'accounts curated' twice shipped on 8/17 when the named-buyers
@@ -897,22 +953,29 @@ a{color:inherit;text-decoration:none;}
     return '<div class="hstat"><div class="n" data-count="'+s.n+'">0</div><div class="l">'+s.label+'</div></div>';}).join('');
   document.getElementById('processLead').textContent=D.process.lead;
   document.getElementById('processFoot').textContent=D.process.foot;
-  document.getElementById('narrIcp').textContent=N.icp||'We read your materials, sit with the buyer calls, and study the category - then write the ICP down as plain criteria we can check against any company in the market.';
+  document.getElementById('narrIcp').textContent=N.icp||'We read your materials, sit with the buyer calls, and study the category - then write the ICP down as plain criteria we can check against every company we surface.';
   document.getElementById('signalsTitleN').textContent=NUMWORD[D.axes.length]||String(D.axes.length);
   document.getElementById('narrSignals').textContent=N.signals||('Standard firmographics only get you so far. We invent signals specific to '+NAME+'’s wedge and weight them by how strongly each one predicts a buyer who is ready now.');
   document.getElementById('narrEvidence').textContent=N.evidence||'Every field on every account, each claim backed by tiered sources. Nothing ships uncited.';
-  document.getElementById('narrScore').textContent=N.score||('The '+(NUMWORD[D.axes.length]||D.axes.length).toString().toLowerCase()+' signals combine on '+NAME+'’s weights into a single 0-100 score. It sets the order you work the list - not whether an account belongs. Everything here already cleared the bar.');
-  document.getElementById('narrShortlist').textContent=N.shortlist||('The '+String(NUMWORD[D.scan.curated]||D.scan.curated).toLowerCase()+' highest-quality accounts in the market - each one cleared every bar we set.');
-  document.getElementById('narrNetwork').textContent=N.network||'Through Primary’s network of partners, advisors, founders, and operators, we already hold warm introductions into much of the shortlist. Every line is a real relationship.';
+  document.getElementById('narrScore').textContent=N.score||('The '+(NUMWORD[D.axes.length]||D.axes.length).toString().toLowerCase()+' signals combine on '+NAME+'’s weights into a single readiness score, shown on a 70-100 display band. It sets the order you work this sample - not whether an account belongs. Everything here already cleared the bar.');
+  // Sample, never census: this is a first pass drawn from the founder's universe,
+  // shown to sharpen the filtering and the signals - not the list of what exists.
+  document.getElementById('narrShortlist').textContent=N.shortlist||('A first-pass sample of the '+String(NUMWORD[D.scan.curated]||D.scan.curated).toLowerCase()+' strongest fits our process surfaced, ranked by relative readiness within this sample.');
+  // Scoped to the sample: we hold paths into part of it, not "much of the shortlist".
+  // Null-guarded because act 8 is removable per build (SHOW_NETWORK).
+  var _nn=document.getElementById('narrNetwork');
+  if(_nn)_nn.textContent=N.network||'Through Primary’s network of partners, advisors, founders, and operators, we already hold warm introductions into part of this sample. Every line is a real relationship.';
   // "intros we can make tomorrow" strip - per-account warm-contact counts from the live graph
   (function(){
     var il=(D.network&&D.network.introList)||[];
     if(!il.length) return;
     var sn=(D.network&&D.network.shortNames)||{};
-    document.getElementById('introStrip').innerHTML=il.map(function(r){
+    var _is=document.getElementById('introStrip'),_isw=document.getElementById('introStripWrap');
+    if(!_is||!_isw)return;
+    _is.innerHTML=il.map(function(r){
       return '<div class="isc"><div class="in">'+(sn[r.name]||r.name)+'</div><div class="im">'+r.warm+' warm contact'+(r.warm===1?'':'s')+' · '+r.best+'</div></div>';
     }).join('');
-    document.getElementById('introStripWrap').style.display='';
+    _isw.style.display='';
   })();
   // score formula, rendered from the axes themselves
   document.getElementById('formulaLine').innerHTML=D.axes.map(function(a){
@@ -985,9 +1048,9 @@ a{color:inherit;text-decoration:none;}
   var FUN=D.scan.funnel||{};
   function farrow(at){return '<span class="fa rv" data-at="'+at+'"><svg viewBox="0 0 24 24"><line x1="4" y1="12" x2="18" y2="12"/><polyline points="12,6 18,12 12,18"/></svg></span>';}
   document.getElementById('funnel').innerHTML=
-    '<div class="fstat rv" data-at="0.56"><div class="n">'+fmt(D.scan.universe)+'</div><div class="l">'+(FUN.universe||'in the universe')+'</div></div>'+farrow('0.6')+
+    '<div class="fstat rv" data-at="0.56"><div class="n">'+fmt(D.scan.universe)+'</div><div class="l">'+(FUN.universe||'est. in your ICP, your sizing')+'</div></div>'+farrow('0.6')+
     '<div class="fstat rv" data-at="0.62"><div class="n">'+fmt(D.scan.groups)+'</div><div class="l">'+(FUN.groups||'clear the structural gate')+'</div></div>'+farrow('0.66')+
-    '<div class="fstat match rv" data-at="0.68"><div class="n">'+D.scan.matched+'</div><div class="l">'+(FUN.matched||'high-fit matches')+'</div></div>';
+    '<div class="fstat match rv" data-at="0.68"><div class="n">'+D.scan.matched+'</div><div class="l">'+(FUN.matched||'high-quality companies found')+'</div></div>';
   // optional methodology note (scan.methodNote) — replaces the generic scan-note line when present
   var mn=document.querySelector('#s-scan .scan-note');
   if(mn&&D.scan.methodNote)mn.textContent=D.scan.methodNote;
@@ -1033,7 +1096,9 @@ a{color:inherit;text-decoration:none;}
 
   /* ---- finale ---- */
   document.getElementById('finMark').innerHTML=D.founder.logoSvg;
-  document.getElementById('finSub').textContent=N.finaleSub||('From '+fmt(D.scan.universe)+' '+D.scan.universeLabel+' down to a ranked shortlist - each account with its score, its evidence, and a warm path in where we have one.');
+  // A first pass, not a finished deliverable: the close invites more work rather
+  // than wrapping one up.
+  document.getElementById('finSub').textContent=N.finaleSub||('From '+fmt(D.scan.universe)+' '+D.scan.universeLabel+' to a first-pass sample - each account with its score, its evidence, and a warm path in where we have one. There is so much more we can map and build together.');
   document.getElementById('finAxes').innerHTML=D.axes.map(function(a){return '<span class="axis-mini">'+a.name+'</span>';}).join('');
   // optional warmth line (narration.finaleWarmth) — trusted HTML; hidden when the key is absent
   var fw=document.getElementById('finWarmth');
@@ -1068,6 +1133,7 @@ a{color:inherit;text-decoration:none;}
   function renderNet(){
     if(netRendered)return; netRendered=true;
     var svgEl=document.getElementById('netSvg'), zoomG=document.getElementById('netZoom');
+    if(!svgEl||!zoomG)return;  // act 8 removed for this build (SHOW_NETWORK)
     zoomG.innerHTML='';
     // fan layout, per the Lyric Network Map: Primary sits bottom-center,
     // connectors fan upward on an inner ring, accounts sit on tiered orbit
@@ -1159,7 +1225,8 @@ a{color:inherit;text-decoration:none;}
     }
     var lp=mk('text',{x:cx,y:cy+17,'text-anchor':'middle','font-size':9,'font-weight':500,fill:'hsl(225 7% 68%)'});lp.textContent='the network';zoomG.appendChild(lp);
     // legend: one row per connector color + account encoding
-    document.getElementById('netLegend').innerHTML=
+    var _nl=document.getElementById('netLegend');
+    if(_nl)_nl.innerHTML=
       '<div class="lg lgh">Warm paths via</div>'+
       cons.map(function(c){return '<div class="lg"><span class="sw2" style="background:'+(palette[c.key]||'')+'"></span> '+c.role+'</div>';}).join('')+
       '<div class="lg lgh" style="margin-top:6px">Accounts</div>'+
@@ -1203,7 +1270,7 @@ a{color:inherit;text-decoration:none;}
     {id:'s-shortlist',lbl:'07 Shortlist'},
     {id:'s-network',  lbl:'08 Network'},
     {id:'s-end',      lbl:'Dashboard'}
-  ];
+  ].filter(function(a){return a.id!=='s-network'||SHOW_NETWORK;});
   var rail=document.getElementById('rail');
   rail.innerHTML=ACTS.map(function(a,i){return '<a data-i="'+i+'"><span class="rlbl">'+a.lbl+'</span><span class="rdot"></span></a>';}).join('');
   var railLinks=qsa('a',rail);
@@ -1348,7 +1415,7 @@ a{color:inherit;text-decoration:none;}
         }else{
           var cp=seg(sp,0.48,0.6);
           o.sn.textContent=fmt(Math.round(D.scan.universe-(D.scan.universe-D.scan.matched)*cp));
-          o.sl.textContent=cp>=1?(N.scanCollapsedLabel||'high-fit matches we research in depth'):D.scan.universeLabel;
+          o.sl.textContent=cp>=1?(N.scanCollapsedLabel||'high-quality companies found through web scraping, Exa, Clay, and hands-on research'):D.scan.universeLabel;
         }
         o.exes.forEach(function(x){var on=p>=x.at;if(on!==x.on){x.on=on;x.el.classList.toggle('struck',on);}});
       }
@@ -1382,7 +1449,7 @@ a{color:inherit;text-decoration:none;}
     qsa('.ring .val').forEach(function(c){var w=parseFloat(c.getAttribute('data-w'));c.setAttribute('stroke-dashoffset',String(CIRC*(1-w/50)));});
     qsa('.cnum .v').forEach(function(v){v.textContent=v.getAttribute('data-w');});
     document.getElementById('scanN').textContent=fmt(D.scan.matched);
-    document.getElementById('scanL').textContent=(N.scanCollapsedLabel||'high-fit matches we research in depth');
+    document.getElementById('scanL').textContent=(N.scanCollapsedLabel||'high-quality companies found through web scraping, Exa, Clay, and hands-on research');
     dots.forEach(function(d,i){d.classList.add(MATCH_IDX[i]?'match':'dim');});
     qsa('.ex').forEach(function(x){x.classList.add('struck');});
     qsa('.abar .fill').forEach(function(f){f.style.width=(parseFloat(f.getAttribute('data-v'))/5*100)+'%';});
