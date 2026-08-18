@@ -160,12 +160,11 @@ a{color:inherit;}
 .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;align-items:stretch;}
 .card-grid .card{height:100%;}
 .card-cell{display:flex;flex-direction:column;gap:8px;min-width:0;}
-/* Expanded cell takes its own full-width row and the expansion replaces the
-   preview card in place (the expansion head restates everything the card shows).
-   Without the row span, one expansion inflates every sibling card in its row. */
 /* Preview expands IN PLACE: the card keeps its own grid column - vertical and
    skinny - so several previews compare side by side (the Frost behaviour;
-   grid-column:1/-1 blew each preview up to the full row - Forgepoint, 8/17). */
+   grid-column:1/-1 blew each preview up to the full row - Forgepoint, 8/17).
+   Do NOT re-add a grid-column span here: toggleExpand opens the whole visual
+   row together, which is what keeps the row-mates from becoming blank cards. */
 .card-cell.is-expanded{display:block;}
 .card-cell.is-expanded .card{display:none;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0;cursor:pointer;transition:all 150ms cubic-bezier(.2,.8,.2,1);position:relative;display:flex;flex-direction:column;overflow:hidden;}
@@ -226,10 +225,13 @@ a{color:inherit;}
 .cx-signal-strip .cx-signal-foot{grid-column:1 / -1;display:flex;justify-content:space-between;align-items:baseline;padding-top:8px;border-top:1px solid var(--border-soft);margin-top:2px;}
 .cx-signal-strip .cx-signal-foot .lbl{font-family:var(--font-sans);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted);font-weight:600;}
 .cx-signal-strip .cx-signal-foot .val{font-family:var(--font-mono);font-size:18px;font-weight:600;color:var(--green-deep);font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
+/* All four axes read as one signal system. Only `pain` was ever themed; the
+   other three carried a hardcoded slate that ignored the build's accent and
+   looked like a disabled state next to it (Prahelika, 8/17). */
 .cx-dot.pain.on{background:var(--q-med);border-color:var(--q-med);}
-.cx-dot.residency.on{background:hsl(215 14% 60%);border-color:hsl(215 14% 60%);}
-.cx-dot.trigger.on{background:hsl(215 14% 60%);border-color:hsl(215 14% 60%);}
-.cx-dot.hiring.on{background:hsl(215 14% 60%);border-color:hsl(215 14% 60%);}
+.cx-dot.residency.on{background:var(--q-med);border-color:var(--q-med);}
+.cx-dot.trigger.on{background:var(--q-med);border-color:var(--q-med);}
+.cx-dot.hiring.on{background:var(--q-med);border-color:var(--q-med);}
 .cx-contacts-pill{display:flex;align-items:center;gap:7px;padding:8px 14px;border-bottom:1px solid var(--border-soft);background:var(--bg);}
 .cx-contacts-avatars{display:flex;}
 .cx-contacts-avatars .pill-av{width:20px;height:20px;border-radius:9999px;background:var(--green-tint);color:var(--green-deep);font-size:8px;font-weight:600;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface);font-family:var(--font-mono);margin-left:-5px;}
@@ -321,9 +323,9 @@ a{color:inherit;}
 .pc-signal-bar{flex:1;height:6px;background:var(--surface3);border-radius:9999px;overflow:hidden;max-width:160px;}
 .pc-signal-bar-fill{height:100%;border-radius:9999px;}
 .pc-signal-bar-fill.pain{background:var(--q-med);}
-.pc-signal-bar-fill.residency{background:hsl(215 14% 60%);}
-.pc-signal-bar-fill.trigger{background:hsl(215 14% 60%);}
-.pc-signal-bar-fill.hiring{background:hsl(215 14% 60%);}
+.pc-signal-bar-fill.residency{background:var(--q-med);}
+.pc-signal-bar-fill.trigger{background:var(--q-med);}
+.pc-signal-bar-fill.hiring{background:var(--q-med);}
 .pc-signal-num{font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--text);min-width:28px;text-align:right;font-variant-numeric:tabular-nums;}
 
 .pc-signal-chips{display:flex;gap:5px;flex-wrap:wrap;}
@@ -1298,9 +1300,29 @@ function toggleExpand(name){
   var seg = getCurrentSeg();
   var c = seg.companies.find(function(x){return x.name===name;});
   if (!c) return;
-  var k = expansionKey(c);
-  if (state.expanded[k]) delete state.expanded[k];
-  else state.expanded[k] = true;
+  var expanding = !state.expanded[expansionKey(c)];
+  // The whole visual row toggles together: grid rows share a height, so one
+  // open preview used to stretch its row-mates into tall blank cards. Cells in
+  // the same CSS-grid row share offsetTop; read the row from the live DOM
+  // before re-rendering, so this holds at any column count.
+  var names = [name];
+  var clickedCard = document.querySelector('#queue-grid .card[data-key="'+CSS.escape(name)+'"]');
+  var clickedCell = clickedCard && clickedCard.closest('.card-cell');
+  if (clickedCell) {
+    var rowTop = clickedCell.offsetTop;
+    document.querySelectorAll('#queue-grid .card-cell').forEach(function(cell){
+      if (cell.offsetTop !== rowTop) return;
+      var el = cell.querySelector('.card');
+      if (el && el.dataset.key && names.indexOf(el.dataset.key) === -1) names.push(el.dataset.key);
+    });
+  }
+  names.forEach(function(nm){
+    var co = seg.companies.find(function(x){return x.name===nm;});
+    if (!co) return;
+    var k = expansionKey(co);
+    if (expanding) state.expanded[k] = true;
+    else delete state.expanded[k];
+  });
   renderQueue();
 }
 

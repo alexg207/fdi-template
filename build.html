@@ -292,11 +292,15 @@ a{color:inherit;text-decoration:none;}
 .axis-card.wow{border-color:hsl(var(--acc) / .4);box-shadow:0 0 44px hsl(var(--acc) / .12);}
 @keyframes orbit{to{transform:rotate(360deg);}}
 .axis-card.wow .kind{color:var(--amber);}
-.wow-note{max-width:760px;margin:28px auto 0;padding:17px 24px;border-radius:14px;text-align:left;
+/* The WOW note is the one place a founder-specific insight gets the big
+   treatment, so it is sized to be read, not skimmed. Note the short-viewport
+   media queries below carry their own font sizes: the max-height:1180px rule
+   fires on most laptops, so a size change here that skips it silently reverts. */
+.wow-note{max-width:860px;margin:28px auto 0;padding:17px 24px;border-radius:14px;text-align:left;
   background:linear-gradient(165deg,hsl(var(--acc) / .07),transparent 60%),var(--glass);
   border:1px solid hsl(var(--acc) / .3);}
-.wow-note .wn-eye{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);font-weight:500;margin-bottom:8px;}
-.wow-note p{font-size:13px;line-height:1.6;color:var(--text-mid);}
+.wow-note .wn-eye{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);font-weight:500;margin-bottom:8px;}
+.wow-note p{font-size:15.5px;line-height:1.6;color:var(--text-mid);}
 .wow-note p b{color:var(--text);font-weight:600;}
 
 /* ---------- act 4 · scan (sweep over the universe) ---------- */
@@ -484,7 +488,7 @@ a{color:inherit;text-decoration:none;}
   .ring .cnum .v{font-size:20px;}
   .axis-card .ms{min-height:0;font-size:11px;}
   .wow-note{margin-top:16px;padding:13px 20px;}
-  .wow-note p{font-size:12.5px;}
+  .wow-note p{font-size:14.5px;}
   /* shortlist: 10 rows + 3 partner cards must fit the pin */
   .ranked{gap:4px;}
   .rrow{padding:6px 14px;}
@@ -547,7 +551,7 @@ a{color:inherit;text-decoration:none;}
   .ps-tools .ptl{display:none;}
   .pipe-foot{margin-top:14px;font-size:9.5px;}
   .wow-note{margin-top:14px;padding:12px 15px;}
-  .wow-note p{font-size:12px;}
+  .wow-note p{font-size:13.5px;}
   .dot-grid{grid-template-columns:repeat(20,1fr);gap:5px;margin-bottom:16px;}
   .scan-counter .n{font-size:38px;}
   .fstat{min-width:104px;padding:10px 12px 9px;}
@@ -872,11 +876,16 @@ a{color:inherit;text-decoration:none;}
   document.getElementById('heroBadge').innerHTML='Live build · <b>'+NAME+'</b>'+(D.founder.fileNo?' · '+D.founder.fileNo:'');
   document.getElementById('heroTitle').innerHTML=(N.heroTitle&&N.heroTitle.length===2?N.heroTitle:[fmt(D.scan.universe)+' '+D.scan.universeLabel+' in.','The readiest buyers out.']).join('<br>');
   document.getElementById('heroSubP').innerHTML=N.heroSub||('The machine we built around <b>'+NAME+'</b> - custom signals, cited evidence, a readiness score on every account, and a warm path in. Scroll to watch it run.');
+  // Fallback stats: FIVE, matching the schema, every label distinct. (A four-entry
+  // fallback with 'accounts curated' twice shipped on 8/17 when the named-buyers
+  // stat was swapped out.) Counts only - the fallback never claims a surface the
+  // build may not ship.
   var heroStats=N.heroStats||[
-    {n:D.scan.universe,label:'scanned'},
+    {n:D.scan.universe,label:D.scan.universeLabel||'in your ICP, your sizing'},
+    {n:D.scan.matched,label:'companies profiled'},
     {n:D.axes.length,label:'custom signals'},
     {n:D.scan.curated,label:'accounts curated'},
-    {n:D.companies.length,label:'accounts curated'}];
+    {n:(D.evidenceFeed||[]).length,label:'cited sources'}];
   document.getElementById('heroStats').innerHTML=heroStats.map(function(s){
     return '<div class="hstat"><div class="n" data-count="'+s.n+'">0</div><div class="l">'+s.label+'</div></div>';}).join('');
   document.getElementById('processLead').textContent=D.process.lead;
