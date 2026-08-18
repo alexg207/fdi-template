@@ -1042,14 +1042,17 @@ function buildScoreTips(c){
     hireReason = verifiedRoles+' verified role'+(verifiedRoles===1?'':'s')+' on staff + '+openReqs+' active posting'+(openReqs===1?'':'s')+'; top: "'+jobs[0].title+'".';
   }
   var total = Math.round((0.25*pain + 0.25*trig + 0.25*res + 0.25*hir) * 20);  // keep in sync with computeSignal() weights
+  // Tooltips explain the WEIGHTED BLEND, so they quote the raw score. _signal is
+  // the 70-100 display value and would not add up against the axes shown below it.
+  var raw = c._signalRaw != null ? c._signalRaw : (c._signal != null ? c._signal : total);
   var score = c._signal != null ? c._signal : total;
   return {
     pain: '<strong>{{AXIS1_LABEL}} ('+pain+'/5)</strong><br><em>What it measures:</em> {{AXIS1_DESCRIPTION}}'+(painReason?'<br><br><em>Why '+c.name+' scored '+pain+':</em> '+painReason:''),
     residency: '<strong>{{AXIS2_LABEL}} ('+res+'/5)</strong><br><em>What it measures:</em> {{AXIS2_DESCRIPTION}}'+(resReason?'<br><br><em>Why '+c.name+' scored '+res+':</em> '+resReason:''),
     trigger: '<strong>Buying Trigger ('+trig+'/5)</strong><br><em>What it measures:</em> recent earnings remarks, hiring spikes, partnerships, or RFPs that open a window now.'+(trigReason?'<br><br><em>Why '+c.name+' scored '+trig+':</em> '+trigReason:''),
     hiring: '<strong>Hiring ('+hir+'/5)</strong><br><em>What it measures:</em> {{HIRING_AXIS_DESCRIPTION}}<br><br><em>Why '+c.name+' scored '+hir+':</em> '+hireReason,
-    total: '<strong>Total Signal Score: '+score+'/100</strong><br>Weighted blend of four rubric-scored axes (0 to 5 each), scaled to 100. Set the per-axis weights in computeSignal() to match your Phase 5 axis weighting.<br><br>{{AXIS1_LABEL}} '+pain+' · Buying Trigger '+trig+' · {{AXIS2_LABEL}} '+res+' · Hiring '+hir+'.',
-    confidence: '<strong>Confidence '+(score/100).toFixed(2)+'</strong><br>Composite confidence the account is a real {{PRODUCT_NAME}} opportunity. Derived from the Total Signal Score ('+score+'/100), normalized to 0.00–1.00. Higher = stronger signal across all four dimensions.'
+    total: '<strong>Signal '+score+'/100</strong><br>Weighted blend of four rubric-scored axes (0 to 5 each), shown on a 70-100 display band because every account here already cleared the bar. Raw blend: '+raw+'/100.<br><br>{{AXIS1_LABEL}} '+pain+' · Buying Trigger '+trig+' · {{AXIS2_LABEL}} '+res+' · Hiring '+hir+'.',
+    confidence: '<strong>Confidence '+(raw/100).toFixed(2)+'</strong><br>Composite confidence the account is a real {{PRODUCT_NAME}} opportunity. Derived from the raw weighted blend ('+raw+'/100), normalized to 0.00-1.00. Higher = stronger signal across all four dimensions.'
   };
 }
 try {
@@ -1163,16 +1166,30 @@ SEGMENTS.forEach(function(seg){
 // This runs on the template side ON PURPOSE: build agents write RAW scores only.
 // A hand-rescaled value entering here gets rescaled twice and drifts the
 // walkthrough and dashboard apart.
+// MIN_SPREAD: below this, stretching the set across the full 30-point band would
+// invent a difference that is not in the data (two accounts on 83 and 84 must not
+// read 70 and 100). In that case the set is SHIFTED so the top still reads 100 and
+// the real gaps are preserved. Keep this identical to build.html's copy.
+var DISPLAY_FLOOR = 70, DISPLAY_TOP = 100, MIN_SPREAD = 10;
 (function(){
   var all = [];
   SEGMENTS.forEach(function(s){ all = all.concat(s.companies); });
-  if (!all.length) return;
+  var scored = all.filter(function(c){ return Number.isFinite(c._signal); });
+  // A cohort with no finite score is corrupt input, not a tie - leave it alone so
+  // the breakage stays visible instead of every account reading 100.
+  if (!scored.length) return;
   var lo = Infinity, hi = -Infinity;
-  all.forEach(function(c){ if (c._signal < lo) lo = c._signal; if (c._signal > hi) hi = c._signal; });
-  all.forEach(function(c){
-    c._signalRaw = c._signal;
-    // Every account tied on raw reads 100: they are all the top of this sample.
-    c._signal = hi > lo ? Math.round(70 + (c._signal - lo) * 30 / (hi - lo)) : 100;
+  scored.forEach(function(c){ if (c._signal < lo) lo = c._signal; if (c._signal > hi) hi = c._signal; });
+  var spread = hi - lo;
+  scored.forEach(function(c){
+    var raw = c._signal;
+    c._signalRaw = raw;
+    if (spread >= MIN_SPREAD) {
+      c._signal = Math.round(DISPLAY_FLOOR + (raw - lo) * (DISPLAY_TOP - DISPLAY_FLOOR) / spread);
+    } else {
+      // Top reads 100, everything below it keeps its real distance, floored at 70.
+      c._signal = Math.max(DISPLAY_FLOOR, Math.round(DISPLAY_TOP - (hi - raw)));
+    }
   });
 })();
 
@@ -1204,7 +1221,10 @@ function getFilteredCompanies(){
     return (c.contacts||[]).reduce(function(s,ct){return s+(ct.connections||[]).length;},0);
   }
   if (state.sort === 'signal') {
-    rows.sort(function(a,b){return b._signal - a._signal;});
+    // Sort on the RAW score. The display value is rounded into a 70-100 band, so
+    // two genuinely different accounts can share a display integer; ordering off
+    // the rounded number would drop that distinction.
+    rows.sort(function(a,b){return (b._signalRaw!=null?b._signalRaw:b._signal) - (a._signalRaw!=null?a._signalRaw:a._signal);});
   } else if (state.sort === 'warm') {
     rows.sort(function(a,b){
       var aw = warmCount(a), bw = warmCount(b);
@@ -1224,7 +1244,9 @@ function renderQueue(){
   var seg = getCurrentSeg();
 
   // Context strip update
-  var aboveThresh = rows.filter(function(c){return c._signal >= 50;}).length;
+  // RAW score: every display score is >= 70 by construction, so a threshold read
+  // off _signal would count every account and the stat would say nothing.
+  var aboveThresh = rows.filter(function(c){return (c._signalRaw!=null?c._signalRaw:c._signal) >= 50;}).length;
   var totalQueue = seg.companies.length;
   var warmCount = 0;
   seg.companies.forEach(function(co){
@@ -3325,7 +3347,9 @@ function openDetail(name){
         '</div>' +
         '<div class="pc-confidence" data-tip="'+escTipAttr(dtTips.confidence)+'">' +
           '<div class="pc-conf-lbl">Confidence</div>' +
-          '<div class="pc-conf-val">'+(c._signal/100).toFixed(2)+'</div>' +
+          // Confidence is a claim about signal STRENGTH, so it comes off the raw
+          // score. Off the display value the top of every sample reads 1.00.
+          '<div class="pc-conf-val">'+((c._signalRaw!=null?c._signalRaw:c._signal)/100).toFixed(2)+'</div>' +
         '</div>' +
       '</div>' +
       // Signal breakdown bars on detail page (with tooltips per axis)

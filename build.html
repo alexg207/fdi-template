@@ -530,7 +530,9 @@ a{color:inherit;text-decoration:none;}
   .pin{padding:70px 18px 28px;}
   .act-title{font-size:28px;}
   .act-narr{font-size:13.5px;margin-bottom:22px;}
-  .punch-h{font-size:26px;}
+  /* Keeps scaling below 900px rather than pinning one size: the longer locked
+     hero line wraps on a phone at a fixed 26px. */
+  .punch-h{font-size:clamp(17px,2.9vw,26px);}
   .intro-word{font-size:38px;}
   .intro-head{font-size:19px;padding:0 8px;}
   .intro-tag{font-size:15px;}
@@ -816,14 +818,23 @@ a{color:inherit;text-decoration:none;}
      the dashboard cannot drift - which is exactly what happened when scores were
      hand-written into build-data.js. Build agents write RAW scores only; a
      pre-scaled value would be scaled twice here. Raw kept on _scoreRaw. */
+  /* MIN_SPREAD: below this, stretching the set across the full 30-point band
+     would invent a difference that is not in the data (83 and 84 must not read
+     70 and 100), so the set is SHIFTED instead - top still 100, real gaps kept.
+     Keep this block identical to the dashboard's copy in index.html. */
+  var DISPLAY_FLOOR=70,DISPLAY_TOP=100,MIN_SPREAD=10;
   (function(){
-    var cos=(D.companies||[]).filter(function(c){return typeof c.score==='number';});
-    if(!cos.length)return;
+    var cos=(D.companies||[]).filter(function(c){return Number.isFinite(c.score);});
+    if(!cos.length)return;   // corrupt/absent scores stay visible, not silently 100
     var lo=Infinity,hi=-Infinity;
     cos.forEach(function(c){if(c.score<lo)lo=c.score;if(c.score>hi)hi=c.score;});
+    var spread=hi-lo;
     cos.forEach(function(c){
-      c._scoreRaw=c.score;
-      c.score=hi>lo?Math.round(70+(c.score-lo)*30/(hi-lo)):100;
+      var raw=c.score;
+      c._scoreRaw=raw;
+      c.score=spread>=MIN_SPREAD
+        ?Math.round(DISPLAY_FLOOR+(raw-lo)*(DISPLAY_TOP-DISPLAY_FLOOR)/spread)
+        :Math.max(DISPLAY_FLOOR,Math.round(DISPLAY_TOP-(hi-raw)));
     });
   })();
   /* Act 8 (the illustrative warm-path fan) is opt-OUT per build: set
@@ -930,7 +941,12 @@ a{color:inherit;text-decoration:none;}
   // and is exactly the census claim Jason struck). Each line must hold on ONE
   // rendered line; the 43px .punch-h cap below exists for these two strings.
   var LOCKED_HERO=['We started researching your market.','Here’s a sample of what we can build together.'];
-  document.getElementById('heroTitle').innerHTML=(N.heroTitle&&N.heroTitle.length===2&&N.heroTitle[0]?N.heroTitle:LOCKED_HERO).join('<br>');
+  // Per-line fallback: a build that authored only one of the two lines gets the
+  // locked wording for the other, rather than silently losing its line or
+  // rendering an empty one.
+  var _ht=(N.heroTitle&&N.heroTitle.length===2)?N.heroTitle:[];
+  document.getElementById('heroTitle').innerHTML=LOCKED_HERO.map(function(def,i){
+    var v=_ht[i];return (typeof v==='string'&&v.trim())?v:def;}).join('<br>');
   document.getElementById('heroSubP').innerHTML=N.heroSub||('The machine we built around <b>'+NAME+'</b> - custom signals, cited evidence, a readiness score on every account, and a warm path in. Scroll to watch it run.');
   // Fallback stats: FIVE, matching the schema, every label distinct. (A four-entry
   // fallback with 'accounts curated' twice shipped on 8/17 when the named-buyers
@@ -1115,7 +1131,8 @@ a{color:inherit;text-decoration:none;}
   function initials(s){return s.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();}
   // score -> accent tone from the active theme
   function accHS(){var p=ACCENT.split(/\s+/);return p[0]+' '+p[1];}
-  function toneL(score){var t=Math.max(0,Math.min(1,(score-70)/25));return 48+Math.round(t*18);}
+  // Spans the full display band; a /25 divisor flattened everything above 95.
+  function toneL(score){var t=Math.max(0,Math.min(1,(score-DISPLAY_FLOOR)/(DISPLAY_TOP-DISPLAY_FLOOR)));return 48+Math.round(t*18);}
   function scoreTone(s){return 'hsl('+accHS()+' '+toneL(s)+'%)';}
   function scoreToneD(s){return 'hsl('+accHS()+' '+(toneL(s)-14)+'%)';}
   function scoreFillSvg(s){return 'hsl('+accHS()+' '+(toneL(s)-16)+'% / .28)';}
@@ -1183,7 +1200,9 @@ a{color:inherit;text-decoration:none;}
         // edge thickness tracks readiness, like Lyric's warmth edges
         zoomG.appendChild(mk('line',{x1:px,y1:py,x2:ccx,y2:ccy,stroke:col,'stroke-width':Math.max(1.2,co.score/38),'stroke-opacity':.32,'stroke-linecap':'round'}));
         flowDots(flow,px,py,ccx,ccy,col,1);
-        var rad=Math.max(15,Math.min(28,15+(co.score-70)/23*13));
+        // Rebased on the 70-100 display band: the old /23 divisor came from a
+        // roughly 70-93 range and made every score above 93 the same size.
+        var rad=Math.max(15,Math.min(28,15+(co.score-DISPLAY_FLOOR)/(DISPLAY_TOP-DISPLAY_FLOOR)*13));
         var g=mk('g',{class:'net-node'});
         if(multi) g.appendChild(mk('circle',{cx:px,cy:py,r:rad+5,fill:'none',stroke:'hsl('+accHS()+' 70%)','stroke-width':1.6,'stroke-opacity':.9}));
         g.appendChild(mk('circle',{cx:px,cy:py,r:rad,fill:scoreFillSvg(co.score),stroke:scoreTone(co.score),'stroke-width':2}));

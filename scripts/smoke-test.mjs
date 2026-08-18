@@ -236,6 +236,7 @@ async function checkDashboard(page, base) {
     return {
       haveRaw, distinctRaw,
       min: Math.min(...disp), max: Math.max(...disp),
+      rawSpread: haveRaw ? Math.max(...raws) - Math.min(...raws) : 0,
       outOfBand: disp.filter((d) => d < 70 || d > 100).length,
       tierMismatch: haveRaw ? all.filter((c) => c.tier !== (c._signalRaw >= 75 ? "high" : "med")).length : -1,
       monotonic: all.slice().sort((a, b) => a._signalRaw - b._signalRaw).every((c, i, arr) => i === 0 || c._signal >= arr[i - 1]._signal),
@@ -245,9 +246,13 @@ async function checkDashboard(page, base) {
     add("dashboard: display scores use the 70-100 band", false, "no companies to score");
     add("dashboard: tier still derives from the raw score", false, "no companies to score");
   } else {
-    const bandOk = scores.haveRaw && scores.outOfBand === 0 && (scores.distinctRaw > 1 ? (scores.min === 70 && scores.max === 100) : scores.max === 100);
+    // Top always reads 100 and nothing falls outside the band. The floor is only
+    // pinned to 70 when the raw spread is wide enough to stretch (>= MIN_SPREAD);
+    // a tight cohort is shifted instead, so its floor sits above 70 on purpose.
+    const wideSpread = scores.rawSpread >= 10;
+    const bandOk = scores.haveRaw && scores.outOfBand === 0 && scores.max === 100 && (!wideSpread || scores.min === 70);
     add("dashboard: display scores use the 70-100 band", bandOk,
-      scores.haveRaw ? `min ${scores.min} / max ${scores.max}, ${scores.outOfBand} outside 70-100, ${scores.distinctRaw} distinct raw` : "_signalRaw missing — no rescale is running");
+      scores.haveRaw ? `min ${scores.min} / max ${scores.max}, ${scores.outOfBand} outside 70-100, raw spread ${scores.rawSpread}` : "_signalRaw missing — no rescale is running");
     add("dashboard: tier still derives from the raw score", scores.tierMismatch === 0,
       scores.tierMismatch < 0 ? "_signalRaw missing" : `${scores.tierMismatch} tier(s) disagree with raw >= 75`);
     // Only meaningful once a rescale is running; without _signalRaw the sort key
@@ -264,7 +269,15 @@ async function checkDashboard(page, base) {
 }
 
 // ── walkthrough checks ──────────────────────────────────────────────────────
+// The one-line hero and three-line narration rules are DESKTOP invariants: they
+// come from Jason reviewing builds on a laptop, and at phone width a 46-character
+// line cannot hold without shrinking type past readability. Narrow viewports still
+// assert the things that matter there - the page executes, nothing clips its
+// scene, no banned copy - with a looser text budget.
 async function checkWalkthrough(page, base, viewport) {
+  const strict = viewport.width >= 1000;
+  const HERO_MAX = strict ? null : 3;      // null = must equal the authored count
+  const NARR_MAX = strict ? 3 : 8;
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message || String(e)));
   await page.setViewportSize(viewport);
@@ -288,7 +301,8 @@ async function checkWalkthrough(page, base, viewport) {
     const authored = (el.innerHTML.match(/<br\s*\/?>/gi) || []).length + 1;
     return { authored, rendered: window.__lineBoxes(el), text: (el.textContent || "").slice(0, 90), fontSize: getComputedStyle(el.closest(".punch-h") || el).fontSize };
   });
-  add(`walkthrough ${tag}: hero renders one line per authored line`, !hero.missing && hero.rendered === hero.authored,
+  const heroOk = !hero.missing && (HERO_MAX === null ? hero.rendered === hero.authored : hero.rendered <= hero.authored + HERO_MAX);
+  add(`walkthrough ${tag}: hero ${strict ? "renders one line per authored line" : "stays compact"}`, heroOk,
     hero.missing ? "#heroTitle missing" : `${hero.rendered} rendered / ${hero.authored} authored at ${hero.fontSize}`);
 
   // W2 — five hero stats, all labels distinct.
@@ -310,9 +324,28 @@ async function checkWalkthrough(page, base, viewport) {
       id: el.id || el.className || "(unnamed)", lines: window.__lineBoxes(el), text: (el.textContent || "").slice(0, 60),
     })).filter((n) => n.lines > 0);
   });
-  const overLong = narr.filter((n) => n.lines > 3);
-  add(`walkthrough ${tag}: narration beats <= 3 rendered lines`, overLong.length === 0,
-    overLong.length ? overLong.map((n) => `${n.id}: ${n.lines} lines ("${n.text}...")`).join("; ") : `${narr.length} beat(s) all within 3`);
+  const overLong = narr.filter((n) => n.lines > NARR_MAX);
+  add(`walkthrough ${tag}: narration beats <= ${NARR_MAX} rendered lines`, overLong.length === 0,
+    overLong.length ? overLong.map((n) => `${n.id}: ${n.lines} lines ("${n.text}...")`).join("; ") : `${narr.length} beat(s) all within ${NARR_MAX}`);
+
+  // W2b — the walkthrough runs the SAME rescale as the dashboard, so its shortlist
+  // must land in the band too. Two surfaces drifting apart is the bug this replaced.
+  const wScores = await page.evaluate(() => {
+    const D = window.BUILD_DATA;
+    const cos = ((D && D.companies) || []).filter((c) => Number.isFinite(c.score));
+    if (!cos.length) return { none: true };
+    const disp = cos.map((c) => c.score), raws = cos.map((c) => c._scoreRaw);
+    return {
+      haveRaw: raws.every((r) => Number.isFinite(r)),
+      min: Math.min(...disp), max: Math.max(...disp),
+      outOfBand: disp.filter((d) => d < 70 || d > 100).length,
+      rawSpread: raws.every((r) => Number.isFinite(r)) ? Math.max(...raws) - Math.min(...raws) : 0,
+    };
+  });
+  if (wScores.none) add(`walkthrough ${tag}: shortlist scores use the 70-100 band`, false, "no scored companies in build-data");
+  else add(`walkthrough ${tag}: shortlist scores use the 70-100 band`,
+    wScores.haveRaw && wScores.outOfBand === 0 && wScores.max === 100 && (wScores.rawSpread < 10 || wScores.min === 70),
+    wScores.haveRaw ? `min ${wScores.min} / max ${wScores.max}, raw spread ${wScores.rawSpread}` : "_scoreRaw missing — no rescale is running");
 
   // W3b — the WOW note is the largest type on a pinned, overflow:hidden scene,
   // so a size bump that reads well on a desktop can clip on a short viewport.
@@ -370,7 +403,10 @@ try {
   // Two viewports: 900px tall trips the short-viewport media query that carries
   // its OWN font cap (a hero fix applied only to the base rule silently reverts
   // on most laptops); 1000px exercises the base rule.
-  for (const vp of [{ width: 1440, height: 900 }, { width: 1440, height: 1000 }]) {
+  // 900px tall trips the short-viewport media query that carries its own font cap;
+  // 1000px exercises the base rule; 390x844 is a phone, where the longer locked
+  // hero line is the first thing to wrap.
+  for (const vp of [{ width: 1440, height: 900 }, { width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
     const p = await ctx.newPage();
     await checkWalkthrough(p, server.url, vp);
     await p.close();
