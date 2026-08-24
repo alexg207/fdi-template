@@ -316,5 +316,11 @@ a{color:inherit;}
   root.innerHTML = html;
 })();
 </script>
+<!-- In-site editor, same as index.html and dashboard.html. This page is
+     published whenever the competitors module ran, so leaving it out meant the
+     one page a teammate most often wants to reword was the one page ⌘K would
+     not open. The slug is stamped by the pipeline
+     (fdi-engine scripts/fdi/stamp-editor-slug.mjs), not by hand. -->
+<script src="https://primary-gtm-team.vercel.app/fdi-edit/widget.js" defer></script>
 </body>
 </html>

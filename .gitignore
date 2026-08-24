@@ -19,6 +19,11 @@ node_modules/
 *.tmp.json
 *.swp
 .DS_Store
+# Vercel's project link. Written by the pipeline so a deploy lands in the right
+# project, and deleted straight afterwards — but a stray projectId committed
+# into a founder's repo is a footgun for the next person who deploys from a
+# clone of it, and `git add -A` in the artifact backstop would sweep it in.
+.vercel/
 
 # Per-build derived files
 *-extracted.txt
