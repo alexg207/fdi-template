@@ -88,6 +88,7 @@ a{color:inherit;text-decoration:none;}
 #field{position:fixed;inset:0;z-index:0;pointer-events:none;}
 
 /* faint dot lattice */
+#impWeb{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.9;transition:opacity .2s linear;}
 .lattice{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
   background-image:radial-gradient(hsl(40 40% 90% / .045) 1px,transparent 1px);background-size:26px 26px;
   mask-image:radial-gradient(ellipse 90% 70% at 50% 40%,black 30%,transparent 100%);
@@ -621,6 +622,7 @@ a{color:inherit;text-decoration:none;}
 <div class="mesh"><i class="m1"></i><i class="m2"></i><i class="m3"></i></div>
 <canvas id="field"></canvas>
 <div class="lattice"></div>
+<canvas id="impWeb" aria-hidden="true"></canvas>
 <div class="progress"><i id="progressBar"></i></div>
 
 <header class="topbar">
@@ -1571,5 +1573,120 @@ a{color:inherit;text-decoration:none;}
 <!-- In-site editor (see index.html). No slug attribute: build.html is copied
      verbatim, and the widget derives the slug from the project hostname. -->
 <script src="https://primary-gtm-team.vercel.app/fdi-edit/widget.js" defer></script>
+<script>
+/* Brand motif (Imprest learnings 10/5): a quiet node web in the founder's accent
+   colour behind the walkthrough. Fixed seeded layout on an even 8x5 grid (never
+   reshuffles on refresh), one light on each half of the screen hopping node to node
+   (2.3s per hop, 0.5s pause), fading to 25% after the intro. Static under
+   prefers-reduced-motion. Opt out with BUILD_DATA.founder.motif === false; pin a
+   layout with founder.motifSeed (pick it from screenshots at build time). */
+(function(){
+  var BD=window.BUILD_DATA||{}, F=BD.founder||{};
+  if(F.motif===false)return;
+  var WEB_SEED=Number(F.motifSeed)||(function(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;})(String(F.name||'fdi'));
+  var cv=document.getElementById('impWeb'); if(!cv||!cv.getContext)return;
+  var ctx=cv.getContext('2d'), DPR=Math.min(window.devicePixelRatio||1,2), W=0,H=0, nodes=[], edges=[], adj=[];
+  // Accent from the theme (--acc is "H S% L%"); rgba() needs r,g,b.
+  var CU=(function(){var v=getComputedStyle(document.documentElement).getPropertyValue('--acc').trim().split(/\s+/);var h=parseFloat(v[0])||30,s=(parseFloat(v[1])||90)/100,l=(parseFloat(v[2])||60)/100;var k=function(n){return (n+h/30)%12;},a=s*Math.min(l,1-l),f=function(n){return Math.round(255*(l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)))));};return f(0)+','+f(8)+','+f(4);})();
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Fixed layout: a seeded generator, so the web is the same on every visit and on
+  // every screen (positions are on a fixed grid in normalised space, scaled to fit).
+  var SEED=(function(){var m=/[?&]webseed=(\d+)/.exec(location.search);return m?Number(m[1]):WEB_SEED;})();
+  function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  var R=mulberry(SEED);
+  function rnd(a,b){return a+R()*(b-a);}
+  function wrnd(a,b){return a+Math.random()*(b-a);}
+  function build(){
+    W=window.innerWidth; H=window.innerHeight;
+    cv.width=W*DPR; cv.height=H*DPR; cv.style.width=W+'px'; cv.style.height=H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    nodes=[]; edges=[]; adj=[]; R=mulberry(SEED);
+    var COLS=8, ROWS=5, cw=W/COLS, ch=H/ROWS;
+    for(var r=0;r<ROWS;r++){
+      for(var c=0;c<COLS;c++){
+        var skip=R()<0.14, jx=rnd(-0.3,0.3), jy=rnd(-0.3,0.3), rad=rnd(4.5,8);
+        if(skip)continue;
+        nodes.push({x:(c+0.5+jx)*cw,y:(r+0.5+jy)*ch,r:rad,lit:0});
+      }
+    }
+    for(var i=0;i<nodes.length;i++)adj.push([]);
+    var seen={}, lim=Math.max(cw,ch)*1.6;
+    nodes.forEach(function(a,i){
+      var near=nodes.map(function(b,j){return {j:j,d:Math.hypot(a.x-b.x,a.y-b.y)};})
+        .filter(function(o){return o.j!==i;}).sort(function(p,q){return p.d-q.d;}).slice(0,3);
+      near.forEach(function(o){
+        if(o.d>lim)return;
+        var k=i<o.j?i+'-'+o.j:o.j+'-'+i; if(seen[k])return; seen[k]=1;
+        edges.push([i,o.j]); adj[i].push(o.j); adj[o.j].push(i);
+      });
+    });
+  }
+  var walkers=[];
+  // One light works the left half of the screen, the other the right, so the
+  // motion is spread across the page instead of bunching in one place.
+  function onSide(n,side){ return side==='L' ? nodes[n].x < W*0.5 : nodes[n].x >= W*0.5; }
+  function spawn(side){
+    var pool=[]; for(var k=0;k<nodes.length;k++){ if(onSide(k,side)&&adj[k]&&adj[k].length)pool.push(k); }
+    if(!pool.length)return;
+    var start=pool[Math.floor(Math.random()*pool.length)];
+    nodes[start].lit=1;
+    walkers.push({side:side,from:start,to:pick(start,-1,side),t:0,wait:0.6,prev:-1,hops:0,max:Math.floor(wrnd(5,9))});
+  }
+  function pick(n,avoid,side){
+    var o=adj[n].filter(function(m){return m!==avoid && (!side||onSide(m,side));});
+    if(!o.length)o=adj[n].filter(function(m){return !side||onSide(m,side);});
+    if(!o.length)o=adj[n];
+    return o[Math.floor(Math.random()*o.length)];
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.lineWidth=1;
+    edges.forEach(function(e){var a=nodes[e[0]],b=nodes[e[1]];
+      ctx.strokeStyle='rgba('+CU+','+(0.10+0.25*Math.max(a.lit,b.lit))+')';
+      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();});
+    walkers.forEach(function(w){var a=nodes[w.from],b=nodes[w.to]; if(!b)return;
+      var e=w.t<0.5?2*w.t*w.t:1-Math.pow(-2*w.t+2,2)/2;  // ease in-out
+      var x=a.x+(b.x-a.x)*e, y=a.y+(b.y-a.y)*e;
+      ctx.strokeStyle='rgba('+CU+',0.85)'; ctx.lineWidth=1.4;
+      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(x,y);ctx.stroke(); ctx.lineWidth=1;
+      var g=ctx.createRadialGradient(x,y,0,x,y,10); g.addColorStop(0,'rgba('+CU+',0.9)'); g.addColorStop(1,'rgba('+CU+',0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,10,0,Math.PI*2); ctx.fill();});
+    nodes.forEach(function(n){
+      var L=n.lit, r=n.r*(1+0.35*L);
+      if(L>0.05){var g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,r*3.2); g.addColorStop(0,'rgba('+CU+','+(0.22*L)+')'); g.addColorStop(1,'rgba('+CU+',0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(n.x,n.y,r*3.2,0,Math.PI*2); ctx.fill();}
+      ctx.fillStyle='#0a0a0a'; ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba('+CU+','+(0.28+0.72*L)+')'; ctx.lineWidth=1+0.6*L; ctx.stroke(); ctx.lineWidth=1;
+      ctx.fillStyle='rgba('+CU+','+(0.35+0.65*L)+')'; ctx.beginPath(); ctx.arc(n.x,n.y,1.4+0.8*L,0,Math.PI*2); ctx.fill();
+    });
+  }
+  var last=0;
+  function tick(ts){
+    var dt=Math.min(0.05,(ts-last)/1000||0); last=ts;
+    nodes.forEach(function(n){ n.lit=Math.max(0,n.lit-dt*0.24); });
+    walkers.forEach(function(w){
+      if(w.wait>0){ w.wait-=dt; return; }             // a breath at each node before moving on
+      w.t+=dt/2.3;                                     // slow travel along the edge
+      if(w.t>=1){ nodes[w.to].lit=1; w.hops++; var nxt=pick(w.to,w.from,w.side); w.prev=w.from; w.from=w.to; w.to=nxt; w.t=0; w.wait=0.5; }
+    });
+    walkers=walkers.filter(function(w){return w.hops<w.max;});
+    ['L','R'].forEach(function(sd){ if(!walkers.some(function(w){return w.side===sd;}))spawn(sd); });
+    draw(); if(!document.hidden)requestAnimationFrame(tick); else setTimeout(function(){requestAnimationFrame(tick);},500);
+  }
+  build();
+  if(reduce){ [0,3,7].forEach(function(i){ if(nodes[i*4])nodes[i*4].lit=1; }); draw(); }
+  else requestAnimationFrame(tick);
+  // Full strength on the intro, fading to 25% (75% less bright) by the time the
+  // next section arrives, so the web sits behind the content instead of competing.
+  var BASE=0.9, FLOOR=BASE*0.25;
+  function fade(){
+    var hero=document.getElementById('s-hero');
+    var end=hero?Math.max(1,hero.offsetHeight):window.innerHeight;
+    var p=Math.min(1,Math.max(0,(window.scrollY||0)/end));
+    cv.style.opacity=String(BASE-(BASE-FLOOR)*p);
+  }
+  window.addEventListener('scroll',fade,{passive:true}); fade();
+  var rz; window.addEventListener('resize',function(){clearTimeout(rz); rz=setTimeout(function(){build(); walkers=[]; if(reduce)draw();},200);});
+})();
+</script>
 </body>
 </html>
