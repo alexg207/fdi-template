@@ -827,7 +827,7 @@ a{color:inherit;}
 <header class="topbar">
   <div style="display:flex;align-items:center;gap:14px;">
     <div class="brand" onclick="window.location.href='./'" title="Back to story">
-      <div class="logo-mark"><!-- {{PRODUCT_LOGO_SVG}}: replace with the founder's mark (a simple line-icon, ~24x24 viewBox). Default below is a generic spark. --><svg viewBox="0 0 24 24"><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/><circle cx="12" cy="12" r="2.5"/></svg></div>
+      <div class="logo-mark"><!-- {{PRODUCT_LOGO_SVG}}: replace with the founder's mark (a simple line-icon, ~24x24 viewBox). Default below is a generic spark; the founder's icon (assets/logo-icon.png, from build-logo-assets) replaces it when present. --><img src="./assets/logo-icon.png" alt="" onload="var n=this.nextElementSibling;if(n)n.remove();" onerror="this.remove();"><svg viewBox="0 0 24 24"><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/><circle cx="12" cy="12" r="2.5"/></svg></div>
       <span class="product-name">{{PRODUCT_NAME}}</span>
       <span class="env-pill">v2.0</span>
     </div>
@@ -1767,7 +1767,18 @@ function setSort(s){
   renderQueue();
 }
 
+// No warm paths, no Network/Contacts tabs: a blank tab reads as broken (Imprest
+// 10/5: 0 of 10 accounts in Primary's Affinity). Unknown coverage keeps them.
+(function hideEmptyNetworkTabs(){
+  var nd=window.NETWORK_DATA, s=nd&&nd.summary;
+  if(!s||s.companies_with_path!==0)return;
+  ['network','contacts'].forEach(function(t){
+    document.querySelectorAll('[data-tab="'+t+'"]').forEach(function(b){ b.remove(); });
+  });
+  window.__fdiNoNetwork=true;
+})();
 function switchTab(tab){
+  if(window.__fdiNoNetwork&&(tab==='network'||tab==='contacts'))tab='all';  // #network deep links fall back to the overview
   // remember where a "drill-in" jump came from so Contacts can offer a Back button;
   // a plain nav-bar click to Contacts (not via a stat) clears it.
   if(tab==='contacts' && !state._viaStat) state.ctBackTo=null;

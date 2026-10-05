@@ -82,20 +82,18 @@ window.BUILD_DATA = {
     // renders the locked default. Only override if the founder's own review asks,
     // and never with a product pitch aimed back at the founder.
     introHeadline: "",                   // locked default; accent spans allowed if you must override
-    introWarmth: "",                     // locked default: the "this is how we execute" process line, hard stop at "network."
+    introWarmth: "",                     // absent = locked default process line; "" = hide the line (Imprest removed it). Budget 28 words.
     heroTitle: ["", ""],                 // locked default; if overridden, each line must hold ONE rendered line (<=46 chars)
     heroSub: "",                         // may contain <b>...</b>; ends "Scroll to watch it run."
-    heroStats: [                         // exactly 5, every label distinct; all values REAL
-      { n: 0, label: "est. in your ICP, your sizing" },  // scan.universe — attribute it when it is the founder's own figure
-      { n: 0, label: "companies profiled" },             // what we read closely (NOT the curated count)
-      { n: 0, label: "custom signals" },
-      { n: 0, label: "accounts curated" },
-      { n: null, label: "named contacts" }               // WRITE null: derives from network-data.js, which the workflow
-                                                         // generates from Affinity AFTER the build agent stops. Any number
-                                                         // here is a guess that will disagree with the real one (a build
-                                                         // shipped 20 against a derived 23). backfill-build-data.mjs stamps
-                                                         // the true value, and swaps this stat for a cited-sources count
-                                                         // when the network came back empty.
+    heroStats: [                         // exactly 5, every label distinct, no null after backfill (gate). Founder-facing first
+                                         // (SKILL Rule 38): what the market is to THEM, what sits behind the sample, who to talk to.
+      { n: 0, label: "in your ICP (your sizing)" },                  // scan.universe, in the founder's own sizing
+      { n: 0, suffix: "M", label: "customers behind that market (your sizing)" },   // e.g. "22M SMB client relationships"; suffix renders "22M"
+      { n: 10, label: "accounts researched in depth for this first pass" },
+      { n: 0, suffix: "+", label: "customers behind just a few of these accounts" }, // only when cited on the accounts themselves
+      { n: null, label: "named contacts" }               // WRITE null: backfill-build-data.mjs stamps the derived value
+                                                         // after the Affinity fetch, or swaps in a cited-sources count
+                                                         // when there are no warm paths.
     ],
     icp: "",                             // act 02 narration, <=2 sentences
     signals: "",                         // act 03
@@ -147,14 +145,14 @@ window.BUILD_DATA = {
     universeLabel: "",                   // plural noun phrase; attribute the founder's own figure, e.g. "in your ICP, your sizing"
     universe: 0, groups: 0, matched: 0, curated: 10, partners: 0,   // universe = NARROW-ICP estimate matching the scan query, NOT broad TAM
     query: "",                           // the Webset search query, human-readable
-    funnel: { universe: "est. in your ICP, your sizing", groups: "", matched: "high-quality companies found" },  // 3 short stat labels
+    funnel: { universe: "in your ICP, your sizing", groups: "scanned in this first pass", matched: "researched in depth" },  // a first-pass deep dive, never "21 of 507K fit"
     // The scan beat's big count is an artifact of the PROCESS, never a sample-size
     // stat. Pattern (Alex's wording for the tool list is mandatory):
     //   "[Universe number, attributed to the founder's own sizing]. We pointed our
     //    process at [the segments] - Exa websets, web scraping, enrichment,
     //    hands-on research - and it surfaced [X] high-quality companies. This is a
     //    sample; the same process scales to the whole universe."
-    methodNote: "",                      // optional; replaces the generic scan-note. <=~40 words
+    methodNote: "",                      // optional, <=40 words (gate). Frame as a first pass that shows the process: "About N fit your ICP. For this first pass we scanned a slice, researched X in depth, and picked ten to show what the process can do."
     excludes: [ "" ]                     // competitor/vendor names struck out on screen
   },
 

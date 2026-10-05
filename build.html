@@ -779,8 +779,8 @@ a{color:inherit;text-decoration:none;}
 <!-- ================= act 8 · network ================= -->
 <section class="scene" data-scrub id="s-network">
   <div class="pin"><div class="pin-inner">
-    <div class="act-eyebrow rv" data-at="0.02"><span class="chip"><span class="n">08</span> Map the way in</span></div>
-    <h2 class="act-title rv" data-at="0.02">And map the <span class="grad">warm paths in.</span></h2>
+    <div class="act-eyebrow rv" data-at="0.02"><span class="chip"><span class="n">08</span> <span id="netEyebrow">Map the way in</span></span></div>
+    <h2 class="act-title rv" data-at="0.02" id="netTitle">And map the <span class="grad">warm paths in.</span></h2>
     <p class="act-narr rv" data-at="0.04" id="narrNetwork"></p>
     <div class="intro-strip rv" data-at="0.06" id="introStripWrap" style="display:none;">
       <div class="ish">The intros we can make tomorrow</div>
@@ -791,7 +791,7 @@ a{color:inherit;text-decoration:none;}
       <div class="net-legend" id="netLegend"></div>
       <div class="net-hint">node size = readiness · drag · hover</div>
     </div>
-    <div class="net-note rv" data-at="0.2">Illustrative warm-path layer. Populated per founder from Primary's Affinity graph + team LinkedIn.</div>
+    <div class="net-note rv" data-at="0.2" id="netNote">Illustrative warm-path layer. Populated per founder from Primary's Affinity graph + team LinkedIn.</div>
   </div></div>
 </section>
 
@@ -962,9 +962,10 @@ a{color:inherit;text-decoration:none;}
   // register: locked wording from 8/17, hard stop at "network." (Alex cut
   // everything that came after it, including the sample count and the feedback
   // ask). Company-agnostic, so it is the default; an authored value overrides.
-  var LOCKED_INTRO_SUB='This is how we execute a well-researched GTM strategy: scraping and structuring market data with tools like Exa, Clay, and Claude, translating your ICP into founder-specific signals, backing every claim with cited evidence, and mapping warm paths in through Primary’s network.';
+  var LOCKED_INTRO_SUB='This is how we execute a well-researched GTM strategy: scraping and structuring market data with tools like Exa, Clay, and Claude, translating your ICP into founder-specific signals, and backing every claim with cited evidence.';
   var iw=document.getElementById('introWarmth');
-  if(iw)iw.innerHTML=N.introWarmth||LOCKED_INTRO_SUB;
+  // introWarmth: '' hides the line entirely; absent uses the locked default.
+  if(iw){ if(N.introWarmth===''){ iw.style.display='none'; } else { iw.innerHTML=N.introWarmth||LOCKED_INTRO_SUB; } }
   // the backdrop mark: one flat copy of the founder's own logo, scaled up. (Was three
   // stacked copies for a faux-3D spin; `founder.hero3d` is now inert but tolerated in
   // existing build data.)
@@ -1008,7 +1009,7 @@ a{color:inherit;text-decoration:none;}
     {n:D.scan.curated||D.companies.length,label:'accounts curated'},
     {n:citedSources,label:'cited sources'}];
   document.getElementById('heroStats').innerHTML=heroStats.map(function(s){
-    return '<div class="hstat"><div class="n" data-count="'+s.n+'">0</div><div class="l">'+s.label+'</div></div>';}).join('');
+    return '<div class="hstat"><div class="n" data-count="'+s.n+'" data-suffix="'+(s.suffix||'')+'">0</div><div class="l">'+s.label+'</div></div>';}).join('');
   document.getElementById('processLead').textContent=D.process.lead;
   document.getElementById('processFoot').textContent=D.process.foot;
   document.getElementById('narrIcp').textContent=N.icp||'We read your materials, sit with the buyer calls, and study the category - then write the ICP down as plain criteria we can check against every company we surface.';
@@ -1022,6 +1023,11 @@ a{color:inherit;text-decoration:none;}
   // Scoped to the sample: we hold paths into part of it, not "much of the shortlist".
   // Null-guarded because act 8 is removable per build (SHOW_NETWORK).
   var _nn=document.getElementById('narrNetwork');
+  // Next-layer framing: backfill-build-data.mjs writes these when the Affinity fetch
+  // finds no warm paths, so the beat previews the capability instead of claiming it.
+  if(N.networkEyebrow){var _ne=document.getElementById('netEyebrow'); if(_ne)_ne.textContent=N.networkEyebrow;}
+  if(N.networkTitle){var _nt=document.getElementById('netTitle'); if(_nt)_nt.innerHTML=N.networkTitle;}
+  if(N.networkNote){var _nno=document.getElementById('netNote'); if(_nno)_nno.textContent=N.networkNote;}
   if(_nn)_nn.textContent=N.network||'Through Primary’s network of partners, advisors, founders, and operators, we already hold warm introductions into part of this sample. Every line is a real relationship.';
   // "intros we can make tomorrow" strip - per-account warm-contact counts from the live graph
   (function(){
@@ -1106,9 +1112,9 @@ a{color:inherit;text-decoration:none;}
   var FUN=D.scan.funnel||{};
   function farrow(at){return '<span class="fa rv" data-at="'+at+'"><svg viewBox="0 0 24 24"><line x1="4" y1="12" x2="18" y2="12"/><polyline points="12,6 18,12 12,18"/></svg></span>';}
   document.getElementById('funnel').innerHTML=
-    '<div class="fstat rv" data-at="0.56"><div class="n">'+fmt(D.scan.universe)+'</div><div class="l">'+(FUN.universe||'est. in your ICP, your sizing')+'</div></div>'+farrow('0.6')+
-    '<div class="fstat rv" data-at="0.62"><div class="n">'+fmt(D.scan.groups)+'</div><div class="l">'+(FUN.groups||'clear the structural gate')+'</div></div>'+farrow('0.66')+
-    '<div class="fstat match rv" data-at="0.68"><div class="n">'+D.scan.matched+'</div><div class="l">'+(FUN.matched||'high-quality companies found')+'</div></div>';
+    '<div class="fstat rv" data-at="0.56"><div class="n">'+fmt(D.scan.universe)+'</div><div class="l">'+(FUN.universe||'in your ICP, your sizing')+'</div></div>'+farrow('0.6')+
+    '<div class="fstat rv" data-at="0.62"><div class="n">'+fmt(D.scan.groups)+'</div><div class="l">'+(FUN.groups||'scanned in this first pass')+'</div></div>'+farrow('0.66')+
+    '<div class="fstat match rv" data-at="0.68"><div class="n">'+D.scan.matched+'</div><div class="l">'+(FUN.matched||'researched in depth')+'</div></div>';
   // optional methodology note (scan.methodNote) — replaces the generic scan-note line when present
   var mn=document.querySelector('#s-scan .scan-note');
   if(mn&&D.scan.methodNote)mn.textContent=D.scan.methodNote;
@@ -1306,10 +1312,11 @@ a{color:inherit;text-decoration:none;}
 
   /* ---- hero count-ups: fire when beat 2 first reveals ---- */
   function countUp(el,to,dur){
-    if(REDUCED){el.textContent=fmt(to);return;}
+    var sfx=el.getAttribute('data-suffix')||'';   // "M", "+": founder-facing stats read "22M", "3,400+"
+    if(REDUCED){el.textContent=fmt(to)+sfx;return;}
     var t0=null;
     function step(ts){if(t0===null)t0=ts;var p=clamp((ts-t0)/dur,0,1),e=1-Math.pow(1-p,3);
-      el.textContent=fmt(Math.round(to*e));if(p<1)requestAnimationFrame(step);}
+      el.textContent=fmt(Math.round(to*e))+sfx;if(p<1)requestAnimationFrame(step);}
     requestAnimationFrame(step);
   }
   var statsStarted=false;
