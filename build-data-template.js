@@ -21,7 +21,7 @@
        target list. Banned outright: "most ready to buy", "the readiest buyers",
        "the [N] accounts to target", "we scan the entire market", "accounts worth
        walking into", and any market-wide superlative. Scope rankings to
-       "relative readiness within this sample". (Jason, 8/17.)
+       "relative signal strength within this sample". (Jason, 8/17.)
      - Numbers that came from the FOUNDER get attributed ("your own sizing"), and
        every count reads as an artifact of the process, never as the size of the
        opportunity. [X] profiled and [Y] curated are different numbers - never

@@ -137,7 +137,7 @@ Full detail in TEMPLATE_GUIDE.md ("A sample, never a census"); the short version
   the signals. Banned in rendered copy: "most ready to buy", "the readiest
   buyers", "the [N] accounts to target", "we scan the entire market", "accounts
   worth walking into", any market-wide superlative. Rankings are scoped to
-  "relative readiness within this sample".
+  "relative signal strength within this sample".
 - **Leave `introHeadline`, `introWarmth` and `heroTitle` EMPTY** in build-data.js.
   build.html carries locked, approved, company-agnostic copy for all three. The
   intro beat sells Primary's process and must contain no account counts.
@@ -155,3 +155,8 @@ Full detail in TEMPLATE_GUIDE.md ("A sample, never a census"); the short version
 If SKILL.md has a rule that contradicts this file, SKILL.md wins. This file is best-effort; SKILL.md is the spec.
 
 If you're updating SKILL.md and changing process flow, you don't need to update this file unless the *file inventory above* changes (e.g., adding a new template file or removing one).
+
+
+## Shared writing guide
+
+Read [COPYWRITING_GUIDE.md in fdi-draft-skill](https://github.com/alexg207/fdi-draft-skill/blob/main/COPYWRITING_GUIDE.md) before authoring copy. It is the shared editorial policy for the entire build, including Talent and the in-site editor. Preserve approved Welcome, intro, and hero copy and established product names. Read headings together in page order, then supporting text; change only wording with a specific problem. Existing schema, citation, factual, and render checks still apply. Older sample sentences here illustrate field structure, not mandatory prose to imitate.

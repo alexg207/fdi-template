@@ -760,7 +760,7 @@ and not "the N companies out there."
   walking into", "the highest-quality accounts in the market", and any
   market-wide superlative. `scripts/smoke-test.mjs` sweeps rendered text for
   these and fails.
-- **Scope rankings to the sample:** "relative readiness within this sample",
+- **Scope rankings to the sample:** "relative signal strength within this sample",
   never "readiest in the market".
 - **Counts are process artifacts.** The scan beat keeps its big number, but
   labelled as what the process found, not as the size of the opportunity. A
@@ -823,3 +823,8 @@ state.
 5. Weights in `axes[]` sum to 100; `companies[0]` is the intended hero account (act 6 uses it).
 6. Warmth lines render under the headline / between finale CTA and replay when present, and disappear cleanly (no gap) when the keys are removed; `scan.methodNote` replaces the generic scan-note line.
 7. `heroStats` has exactly 5 entries leading with the TAM stat; `scan.universe` (narrow-ICP estimate) and `finaleSub` state the same figure; `founder.tagline` does not restate `introHeadline`.
+
+
+## Shared writing guide
+
+Read [COPYWRITING_GUIDE.md in fdi-draft-skill](https://github.com/alexg207/fdi-draft-skill/blob/main/COPYWRITING_GUIDE.md) before authoring copy. It is the shared editorial policy for the entire build, including Talent and the in-site editor. Preserve approved Welcome, intro, and hero copy and established product names. Read headings together in page order, then supporting text; change only wording with a specific problem. Existing schema, citation, factual, and render checks still apply. Older sample sentences here illustrate field structure, not mandatory prose to imitate.
