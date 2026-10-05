@@ -108,6 +108,8 @@ a{color:inherit;text-decoration:none;}
 .logo-mark svg{width:17px;height:17px;stroke:var(--amber-deep);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round;}
 .brand .nm{font-family:var(--display);font-size:14.5px;font-weight:600;letter-spacing:-.01em;}
 .brand .x{color:var(--text-faint);margin:0 6px;}
+.fw-logo{height:.78em;width:auto;display:inline-block;vertical-align:-.04em;}
+.fw-mask{display:inline-block;height:.78em;vertical-align:-.04em;background:currentColor;-webkit-mask:url(./assets/brand/wordmark-mono.png) center/contain no-repeat;mask:url(./assets/brand/wordmark-mono.png) center/contain no-repeat;}
 .pv-lockup{height:1.15em;display:inline-block;vertical-align:-.3em;opacity:.95;}
 .skip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;color:var(--text-mid);
   border:1px solid var(--border);border-radius:8px;padding:7px 13px;background:var(--glass);
@@ -952,6 +954,16 @@ a{color:inherit;text-decoration:none;}
   document.getElementById('brandName').textContent=NAME;
   // beat 1: the founder, front and center
   document.getElementById('introName').textContent=NAME;
+  // Founder wordmark (engine: build-wordmark.mjs, captured from the founder's own
+  // site). assets/brand/wordmark-color.png exists only when the site is dark, so it
+  // reads on this dark page as-is; otherwise the one-colour mask takes the text
+  // colour. Absent both, the plain name stays.
+  (function(){
+    function place(html){ ['brandName','introName'].forEach(function(id){ var el=document.getElementById(id); if(el){ el.innerHTML=html; el.setAttribute('aria-label',NAME); } }); }
+    var c=new Image(); c.onload=function(){ place('<img class="fw-logo" src="./assets/brand/wordmark-color.png" alt="'+NAME.replace(/"/g,'')+'">'); };
+    c.onerror=function(){ var m=new Image(); m.onload=function(){ var ar=(m.naturalWidth/m.naturalHeight)||6; place('<span class="fw-mask" style="aspect-ratio:'+ar.toFixed(2)+'"></span>'); }; m.src='./assets/brand/wordmark-mono.png'; };
+    c.src='./assets/brand/wordmark-color.png';
+  })();
   document.getElementById('introTag').textContent=D.founder.tagline||'';
   // The intro beat sells PRIMARY'S PROCESS, never this build's outcomes: no
   // account counts, no sample sizes, nothing about what this particular build
