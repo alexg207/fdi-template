@@ -85,7 +85,7 @@ window.BUILD_DATA = {
     introWarmth: "",                     // absent = locked default process line; "" = hide the line (Imprest removed it). Budget 28 words.
     heroTitle: ["", ""],                 // locked default; if overridden, each line must hold ONE rendered line (<=46 chars)
     heroSub: "",                         // may contain <b>...</b>; ends "Scroll to watch it run."
-    heroStats: [                         // exactly 5, every label distinct, no null after backfill (gate). Founder-facing first
+    heroStats: [                         // 3 to 5 (one row), every label distinct, no null after backfill (gate). Founder-facing first
                                          // (SKILL Rule 38): what the market is to THEM, what sits behind the sample, who to talk to.
       { n: 0, label: "in your ICP (your sizing)" },                  // scan.universe, in the founder's own sizing
       { n: 0, suffix: "M", label: "customers behind that market (your sizing)" },   // e.g. "22M SMB client relationships"; suffix renders "22M"
